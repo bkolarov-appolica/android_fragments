@@ -16,24 +16,27 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
+package universum.studios.android.fragment.annotation.handler;
+
+import android.support.annotation.NonNull;
 
 /**
- * Library Module dependencies =====================================================================
+ * Base interface for annotation handlers from the Fragments library that are used to handle processing
+ * of annotations attached to classes derived from base classes provided by this library or to theirs
+ * fields.
+ * <p>
+ * Each handler instance has attached a single class for which annotations handling is responsible.
+ * The attached class may be obtained via {@link #getAnnotatedClass()}.
+ *
+ * @author Martin Albedinsky
  */
-dependencies {
-    // None.
+public interface AnnotationHandler {
+
+	/**
+	 * Returns the class for which has been this handler created.
+	 *
+	 * @return Annotated class attached to this handler.
+	 */
+	@NonNull
+	Class<?> getAnnotatedClass();
 }

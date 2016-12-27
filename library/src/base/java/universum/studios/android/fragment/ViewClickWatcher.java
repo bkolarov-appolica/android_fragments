@@ -16,24 +16,25 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
+package universum.studios.android.fragment;
+
+import android.support.annotation.NonNull;
+import android.view.View;
 
 /**
- * Library Module dependencies =====================================================================
+ * The ViewClickWatcher interface specifies one callback that may be used to dispatch a view click
+ * event to a watcher that implements this interface.
+ *
+ * @author Martin Albedinsky
  */
-dependencies {
-    // None.
+public interface ViewClickWatcher {
+
+	/**
+	 * Called to dispatch a view click event to this watcher instance.
+	 *
+	 * @param view The clicked view.
+	 * @return {@code True} if this watcher processed the click event for the specified <var>view</var>,
+	 * {@code false} otherwise.
+	 */
+	boolean dispatchViewClick(@NonNull View view);
 }

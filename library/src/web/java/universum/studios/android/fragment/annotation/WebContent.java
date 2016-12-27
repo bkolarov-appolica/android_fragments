@@ -16,24 +16,42 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
+package universum.studios.android.fragment.annotation;
+
+import android.support.annotation.StringRes;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Library Module dependencies =====================================================================
+ * Defines an annotation for determining a content to be loaded into {@link android.webkit.WebView WebView}.
+ *
+ * <h4>Usage</h4>
+ * <ul>
+ * <li>{@link universum.studios.android.fragment.WebFragment WebFragment}</li>
+ * </ul>
+ *
+ * @author Martin Albedinsky
  */
-dependencies {
-    // None.
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface WebContent {
+
+	/**
+	 * The desired content to be loaded into {@link android.webkit.WebView WebView}. May be a raw
+	 * <b>HTML</b>, web <b>URL</b> or path to a <b>FILE</b> with the desired HTML content.
+	 * <p>
+	 * Default value: <b>""</b>
+	 */
+	String value() default "";
+
+	/**
+	 * Like {@link #value()}, but this specifies a resource id of the desired web content.
+	 * <p>
+	 * Default value: <b>-1</b>
+	 */
+	@StringRes
+	int valueRes() default -1;
 }

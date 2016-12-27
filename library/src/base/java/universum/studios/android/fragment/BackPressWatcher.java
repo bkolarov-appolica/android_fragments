@@ -16,24 +16,20 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
+package universum.studios.android.fragment;
 
 /**
- * Library Module dependencies =====================================================================
+ * The BackPressWatcher interface specifies one callback that may be used to dispatch a back button
+ * press event to a watcher that implements this interface.
+ *
+ * @author Martin Albedinsky
  */
-dependencies {
-    // None.
+public interface BackPressWatcher {
+
+	/**
+	 * Called to dispatch a back press event to this watcher instance.
+	 *
+	 * @return {@code True} if this watcher processed the back press event, {@code false} otherwise.
+	 */
+	boolean dispatchBackPressed();
 }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
+ * *************************************************************************************************
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+-->
+<resources>
+
+    <!-- ### ANIMATIONS ======================================================================== -->
+
+    <!-- Duration for a new incoming fragment's horizontal animation -->
+    <integer name="fragment_config_anim_horizontal_in_duration">500</integer>
+    <!-- Duration for an old incoming back-stacked fragment's horizontal animation -->
+    <integer name="fragment_config_anim_horizontal_in_back_duration">350</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) horizontal animation -->
+    <integer name="fragment_config_anim_horizontal_out_duration">500</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's horizontal animation -->
+    <integer name="fragment_config_anim_horizontal_out_back_duration">350</integer>
+    <!-- Duration for a new incoming fragment's vertical animation -->
+    <integer name="fragment_config_anim_vertical_in_duration">500</integer>
+    <!-- Duration for an old incoming back-stacked fragment's vertical animation -->
+    <integer name="fragment_config_anim_vertical_in_back_duration">350</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) vertical animation -->
+    <integer name="fragment_config_anim_vertical_out_duration">500</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's vertical animation -->
+    <integer name="fragment_config_anim_vertical_out_back_duration">350</integer>
+
+    <!-- ### ANIMATIONS:Alpha animation durations. ============================================= -->
+
+    <!-- Duration for a new incoming fragment's alpha animation -->
+    <integer name="fragment_config_anim_alpha_in_duration">@integer/fragment_config_anim_horizontal_in_duration</integer>
+    <!-- Duration for an old incoming back-stacked fragment's alpha animation -->
+    <integer name="fragment_config_anim_alpha_in_back_duration">@integer/fragment_config_anim_horizontal_in_back_duration</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) alpha animation -->
+    <integer name="fragment_config_anim_alpha_out_duration">@integer/fragment_config_anim_horizontal_out_duration</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's alpha animation -->
+    <integer name="fragment_config_anim_alpha_out_back_duration">@integer/fragment_config_anim_horizontal_out_back_duration</integer>
+
+    <!-- ### ANIMATIONS:Slide animation durations. ============================================= -->
+
+    <!-- Duration for a new incoming fragment's horizontal slide animation -->
+    <integer name="fragment_config_anim_slide_horizontal_in_duration">@integer/fragment_config_anim_horizontal_in_duration</integer>
+    <!-- Duration for an old incoming back-stacked fragment's horizontal slide animation -->
+    <integer name="fragment_config_anim_slide_horizontal_in_back_duration">@integer/fragment_config_anim_horizontal_in_back_duration</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) horizontal slide animation -->
+    <integer name="fragment_config_anim_slide_horizontal_out_duration">@integer/fragment_config_anim_horizontal_out_duration</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's horizontal slide animation -->
+    <integer name="fragment_config_anim_slide_horizontal_out_back_duration">@integer/fragment_config_anim_horizontal_out_back_duration</integer>
+    <!-- Duration for a new incoming fragment's vertical slide animation -->
+    <integer name="fragment_config_anim_slide_vertical_in_duration">@integer/fragment_config_anim_horizontal_in_duration</integer>
+    <!-- Duration for an old incoming back-stacked fragment's vertical slide animation -->
+    <integer name="fragment_config_anim_slide_vertical_in_back_duration">@integer/fragment_config_anim_horizontal_in_back_duration</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) vertical slide animation -->
+    <integer name="fragment_config_anim_slide_vertical_out_duration">@integer/fragment_config_anim_horizontal_out_duration</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's vertical slide animation -->
+    <integer name="fragment_config_anim_slide_vertical_out_back_duration">@integer/fragment_config_anim_horizontal_out_back_duration</integer>
+
+    <!-- ### ANIMATIONS:Scale animation durations. ============================================= -->
+
+    <!-- Duration for a new incoming fragment's scale animation -->
+    <integer name="fragment_config_anim_scale_in_duration">@integer/fragment_config_anim_horizontal_in_duration</integer>
+    <!-- Start offset duration for a new incoming fragment's scale animation -->
+    <integer name="fragment_config_anim_scale_in_delay">150</integer>
+    <!-- Duration for an old incoming back-stacked fragment's scale animation -->
+    <integer name="fragment_config_anim_scale_in_back_duration">@integer/fragment_config_anim_horizontal_in_back_duration</integer>
+    <!-- Start offset duration for an old incoming back-stacked fragment's scale animation -->
+    <integer name="fragment_config_anim_scale_in_back_delay">100</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) scale animation -->
+    <integer name="fragment_config_anim_scale_out_duration">@integer/fragment_config_anim_horizontal_out_duration</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's scale animation -->
+    <integer name="fragment_config_anim_scale_out_back_duration">@integer/fragment_config_anim_horizontal_out_back_duration</integer>
+    <!-- Duration for a new incoming fragment's alpha animation within scale animation set -->
+    <integer name="fragment_config_anim_scale_alpha_in_duration">400</integer>
+    <!-- Duration for an old incoming back-stacked fragment's alpha animation within scale animation set -->
+    <integer name="fragment_config_anim_scale_alpha_in_back_duration">300</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) alpha animation within scale animation set -->
+    <integer name="fragment_config_anim_scale_alpha_out_duration">400</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's alpha animation within scale animation set -->
+    <integer name="fragment_config_anim_scale_alpha_out_back_duration">300</integer>
+
+    <!-- ### ANIMATIONS:Flip animation durations. ============================================== -->
+
+    <!-- Duration for a new incoming fragment's horizontal flip animation -->
+    <integer name="fragment_config_anim_flip_horizontal_in_duration">@integer/fragment_config_anim_horizontal_in_duration</integer>
+    <integer name="fragment_config_anim_flip_horizontal_in_delay">250</integer>
+    <!-- Duration for an old incoming back-stacked fragment's horizontal flip animation -->
+    <integer name="fragment_config_anim_flip_horizontal_in_back_duration">@integer/fragment_config_anim_horizontal_in_back_duration</integer>
+    <integer name="fragment_config_anim_flip_horizontal_in_back_delay">175</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) horizontal flip animation -->
+    <integer name="fragment_config_anim_flip_horizontal_out_duration">@integer/fragment_config_anim_horizontal_out_duration</integer>
+    <integer name="fragment_config_anim_flip_horizontal_out_delay">250</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's horizontal flip animation -->
+    <integer name="fragment_config_anim_flip_horizontal_out_back_duration">@integer/fragment_config_anim_horizontal_out_back_duration</integer>
+    <integer name="fragment_config_anim_flip_horizontal_out_back_delay">175</integer>
+    <!-- Duration for a new incoming fragment's vertical flip animation -->
+    <integer name="fragment_config_anim_flip_vertical_in_duration">@integer/fragment_config_anim_horizontal_in_duration</integer>
+    <integer name="fragment_config_anim_flip_vertical_in_delay">250</integer>
+    <!-- Duration for an old incoming back-stacked fragment's vertical flip animation -->
+    <integer name="fragment_config_anim_flip_vertical_in_back_duration">@integer/fragment_config_anim_horizontal_in_back_duration</integer>
+    <integer name="fragment_config_anim_flip_vertical_in_back_delay">175</integer>
+    <!-- Duration for a current outgoing fragment's (new is incoming) vertical flip animation -->
+    <integer name="fragment_config_anim_flip_vertical_out_duration">@integer/fragment_config_anim_horizontal_out_duration</integer>
+    <integer name="fragment_config_anim_flip_vertical_out_delay">250</integer>
+    <!-- Duration for a current outgoing (back-stacked is incoming) fragment's vertical flip animation -->
+    <integer name="fragment_config_anim_flip_vertical_out_back_duration">@integer/fragment_config_anim_horizontal_out_back_duration</integer>
+    <integer name="fragment_config_anim_flip_vertical_out_back_delay">175</integer>
+</resources>

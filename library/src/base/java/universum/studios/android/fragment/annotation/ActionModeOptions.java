@@ -16,24 +16,38 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
+package universum.studios.android.fragment.annotation;
+
+import android.support.annotation.MenuRes;
+import android.support.v7.view.ActionMode;
+import android.view.Menu;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Library Module dependencies =====================================================================
+ * Defines an annotation for determining how an {@link ActionMode} should be set.
+ *
+ * <h4>Usage</h4>
+ * <ul>
+ * <li>{@link universum.studios.android.fragment.ActionBarFragment ActionBarFragment}</li>
+ * </ul>
+ *
+ * @author Martin Albedinsky
  */
-dependencies {
-    // None.
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ActionModeOptions {
+
+	/**
+	 * A resource id of the desired xml menu for an ActionMode.
+	 * <p>
+	 * Default value: <b>0</b>
+	 *
+	 * @see ActionMode.Callback#onCreateActionMode(ActionMode, Menu)
+	 */
+	@MenuRes
+	int menu() default 0;
 }

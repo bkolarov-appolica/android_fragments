@@ -54,11 +54,11 @@ repositories {
 }
 
 dependencies {
+    final String supportVersion = project.property('android.support.version')
     /*
      * RELEASE DEPENDENCIES ------------------------------------------------------------------------
      */
-    final String supportVersion = project.property('android.support.version')
-    compile 'com.android.support:support-v4:' + supportVersion
+    // See build scripts for separate modules.
 
     /*
      * TEST DEPENDENCIES ---------------------------------------------------------------------------

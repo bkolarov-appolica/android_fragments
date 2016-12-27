@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 /*
  * =================================================================================================
  *                             Copyright (C) 2016 Universum Studios
  * =================================================================================================
  *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
- * -------------------------------------------------------------------------------------------------
+ * *************************************************************************************************
  * You may use this file only in compliance with the License. More details and copy of this License
  * you may obtain at
  *
@@ -16,24 +18,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
-
-/**
- * Library Module dependencies =====================================================================
- */
-dependencies {
-    // None.
-}
+-->
+<manifest package="universum.studios.android.fragment.transition.extra">
+	<application/>
+</manifest>

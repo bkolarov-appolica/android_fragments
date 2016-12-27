@@ -17,23 +17,9 @@
  * =================================================================================================
  */
 /**
- * Library Module options ==========================================================================
+ * Provides base and common {@link android.app.Fragment Fragment} implementations that may be used
+ * in an Android application as base classes for a specific fragment implementations.
+ *
+ * @author Martin Albedinsky
  */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
-
-/**
- * Library Module dependencies =====================================================================
- */
-dependencies {
-    // None.
-}
+package universum.studios.android.fragment;

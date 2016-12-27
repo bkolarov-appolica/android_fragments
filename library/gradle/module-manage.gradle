@@ -20,13 +20,11 @@
  * Library Module options ==========================================================================
  */
 android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
     sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
+        main.manifest.srcFile 'src/manage/AndroidManifest.xml'
         main.java.srcDirs = [
-                'src/main/java'
+                'src/manage/core/java',
+                'src/manage/base/java'
         ]
     }
 }

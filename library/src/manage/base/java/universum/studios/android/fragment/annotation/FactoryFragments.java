@@ -16,24 +16,34 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-    sourceSets {
-        main.manifest.srcFile 'src/main/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/main/java'
-        ]
-    }
-}
+package universum.studios.android.fragment.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import universum.studios.android.fragment.manage.FragmentController;
 
 /**
- * Library Module dependencies =====================================================================
+ * Defines an annotation for determining set of Fragment ids that are provided by a specific
+ * {@link FragmentController.FragmentFactory}.
+ *
+ * <h4>Usage</h4>
+ * <ul>
+ * <li>{@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}</li>
+ * </ul>
+ *
+ * @author Martin Albedinsky
  */
-dependencies {
-    // None.
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FactoryFragments {
+
+	/**
+	 * An array with Fragment ids to be provided by FragmentFactory.
+	 *
+	 * @see FragmentController.FragmentFactory#isFragmentProvided(int)
+	 */
+	int[] value();
 }
