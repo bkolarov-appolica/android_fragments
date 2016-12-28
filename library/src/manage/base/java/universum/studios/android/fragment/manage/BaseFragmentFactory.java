@@ -37,18 +37,18 @@ import universum.studios.android.fragment.FragmentsConfig;
 import universum.studios.android.fragment.annotation.FactoryFragment;
 import universum.studios.android.fragment.annotation.FactoryFragments;
 import universum.studios.android.fragment.annotation.FragmentAnnotations;
-import universum.studios.android.fragment.transition.BasicFragmentTransition;
-import universum.studios.android.fragment.annotation.handler.AnnotationHandlers;
+import universum.studios.android.fragment.annotation.handler.BaseManagementAnnotationHandlers;
 import universum.studios.android.fragment.annotation.handler.FragmentFactoryAnnotationHandler;
+import universum.studios.android.fragment.transition.BasicFragmentTransition;
 
 /**
  * Fragment factory that provides base implementation of required {@link universum.studios.android.fragment.manage.FragmentController.FragmentFactory}
  * interface for {@link universum.studios.android.fragment.manage.FragmentController}.
  *
- * <h4>Accepted annotations</h4>
+ * <h3>Accepted annotations</h3>
  * <ul>
  * <li>
- * {@link universum.studios.android.fragment.annotation.FactoryFragments @FactoryFragments} <b>[class]</b>
+ * {@link universum.studios.android.fragment.annotation.FactoryFragments @FactoryFragments} <b>[class - inherited]</b>
  * <p>
  * If this annotation is presented, all ids of fragments presented within this annotation will be
  * attached to an instance of annotated BaseFragmentFactory sub-class, so {@link #isFragmentProvided(int)}
@@ -58,7 +58,7 @@ import universum.studios.android.fragment.annotation.handler.FragmentFactoryAnno
  * via {@link #getFragmentTag(int)} with the specific fragment id.
  * </li>
  * <li>
- * {@link universum.studios.android.fragment.annotation.FactoryFragment @FactoryFragment} <b>[member]</b>
+ * {@link universum.studios.android.fragment.annotation.FactoryFragment @FactoryFragment} <b>[member - inherited]</b>
  * <p>
  * This annotation provides same results as {@link universum.studios.android.fragment.annotation.FactoryFragments @FactoryFragments}
  * annotation, but this annotation is meant to be used to mark directly constant fields that specify
@@ -170,7 +170,7 @@ public abstract class BaseFragmentFactory implements FragmentController.Fragment
 	 * @return Annotations handler specific for this class.
 	 */
 	FragmentFactoryAnnotationHandler onCreateAnnotationHandler() {
-		return AnnotationHandlers.obtainFactoryHandler(getClass());
+		return BaseManagementAnnotationHandlers.obtainFactoryHandler(getClass());
 	}
 
 	/**

@@ -44,7 +44,7 @@ public final class FragmentTransitions {
 	 * Transition that may be used to fade a new incoming fragment into the screen and an outgoing
 	 * (the current one) will be faded out of the screen.
 	 *
-	 * <h4>Powered by animations:</h4>
+	 * <h3>Powered by animations:</h3>
 	 * <ul>
 	 * <li><b>Incoming:</b> {@link R.animator#fragment_fade_in}</li>
 	 * <li><b>Outgoing:</b> {@link R.animator#fragment_fade_out}</li>
@@ -68,7 +68,7 @@ public final class FragmentTransitions {
 	 * Transition that may be used to slide a new incoming fragment into the screen from the left and
 	 * an outgoing (the current one) will be slided out of the screen to the right.
 	 *
-	 * <h4>Powered by animations:</h4>
+	 * <h3>Powered by animations:</h3>
 	 * <ul>
 	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_right}</li>
 	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_right}</li>
@@ -92,7 +92,7 @@ public final class FragmentTransitions {
 	 * Transition that may be used to slide a new incoming fragment into the screen from the right
 	 * and an outgoing (the current one) will be slided out of the screen to the left.
 	 *
-	 * <h4>Powered by animations:</h4>
+	 * <h3>Powered by animations:</h3>
 	 * <ul>
 	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_left}</li>
 	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_left}</li>
@@ -116,7 +116,7 @@ public final class FragmentTransitions {
 	 * Transition that may be used to slide a new incoming fragment into the screen from the bottom
 	 * and an outgoing (the current one) will be slided out of the screen to the top.
 	 *
-	 * <h4>Powered by animations:</h4>
+	 * <h3>Powered by animations:</h3>
 	 * <ul>
 	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_top}</li>
 	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_top}</li>
@@ -140,7 +140,7 @@ public final class FragmentTransitions {
 	 * Transition that may be used to slide a new incoming fragment into the screen from the top and
 	 * an outgoing (the current one) will be slided out of the screen to the bottom.
 	 *
-	 * <h4>Powered by animations:</h4>
+	 * <h3>Powered by animations:</h3>
 	 * <ul>
 	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_bottom}</li>
 	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_bottom}</li>

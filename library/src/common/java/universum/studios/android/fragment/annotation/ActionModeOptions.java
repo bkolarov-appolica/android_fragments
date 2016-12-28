@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 /**
  * Defines an annotation for determining how an {@link ActionMode} should be set.
  *
- * <h4>Usage</h4>
+ * <h3>Usage</h3>
  * <ul>
  * <li>{@link universum.studios.android.fragment.ActionBarFragment ActionBarFragment}</li>
  * </ul>

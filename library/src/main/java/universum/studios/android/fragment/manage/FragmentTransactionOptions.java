@@ -48,7 +48,7 @@ import universum.studios.android.fragment.transition.BasicFragmentTransition;
  * you want to show the desired fragment with some transition, you can specify it via
  * {@link #transition(BasicFragmentTransition)}.
  *
- * <h4>Default options</h4>
+ * <h3>Default options</h3>
  * Below are listed default values of all arguments within the FragmentTransactionOptions:
  * <ul>
  * <li>tag: <b>unspecified</b></li>

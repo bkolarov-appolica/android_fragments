@@ -43,16 +43,16 @@ import universum.studios.android.fragment.annotation.handler.WebAnnotationHandle
 import universum.studios.android.fragment.annotation.handler.WebFragmentAnnotationHandler;
 
 /**
- * A {@link ActionBarFragment} implementation that allows to show a web content within a {@link WebView}.
+ * An {@link ActionBarFragment} implementation that allows to show a web content within a {@link WebView}.
  * This fragment creates WebView as its root view when {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
  * is called. That WebView is used to present the web content supplied to this web fragment.
  * <p>
- * The desired web content can be specified through {@link WebOptions} when creating new instance of
+ * The desired web content may be specified through {@link WebOptions} when creating new instance of
  * WebFragment via {@link #newInstance(WebFragment.WebOptions)} or when you have access to already
  * visible and showing web fragment via {@link #loadContent(String)}.
  *
- * <h4>Web content types</h4>
- * Following content types are supported as content that can be loaded into WebView of WebFragment:
+ * <h3>Web content types</h3>
+ * Following content types are supported as content that may be loaded into WebView:
  * <ul>
  * <li>
  * <b>URL</b>
@@ -75,7 +75,7 @@ import universum.studios.android.fragment.annotation.handler.WebFragmentAnnotati
  * </li>
  * </ul>
  *
- * <h4>Accepted annotations</h4>
+ * <h3>Accepted annotations</h3>
  * <ul>
  * <li>
  * {@link universum.studios.android.fragment.annotation.WebContent @WebContent} <b>[class]</b>
@@ -206,7 +206,8 @@ public class WebFragment extends ActionBarFragment {
 	 */
 	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({CONTENT_EMPTY, CONTENT_URL, CONTENT_HTML, CONTENT_FILE})
-	public @interface ContentType {}
+	public @interface ContentType {
+	}
 
 	/**
 	 * Flag indicating no content to load.
@@ -376,6 +377,40 @@ public class WebFragment extends ActionBarFragment {
 	}
 
 	/**
+	 * Registers a callback to be invoked when loading process of the current content into web view
+	 * starts or finishes.
+	 *
+	 * @param listener The desired listener callback. May be {@code null} to clear the current one.
+	 */
+	public void setOnWebContentLoadingListener(@Nullable OnWebContentLoadingListener listener) {
+		this.mContentLoadingListener = listener;
+	}
+
+	/**
+	 * Called to notify, that loading process of the specified <var>webUrl</var> just started.
+	 * <p>
+	 * By default this will dispatch {@link OnWebContentLoadingListener#onLoadingStarted(String)}
+	 * callback to the current OnWebContentLoadingListener listener.
+	 *
+	 * @param webUrl Web url which is currently being loaded into the current web view.
+	 */
+	protected void notifyLoadingStarted(@NonNull String webUrl) {
+		if (mContentLoadingListener != null) mContentLoadingListener.onLoadingStarted(webUrl);
+	}
+
+	/**
+	 * Called to notify, that loading process of the specified <var>webUrl</var> was finished.
+	 * <p>
+	 * By default, this will dispatch {@link OnWebContentLoadingListener#onLoadingFinished(String)}
+	 * callback to the current OnWebContentLoadingListener listener.
+	 *
+	 * @param webUrl Web url which was currently loaded into the current web view.
+	 */
+	protected void notifyLoadingFinished(@NonNull String webUrl) {
+		if (mContentLoadingListener != null) mContentLoadingListener.onLoadingFinished(webUrl);
+	}
+
+	/**
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -392,115 +427,6 @@ public class WebFragment extends ActionBarFragment {
 			mWebView.setWebChromeClient(chromeClient);
 		}
 		return mWebView;
-	}
-
-	/**
-	 */
-	@Override
-	@SuppressLint("SetJavaScriptEnabled")
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		if (savedInstanceState != null) {
-			this.mPrivateFlags = savedInstanceState.getInt(BUNDLE_PRIVATE_FLAGS);
-			this.mContent = savedInstanceState.getString(BUNDLE_WEB_VIEW_CONTENT);
-			this.updatePrivateFlags(PFLAG_CONTENT_CHANGED, true);
-		}
-
-		if (mWebView != null) {
-			mWebView.getSettings().setJavaScriptEnabled(hasPrivateFlag(PFLAG_JAVA_SCRIPT_ENABLED));
-		}
-	}
-
-	/**
-	 */
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		this.updatePrivateFlags(PFLAG_READY_TO_LOAD_CONTENT, true);
-		this.resolveContentType();
-		// Restore web view state.
-		if (savedInstanceState != null && mWebView != null && mContentType != CONTENT_EMPTY && mContentType != CONTENT_HTML) {
-			mWebView.restoreState(savedInstanceState);
-		}
-		// Load content.
-		else {
-			onLoadContent(mContent, mContentType);
-		}
-	}
-
-	/**
-	 */
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		// Save web view state.
-		if (mWebView != null) {
-			mWebView.saveState(outState);
-		}
-		outState.putInt(BUNDLE_PRIVATE_FLAGS, mPrivateFlags);
-		outState.putString(BUNDLE_WEB_VIEW_CONTENT, mContent);
-	}
-
-	/**
-	 * Loads the given content into the WebView of this web fragment instance.
-	 *
-	 * @param content Content to load. May be a raw <b>HTML</b>, web <b>URL</b> or path to a <b>FILE</b>
-	 *                with HTML content.
-	 * @return {@code True} if content was loaded, {@code false} if it was prepared for loading and
-	 * will be loaded in the feature when WebView is ready.
-	 * @see #getContent()
-	 */
-	public boolean loadContent(@Nullable String content) {
-		this.mContent = content;
-		this.updatePrivateFlags(PFLAG_CONTENT_CHANGED, true);
-		if ((mPrivateFlags & PFLAG_READY_TO_LOAD_CONTENT) != 0) {
-			onLoadContent(mContent, resolveContentType());
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns an instance of WebView of this fragment instance.
-	 *
-	 * @return The WebView of this web fragment instance.
-	 */
-	@Nullable
-	public WebView getWebView() {
-		return mWebView;
-	}
-
-	/**
-	 * Returns the current content that is loaded or prepared to load into the web view of this
-	 * web fragment instance.
-	 *
-	 * @return Current content. This can be a raw HTML or web URL or a FILE path.
-	 * @see #loadContent(String)
-	 */
-	@Nullable
-	public String getContent() {
-		return mContent;
-	}
-
-	/**
-	 * Registers a callback to be invoked when loading process of the current content into web view
-	 * starts or finishes.
-	 *
-	 * @param listener Listener callback. May be {@code null} to clear the current one.
-	 */
-	public void setOnWebContentLoadingListener(@Nullable OnWebContentLoadingListener listener) {
-		this.mContentLoadingListener = listener;
-	}
-
-	/**
-	 */
-	@Override
-	protected boolean onBackPressed() {
-		if (mWebView != null && mWebView.canGoBack()) {
-			mWebView.goBack();
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -545,6 +471,93 @@ public class WebFragment extends ActionBarFragment {
 	}
 
 	/**
+	 */
+	@Override
+	@SuppressLint("SetJavaScriptEnabled")
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		if (savedInstanceState != null) {
+			this.mPrivateFlags = savedInstanceState.getInt(BUNDLE_PRIVATE_FLAGS);
+			this.mContent = savedInstanceState.getString(BUNDLE_WEB_VIEW_CONTENT);
+			this.updatePrivateFlags(PFLAG_CONTENT_CHANGED, true);
+		}
+
+		if (mWebView != null) {
+			mWebView.getSettings().setJavaScriptEnabled(hasPrivateFlag(PFLAG_JAVA_SCRIPT_ENABLED));
+		}
+	}
+
+	/**
+	 * Returns the instance of WebView of this fragment instance.
+	 *
+	 * @return WebView of this web fragment instance.
+	 */
+	@Nullable
+	public WebView getWebView() {
+		return mWebView;
+	}
+
+	/**
+	 */
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		this.updatePrivateFlags(PFLAG_READY_TO_LOAD_CONTENT, true);
+		this.resolveContentType();
+		// Restore web view state.
+		if (savedInstanceState != null && mWebView != null && mContentType != CONTENT_EMPTY && mContentType != CONTENT_HTML) {
+			mWebView.restoreState(savedInstanceState);
+		}
+		// Load content.
+		else {
+			onLoadContent(mContent, mContentType);
+		}
+	}
+
+	/**
+	 * Loads the given content into the WebView of this web fragment instance.
+	 *
+	 * @param content Content to load. May be a raw <b>HTML</b>, web <b>URL</b> or path to a <b>FILE</b>
+	 *                with HTML content.
+	 * @return {@code True} if content was loaded, {@code false} if it was prepared for loading and
+	 * will be loaded in the feature when WebView is ready.
+	 * @see #getContent()
+	 */
+	public boolean loadContent(@Nullable String content) {
+		this.mContent = content;
+		this.updatePrivateFlags(PFLAG_CONTENT_CHANGED, true);
+		if ((mPrivateFlags & PFLAG_READY_TO_LOAD_CONTENT) != 0) {
+			onLoadContent(mContent, resolveContentType());
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Runs resolving process of the current content.
+	 *
+	 * @return One of the flags {@link #CONTENT_EMPTY}, {@link #CONTENT_HTML}, {@link #CONTENT_URL}
+	 * or {@link #CONTENT_FILE}.
+	 */
+	@ContentType
+	private int resolveContentType() {
+		if (hasPrivateFlag(PFLAG_CONTENT_CHANGED)) {
+			if (!TextUtils.isEmpty(mContent)) {
+				if (WEB_URL_MATCHER.reset(mContent).matches()) {
+					this.mContentType = CONTENT_URL;
+				} else if (FILE_URL_MATCHER.reset(mContent).matches()) {
+					this.mContentType = CONTENT_FILE;
+				} else {
+					this.mContentType = CONTENT_HTML;
+				}
+			} else {
+				this.mContentType = CONTENT_EMPTY;
+			}
+		}
+		return mContentType;
+	}
+
+	/**
 	 * Invoked whenever {@link #loadContent(String)} is called and this fragment is ready (READY means
 	 * after {@link #onActivityCreated(Bundle)} was called) to load that specific content
 	 * or from {@link #onActivityCreated(Bundle)} when this fragment is being first time
@@ -579,52 +592,39 @@ public class WebFragment extends ActionBarFragment {
 	}
 
 	/**
-	 * Called to notify, that loading process of the specified <var>webUrl</var> just started.
-	 * <p>
-	 * By default this will dispatch {@link OnWebContentLoadingListener#onLoadingStarted(String)}
-	 * callback to the current OnWebContentLoadingListener listener.
+	 * Returns the current content that is loaded or prepared to load into the web view of this
+	 * web fragment instance.
 	 *
-	 * @param webUrl Web url which is currently being loaded into the current web view.
+	 * @return Current content. This can be a raw HTML or web URL or a FILE path.
+	 * @see #loadContent(String)
 	 */
-	protected void notifyLoadingStarted(@NonNull String webUrl) {
-		if (mContentLoadingListener != null) mContentLoadingListener.onLoadingStarted(webUrl);
+	@Nullable
+	public String getContent() {
+		return mContent;
 	}
 
 	/**
-	 * Called to notify, that loading process of the specified <var>webUrl</var> was finished.
-	 * <p>
-	 * By default, this will dispatch {@link OnWebContentLoadingListener#onLoadingFinished(String)}
-	 * callback to the current OnWebContentLoadingListener listener.
-	 * </p>D
-	 *
-	 * @param webUrl Web url which was currently loaded into the current web view.
 	 */
-	protected void notifyLoadingFinished(@NonNull String webUrl) {
-		if (mContentLoadingListener != null) mContentLoadingListener.onLoadingFinished(webUrl);
-	}
-
-	/**
-	 * Runs resolving process of the current content.
-	 *
-	 * @return One of the flags {@link #CONTENT_EMPTY}, {@link #CONTENT_HTML}, {@link #CONTENT_URL}
-	 * or {@link #CONTENT_FILE}.
-	 */
-	@ContentType
-	private int resolveContentType() {
-		if (hasPrivateFlag(PFLAG_CONTENT_CHANGED)) {
-			if (!TextUtils.isEmpty(mContent)) {
-				if (WEB_URL_MATCHER.reset(mContent).matches()) {
-					this.mContentType = CONTENT_URL;
-				} else if (FILE_URL_MATCHER.reset(mContent).matches()) {
-					this.mContentType = CONTENT_FILE;
-				} else {
-					this.mContentType = CONTENT_HTML;
-				}
-			} else {
-				this.mContentType = CONTENT_EMPTY;
-			}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		// Save web view state.
+		if (mWebView != null) {
+			mWebView.saveState(outState);
 		}
-		return mContentType;
+		outState.putInt(BUNDLE_PRIVATE_FLAGS, mPrivateFlags);
+		outState.putString(BUNDLE_WEB_VIEW_CONTENT, mContent);
+	}
+
+	/**
+	 */
+	@Override
+	protected boolean onBackPressed() {
+		if (mWebView != null && mWebView.canGoBack()) {
+			mWebView.goBack();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -632,7 +632,7 @@ public class WebFragment extends ActionBarFragment {
 	 */
 
 	/**
-	 * This class specifies base options for {@link WebFragment} like {@link #content(String)}
+	 * Simple class specifying options for {@link WebFragment} like {@link #content(String)}
 	 * {@link #javaScriptEnabled(boolean)}.
 	 *
 	 * @author Martin Albedinsky
@@ -650,11 +650,11 @@ public class WebFragment extends ActionBarFragment {
 		private boolean javascriptEnabled = true;
 
 		/**
-		 * Sets the content to load into web view.
+		 * Sets a content to load into web view.
 		 *
 		 * @param content Content to load. This can be a raw <b>HTML</b>, web <b>URL</b> or path to
 		 *                a <b>FILE</b> with HTML content.
-		 * @return This options to allow methods chaining.
+		 * @return These options to allow methods chaining.
 		 */
 		public WebOptions content(@NonNull String content) {
 			this.content = content;
@@ -662,10 +662,10 @@ public class WebFragment extends ActionBarFragment {
 		}
 
 		/**
-		 * Sets flag indicating whether to enable Java-Script or not.
+		 * Sets a boolean flag indicating whether to enable Java-Script or not.
 		 *
 		 * @param enabled {@code True} to enable, {@code false} otherwise.
-		 * @return This options to allow methods chaining.
+		 * @return These options to allow methods chaining.
 		 */
 		public WebOptions javaScriptEnabled(boolean enabled) {
 			this.javascriptEnabled = enabled;

@@ -30,10 +30,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines an annotation for determining how an {@link ActionBar}
- * should be set.
+ * Defines an annotation for determining how an {@link ActionBar} should be set.
  *
- * <h4>Usage</h4>
+ * <h3>Usage</h3>
  * <ul>
  * <li>{@link universum.studios.android.fragment.ActionBarFragment ActionBarFragment}</li>
  * </ul>
@@ -53,11 +52,12 @@ public @interface ActionBarOptions {
 	 */
 	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({UNCHANGED, HOME_AS_UP_ENABLED, HOME_AS_UP_DISABLED})
-	@interface HomeAsUp {}
+	@interface HomeAsUp {
+	}
 
 	/**
 	 * Flag for all options from this annotation that can be used to identify that current value for
-	 * such option should be not <b>changed</b>.
+	 * such option should be left <b>unchanged</b>.
 	 */
 	int UNCHANGED = -0x01;
 

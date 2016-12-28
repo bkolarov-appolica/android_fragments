@@ -34,8 +34,8 @@ import android.view.MenuItem;
 import universum.studios.android.fragment.annotation.ActionBarOptions;
 import universum.studios.android.fragment.annotation.FragmentAnnotations;
 import universum.studios.android.fragment.annotation.MenuOptions;
+import universum.studios.android.fragment.annotation.handler.ActionBarAnnotationHandlers;
 import universum.studios.android.fragment.annotation.handler.ActionBarFragmentAnnotationHandler;
-import universum.studios.android.fragment.annotation.handler.AnnotationHandlers;
 
 /**
  * A {@link BaseFragment} implementation that provides API allowing to access {@link ActionBar} directly
@@ -56,7 +56,7 @@ import universum.studios.android.fragment.annotation.handler.AnnotationHandlers;
  * <li>{@link #requestWindowFeature(int)}</li>
  * </ul>
  *
- * <h4>Action mode</h4>
+ * <h3>Action mode</h3>
  * This fragment implementation also provides logic allowing to start an action mode via {@link #startActionMode()}
  * or {@link #startActionMode(android.support.v7.view.ActionMode.Callback)}. Whenever the new action
  * mode is started {@link #onActionModeStarted(android.support.v7.view.ActionMode)} is invoked. To
@@ -64,7 +64,7 @@ import universum.studios.android.fragment.annotation.handler.AnnotationHandlers;
  * mode can be than accessed via {@link #getActionMode()}. Finishing of the started action mode can
  * be done via {@link #finishActionMode()} and {@link #onActionModeFinished()} will be invoked immediately.
  *
- * <h4>Accepted annotations</h4>
+ * <h3>Accepted annotations</h3>
  * <ul>
  * <li>
  * {@link universum.studios.android.fragment.annotation.ActionBarOptions @ActionBarOptions} <b>[class - inherited]</b>
@@ -138,7 +138,7 @@ public class ActionBarFragment extends BaseFragment {
 	 */
 	@Override
 	ActionBarFragmentAnnotationHandler onCreateAnnotationHandler() {
-		return AnnotationHandlers.obtainActionBarFragmentHandler(getClass());
+		return ActionBarAnnotationHandlers.obtainActionBarFragmentHandler(getClass());
 	}
 
 	/**

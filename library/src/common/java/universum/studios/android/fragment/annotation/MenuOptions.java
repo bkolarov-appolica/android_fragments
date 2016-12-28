@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 /**
  * Defines an annotation for determining how a {@link android.view.Menu Menu} should be set.
  *
- * <h4>Usage</h4>
+ * <h3>Usage</h3>
  * <ul>
  * <li>{@link universum.studios.android.fragment.ActionBarFragment ActionBarFragment}</li>
  * </ul>
@@ -49,7 +49,8 @@ public @interface MenuOptions {
 	 */
 	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({DEFAULT, IGNORE_SUPER, BEFORE_SUPER})
-	@interface Flags {}
+	@interface Flags {
+	}
 
 	/**
 	 * Fag indicating that a default menu set up should be used.

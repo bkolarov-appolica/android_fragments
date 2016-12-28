@@ -29,7 +29,7 @@ import universum.studios.android.fragment.manage.FragmentController;
  * Defines an annotation for determining set of Fragment ids that are provided by a specific
  * {@link FragmentController.FragmentFactory}.
  *
- * <h4>Usage</h4>
+ * <h3>Usage</h3>
  * <ul>
  * <li>{@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}</li>
  * </ul>

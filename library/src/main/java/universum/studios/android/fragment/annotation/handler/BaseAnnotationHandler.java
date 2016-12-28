@@ -19,6 +19,7 @@
 package universum.studios.android.fragment.annotation.handler;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.lang.annotation.Annotation;
 
@@ -68,21 +69,13 @@ abstract class BaseAnnotationHandler implements AnnotationHandler {
 	 */
 
 	/**
-	 * Same as {@link #BaseAnnotationHandler(Class, Class)} with {@code null} <var>maxSuperClass</var>
-	 */
-	BaseAnnotationHandler(Class<?> annotatedClass) {
-		this(annotatedClass, null);
-	}
-
-	/**
 	 * Creates a new instance of BaseAnnotationHandler for the specified <var>annotatedClass</var>.
 	 *
-	 * @param annotatedClass The class of which annotations processing should the new handler
-	 *                       handle.
-	 * @param maxSuperClass  Max super class of the annotated class till where to search for
-	 *                       annotations if they are not presented in the annotated class.
+	 * @param annotatedClass The class of which annotations processing should the new handler handle.
+	 * @param maxSuperClass  Max super class of the annotated class up to which to search for annotations
+	 *                       recursively when searching for requested annotation via {@link #findAnnotationRecursive(Class)}.
 	 */
-	BaseAnnotationHandler(Class<?> annotatedClass, Class<?> maxSuperClass) {
+	BaseAnnotationHandler(@NonNull Class<?> annotatedClass, @Nullable Class<?> maxSuperClass) {
 		this.mAnnotatedClass = annotatedClass;
 		this.mMaxSuperClass = maxSuperClass;
 	}
@@ -100,21 +93,11 @@ abstract class BaseAnnotationHandler implements AnnotationHandler {
 	}
 
 	/**
-	 * Returns the max super class with which has been this handler created (if supplied).
-	 *
-	 * @return Max super class that is used as boundary for recursive finding of a specific annotation
-	 * via {@link #findAnnotationRecursive(Class)}.
-	 */
-	final Class<?> getMaxSupperClass() {
-		return mMaxSuperClass;
-	}
-
-	/**
-	 * Same as {@link #findAnnotationRecursive(Class, Class)}, but this tries to find the requested
+	 * Like {@link #findAnnotationRecursive(Class)} but this method tries to find the requested
 	 * annotation only for the class attached to this handler.
 	 *
 	 * @param classOfAnnotation Class of the annotation to find.
-	 * @param <A> Type of the annotation to find.
+	 * @param <A>               Type of the annotation to find.
 	 * @return Found annotation or {@code null} if there is no such annotation presented.
 	 */
 	final <A extends Annotation> A findAnnotation(Class<A> classOfAnnotation) {
@@ -122,24 +105,15 @@ abstract class BaseAnnotationHandler implements AnnotationHandler {
 	}
 
 	/**
-	 * Same as {@link #findAnnotationRecursive(Class, Class)} with {@link #getMaxSupperClass()} as
-	 * <var>maxSuperClass</var>.
-	 */
-	final <A extends Annotation> A findAnnotationRecursive(Class<A> classOfAnnotation) {
-		return findAnnotationRecursive(classOfAnnotation, mMaxSuperClass);
-	}
-
-	/**
 	 * Tries to find annotation with the requested <var>classOfAnnotation</var> for the class attached
-	 * to this handler recursively.
+	 * to this handler recursively using also max super class specified for this handler (if any).
 	 *
 	 * @param classOfAnnotation Class of the annotation to find.
-	 * @param maxSuperClass     Class till which should the recursion be performed (excluding).
 	 * @param <A>               Type of the annotation to find.
 	 * @return Found annotation or {@code null} if there is no such annotation presented.
 	 */
-	final <A extends Annotation> A findAnnotationRecursive(Class<A> classOfAnnotation, Class<?> maxSuperClass) {
-		return FragmentAnnotations.obtainAnnotationFrom(classOfAnnotation, mAnnotatedClass, maxSuperClass);
+	final <A extends Annotation> A findAnnotationRecursive(Class<A> classOfAnnotation) {
+		return FragmentAnnotations.obtainAnnotationFrom(classOfAnnotation, mAnnotatedClass, mMaxSuperClass);
 	}
 
 	/**

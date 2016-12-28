@@ -51,7 +51,7 @@ import universum.studios.android.fragment.transition.BasicFragmentTransition;
  * fragment shown, use {@link #showFragment(android.support.v4.app.Fragment, FragmentTransactionOptions)}
  * and specify your required options via {@link FragmentTransactionOptions} object.
  *
- * <h4>Fragment factory</h4>
+ * <h3>Fragment factory</h3>
  * The best advantage of the FragmentController and globally of this library can be accomplished by
  * using of {@link FragmentFactory} attached to fragment controller. Basically in your application
  * you will use directly instances of the FragmentController to show/hide/find your application's
@@ -72,7 +72,7 @@ import universum.studios.android.fragment.transition.BasicFragmentTransition;
  * only {@link BaseFragmentFactory#onConfigureTransactionOptions(FragmentTransactionOptions)} method
  * if using fragment annotations.
  *
- * <h4>Callbacks</h4>
+ * <h3>Callbacks</h3>
  * If you want to listen for changes in fragments when they are being shown, you can attach
  * {@link OnChangeListener} to the FragmentController via {@link #addOnChangeListener(FragmentController.OnChangeListener)}
  * that will receive callback whenever a new fragment is shown via this controller.

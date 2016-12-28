@@ -28,18 +28,17 @@ import universum.studios.android.fragment.manage.FragmentItem;
 
 /**
  * An {@link AnnotationHandler} extended interface for annotation handlers from the Fragments library
- * that are used to handle processing of annotations attached to classes derived from the <b>Base Fragment Factory</b>
- * classes provided by this library.
+ * that are used to handle processing of annotations attached to classes derived from
+ * {@link BaseFragmentFactory} class provided by this library.
  *
  * @author Martin Albedinsky
- * @see BaseFragmentFactory
  */
 public interface FragmentFactoryAnnotationHandler extends AnnotationHandler {
 
 	/**
 	 * Returns an array with FragmentItems mapped to theirs ids that has been created from
 	 * {@link FactoryFragment @FactoryFragment} or {@link FactoryFragments @FactoryFragments}
-	 * (if presented).
+	 * annotations (if presented).
 	 *
 	 * @return Array with fragment items created from the processed annotations or {@code null} if
 	 * there were no annotations specified.

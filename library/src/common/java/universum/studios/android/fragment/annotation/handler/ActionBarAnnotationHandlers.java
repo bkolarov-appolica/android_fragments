@@ -20,38 +20,49 @@ package universum.studios.android.fragment.annotation.handler;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.view.Menu;
 
 import universum.studios.android.fragment.ActionBarFragment;
 import universum.studios.android.fragment.ActionBarWrapper;
-import universum.studios.android.fragment.BaseFragment;
 import universum.studios.android.fragment.annotation.ActionBarOptions;
 import universum.studios.android.fragment.annotation.ActionModeOptions;
-import universum.studios.android.fragment.annotation.ContentView;
 import universum.studios.android.fragment.annotation.MenuOptions;
 
 /**
- *  Contains implementations of all annotation handlers related to <b>fragments</b>.
+ * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
+ * <b>ActionBar</b> associated fragments and classes.
  *
  * @author Martin Albedinsky
  */
 @SuppressWarnings("unused")
-final class FragmentAnnotationHandlers {
+public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 
 	/**
 	 * Constructors ================================================================================
 	 */
 
 	/**
-	 * Creating of instances of this class is not allowed.
 	 */
-	private FragmentAnnotationHandlers() {
+	private ActionBarAnnotationHandlers() {
+		// Creation of instances of this class is not publicly allowed.
+	}
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Obtains a {@link ActionBarFragmentAnnotationHandler} implementation for the given <var>classOfFragment</var>.
+	 *
+	 * @see AnnotationHandlers#obtainHandler(Class, Class)
+	 */
+	@Nullable
+	public static ActionBarFragmentAnnotationHandler obtainActionBarFragmentHandler(@NonNull Class<?> classOfFragment) {
+		return obtainHandler(ActionBarFragmentHandler.class, classOfFragment);
 	}
 
 	/**
@@ -59,84 +70,9 @@ final class FragmentAnnotationHandlers {
 	 */
 
 	/**
-	 * A {@link FragmentAnnotationHandler} implementation for {@link BaseFragment} class.
+	 * An {@link ActionBarFragmentAnnotationHandler} implementation for {@link ActionBarFragment} class.
 	 */
-	static class FragmentHandler extends BaseAnnotationHandler implements FragmentAnnotationHandler {
-
-		/**
-		 * Boolean flat determining whether to attach content view to the related fragment's parent
-		 * container..
-		 * <p>
-		 * Obtained via {@link ContentView @ContentView} annotation.
-		 */
-		private boolean attachContentViewToContainer;
-
-		/**
-		 * Layout resource of the related fragment's content view obtained from the annotated class.
-		 * <p>
-		 * Obtained via {@link ContentView @ContentView} annotation.
-		 */
-		private int contentViewResource = NO_RES;
-
-		/**
-		 * Background resource id of the related fragment's content view obtained from the annotated
-		 * class.
-		 * <p>
-		 * Obtained via {@link ContentView @ContentView} annotation.
-		 */
-		private int contentViewBackgroundResId = NO_RES;
-
-		/**
-		 * Same as {@link #FragmentHandler(Class, Class)} with {@link BaseFragment} as <var>maxSuperClass</var>.
-		 */
-		public FragmentHandler(@NonNull Class<?> annotatedClass) {
-			this(annotatedClass, BaseFragment.class);
-		}
-
-		/**
-		 * Creates a new instance of FragmentHandler for the specified <var>annotatedClass</var>.
-		 *
-		 * @see BaseAnnotationHandler#BaseAnnotationHandler(Class, Class)
-		 */
-		FragmentHandler(Class<?> annotatedClass, Class<?> maxSuperClass) {
-			super(annotatedClass, maxSuperClass);
-			final ContentView contentView = findAnnotationRecursive(ContentView.class);
-			if (contentView != null) {
-				this.attachContentViewToContainer = contentView.attachToContainer();
-				this.contentViewResource = contentView.value();
-				this.contentViewBackgroundResId = contentView.background();
-			}
-		}
-
-		/**
-		 */
-		@Override
-		public boolean shouldAttachContentViewToContainer() {
-			return attachContentViewToContainer;
-		}
-
-		/**
-		 */
-		@Override
-		@LayoutRes
-		public int getContentViewResource(@LayoutRes int defaultViewResource) {
-			return contentViewResource != NO_RES ? contentViewResource : defaultViewResource;
-		}
-
-		/**
-		 */
-		@Override
-		@ColorRes
-		@DrawableRes
-		public int getContentViewBackgroundResId(int defaultResId) {
-			return contentViewBackgroundResId != NO_RES ? contentViewBackgroundResId : defaultResId;
-		}
-	}
-
-	/**
-	 * A {@link ActionBarFragmentAnnotationHandler} implementation for {@link ActionBarFragment} class.
-	 */
-	static class ActionBarFragmentHandler extends FragmentHandler implements ActionBarFragmentAnnotationHandler {
+	@SuppressWarnings("WeakerAccess") static class ActionBarFragmentHandler extends BaseAnnotationHandlers.FragmentHandler implements ActionBarFragmentAnnotationHandler {
 
 		/**
 		 * Action bar's home as up flag obtained from the annotated class.

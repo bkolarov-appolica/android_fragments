@@ -31,7 +31,7 @@ import universum.studios.android.fragment.manage.FragmentTransactionOptions;
  * Annotation type used to mark an <b>int</b> field that specifies an id of fragment provided by
  * instance of {@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
  *
- * <h4>Usage</h4>
+ * <h3>Usage</h3>
  * <ul>
  * <li>{@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}</li>
  * </ul>

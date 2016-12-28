@@ -85,27 +85,6 @@ public abstract class AnnotationHandlers {
 	 */
 
 	/**
-	 */
-	@Nullable
-	public static FragmentFactoryAnnotationHandler obtainFactoryHandler(@NonNull Class<?> classOfFactory) {
-		return obtainHandler(FragmentFactoryAnnotationHandlerImpl.class, classOfFactory);
-	}
-
-	/**
-	 */
-	@Nullable
-	public static FragmentAnnotationHandler obtainFragmentHandler(@NonNull Class<?> classOfFragment) {
-		return obtainHandler(FragmentAnnotationHandlers.FragmentHandler.class, classOfFragment);
-	}
-
-	/**
-	 */
-	@Nullable
-	public static ActionBarFragmentAnnotationHandler obtainActionBarFragmentHandler(@NonNull Class<?> classOfFragment) {
-		return obtainHandler(FragmentAnnotationHandlers.ActionBarFragmentHandler.class, classOfFragment);
-	}
-
-	/**
 	 * Obtains an annotation handler with the specified <var>classOfHandler</var> class for the
 	 * given <var>annotatedClass</var>. If there is no such handler already instantiated and cached,
 	 * its instance will be created and cached.

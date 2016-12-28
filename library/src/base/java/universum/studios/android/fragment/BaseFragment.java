@@ -37,8 +37,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import universum.studios.android.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.fragment.annotation.handler.BaseAnnotationHandlers;
 import universum.studios.android.fragment.annotation.handler.FragmentAnnotationHandler;
-import universum.studios.android.fragment.annotation.handler.AnnotationHandlers;
 
 /**
  * A {@link Fragment} implementation designed to provide extended API and logic that is useful almost
@@ -53,7 +53,7 @@ import universum.studios.android.fragment.annotation.handler.AnnotationHandlers;
  * via {@link #dispatchViewClick(View)} or back press events via {@link #dispatchBackPressed()}
  * from activity's context in which is your fragment presented.
  *
- * <h4>Accepted annotations</h4>
+ * <h3>Accepted annotations</h3>
  * <ul>
  * <li>
  * {@link universum.studios.android.fragment.annotation.ContentView @ContentView} <b>[class - inherited]</b>
@@ -151,7 +151,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @return Annotations handler specific for this class.
 	 */
 	FragmentAnnotationHandler onCreateAnnotationHandler() {
-		return AnnotationHandlers.obtainFragmentHandler(getClass());
+		return BaseAnnotationHandlers.obtainFragmentHandler(getClass());
 	}
 
 	/**

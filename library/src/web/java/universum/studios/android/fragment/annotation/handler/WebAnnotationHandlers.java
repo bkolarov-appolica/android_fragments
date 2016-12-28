@@ -27,8 +27,8 @@ import universum.studios.android.fragment.WebFragment;
 import universum.studios.android.fragment.annotation.WebContent;
 
 /**
- * A {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for web
- * related fragments and classes.
+ * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
+ * <b>web</b> associated fragments and classes.
  *
  * @author Martin Albedinsky
  */
@@ -49,6 +49,9 @@ public final class WebAnnotationHandlers extends AnnotationHandlers {
 	 */
 
 	/**
+	 * Obtains a {@link WebFragmentAnnotationHandler} implementation for the given <var>classOfFragment</var>.
+	 *
+	 * @see AnnotationHandlers#obtainHandler(Class, Class)
 	 */
 	@Nullable
 	public static WebFragmentAnnotationHandler obtainWebFragmentHandler(@NonNull Class<?> classOfFragment) {
@@ -62,7 +65,7 @@ public final class WebAnnotationHandlers extends AnnotationHandlers {
 	/**
 	 * A {@link WebFragmentAnnotationHandler} implementation for {@link WebFragment} class.
 	 */
-	@SuppressWarnings("WeakerAccess") static final class WebFragmentHandler extends FragmentAnnotationHandlers.ActionBarFragmentHandler implements WebFragmentAnnotationHandler {
+	@SuppressWarnings("WeakerAccess") static final class WebFragmentHandler extends ActionBarAnnotationHandlers.ActionBarFragmentHandler implements WebFragmentAnnotationHandler {
 
 		/**
 		 * String resource id of a web content obtained from the annotated class.
