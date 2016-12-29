@@ -212,15 +212,15 @@ public abstract class ActivityDelegate {
 		/**
 		 */
 		@Override
-		public android.support.v7.app.ActionBar getSupportActionBar() {
-			return ((AppCompatActivity) mActivity).getSupportActionBar();
+		public void invalidateOptionsMenu() {
+			((AppCompatActivity) mActivity).supportInvalidateOptionsMenu();
 		}
 
 		/**
 		 */
 		@Override
-		public void invalidateOptionsMenu() {
-			((AppCompatActivity) mActivity).supportInvalidateOptionsMenu();
+		public android.support.v7.app.ActionBar getSupportActionBar() {
+			return ((AppCompatActivity) mActivity).getSupportActionBar();
 		}
 	}
 }
