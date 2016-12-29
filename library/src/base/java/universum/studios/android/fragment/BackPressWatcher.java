@@ -31,5 +31,5 @@ public interface BackPressWatcher {
 	 *
 	 * @return {@code True} if this watcher processed the back press event, {@code false} otherwise.
 	 */
-	boolean dispatchBackPressed();
+	boolean dispatchBackPress();
 }

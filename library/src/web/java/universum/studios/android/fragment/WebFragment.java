@@ -293,28 +293,17 @@ public class WebFragment extends ActionBarFragment {
 	private OnWebContentLoadingListener mContentLoadingListener;
 
 	/**
+	 * Stores all private flags for this fragment.
+	 */
+	private int mPrivateFlags;
+
+	/**
 	 * Constructors ================================================================================
 	 */
 
 	/**
 	 * Methods =====================================================================================
 	 */
-
-	/**
-	 */
-	@NonNull
-	@Override
-	protected WebFragmentAnnotationHandler getAnnotationHandler() {
-		FragmentAnnotations.checkIfEnabledOrThrow();
-		return (WebFragmentAnnotationHandler) mAnnotationHandler;
-	}
-
-	/**
-	 */
-	@Override
-	WebFragmentAnnotationHandler onCreateAnnotationHandler() {
-		return WebAnnotationHandlers.obtainWebFragmentHandler(getClass());
-	}
 
 	/**
 	 * Checks whether the given <var>url</var> is valid and can be loaded into web view.
@@ -354,6 +343,46 @@ public class WebFragment extends ActionBarFragment {
 
 	/**
 	 */
+	@NonNull
+	@Override
+	protected WebFragmentAnnotationHandler getAnnotationHandler() {
+		FragmentAnnotations.checkIfEnabledOrThrow();
+		return (WebFragmentAnnotationHandler) mAnnotationHandler;
+	}
+
+	/**
+	 */
+	@Override
+	WebFragmentAnnotationHandler onCreateAnnotationHandler() {
+		return WebAnnotationHandlers.obtainWebFragmentHandler(getClass());
+	}
+
+	/**
+	 * Updates the current private flags.
+	 *
+	 * @param flag Value of the desired flag to add/remove to/from the current private flags.
+	 * @param add  Boolean flag indicating whether to add or remove the specified <var>flag</var>.
+	 * @see #hasPrivateFlag(int)
+	 */
+	private void updatePrivateFlags(int flag, boolean add) {
+		if (add) this.mPrivateFlags |= flag;
+		else this.mPrivateFlags &= ~flag;
+	}
+
+	/**
+	 * Returns a boolean flag indicating whether the specified <var>flag</var> is contained within
+	 * the current private flags or not.
+	 *
+	 * @param flag Value of the flag to check.
+	 * @return {@code True} if the requested flag is contained, {@code false} otherwise.
+	 * @see #updatePrivateFlags(int, boolean)
+	 */
+	private boolean hasPrivateFlag(int flag) {
+		return (mPrivateFlags & flag) != 0;
+	}
+
+	/**
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -361,7 +390,7 @@ public class WebFragment extends ActionBarFragment {
 			final WebFragmentAnnotationHandler annotationHandler = (WebFragmentAnnotationHandler) mAnnotationHandler;
 			final int contentResId = annotationHandler.getWebContentResId(-1);
 			if (contentResId != -1) {
-				this.mContent = obtainString(contentResId);
+				this.mContent = getString(contentResId);
 			} else {
 				this.mContent = annotationHandler.getWebContent(null);
 			}
@@ -619,7 +648,7 @@ public class WebFragment extends ActionBarFragment {
 	/**
 	 */
 	@Override
-	protected boolean onBackPressed() {
+	protected boolean onBackPress() {
 		if (mWebView != null && mWebView.canGoBack()) {
 			mWebView.goBack();
 			return true;

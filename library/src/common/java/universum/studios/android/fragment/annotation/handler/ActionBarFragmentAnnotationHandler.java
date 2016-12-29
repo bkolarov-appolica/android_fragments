@@ -21,11 +21,11 @@ package universum.studios.android.fragment.annotation.handler;
 import android.app.Fragment;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
-import android.support.v7.view.ActionMode;
+import android.view.ActionMode;
 import android.view.Menu;
 
 import universum.studios.android.fragment.ActionBarFragment;
-import universum.studios.android.fragment.ActionBarWrapper;
+import universum.studios.android.fragment.ActionBarDelegate;
 import universum.studios.android.fragment.annotation.ActionBarOptions;
 import universum.studios.android.fragment.annotation.ActionModeOptions;
 import universum.studios.android.fragment.annotation.MenuOptions;
@@ -41,12 +41,12 @@ import universum.studios.android.fragment.annotation.MenuOptions;
 public interface ActionBarFragmentAnnotationHandler extends FragmentAnnotationHandler {
 
 	/**
-	 * Performs configuration of the ActionBar wrapped by the given <var>actionBarWrapper</var> based
+	 * Performs configuration of the ActionBar wrapped by the given <var>actionBarDelegate</var> based
 	 * on {@link ActionBarOptions @ActionBarOptions} annotation (if presented).
 	 *
-	 * @param actionBarWrapper The wrapper with ActionBar to configure.
+	 * @param actionBarDelegate The delegate with ActionBar to configure.
 	 */
-	void configureActionBar(@NonNull ActionBarWrapper actionBarWrapper);
+	void configureActionBar(@NonNull ActionBarDelegate actionBarDelegate);
 
 	/**
 	 * Returns a boolean flag indicating whether there is {@link MenuOptions @MenuOptions} annotation

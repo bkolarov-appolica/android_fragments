@@ -22,7 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
-import android.support.v7.app.ActionBar;
+import android.app.ActionBar;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -34,6 +34,7 @@ import universum.studios.android.fragment.manage.FragmentTransition;
  *
  * @author Martin Albedinsky
  */
+@SuppressWarnings("unused")
 public final class FragmentTransitions {
 	/**
 	 * Transition that may be used for changing of two fragments without any animation.

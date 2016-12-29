@@ -23,11 +23,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.view.ActionMode;
+import android.view.ActionMode;
 import android.view.Menu;
 
 import universum.studios.android.fragment.ActionBarFragment;
-import universum.studios.android.fragment.ActionBarWrapper;
+import universum.studios.android.fragment.ActionBarDelegate;
 import universum.studios.android.fragment.annotation.ActionBarOptions;
 import universum.studios.android.fragment.annotation.ActionModeOptions;
 import universum.studios.android.fragment.annotation.MenuOptions;
@@ -184,50 +184,50 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 		/**
 		 */
 		@Override
-		public void configureActionBar(@NonNull ActionBarWrapper actionBarWrapper) {
+		public void configureActionBar(@NonNull ActionBarDelegate actionBarDelegate) {
 			switch (homeAsUp) {
 				case ActionBarOptions.HOME_AS_UP_DISABLED:
-					actionBarWrapper.setDisplayHomeAsUpEnabled(false);
+					actionBarDelegate.setDisplayHomeAsUpEnabled(false);
 					break;
 				case ActionBarOptions.HOME_AS_UP_ENABLED:
-					actionBarWrapper.setDisplayHomeAsUpEnabled(true);
+					actionBarDelegate.setDisplayHomeAsUpEnabled(true);
 					this.hasOptionsMenu = true;
 					break;
 			}
 			if (homeAsUpVectorIndicator != ActionBarOptions.UNCHANGED) {
 				switch (homeAsUpVectorIndicator) {
 					case ActionBarOptions.NONE:
-						actionBarWrapper.setHomeAsUpIndicator(new ColorDrawable(Color.TRANSPARENT));
+						actionBarDelegate.setHomeAsUpIndicator(new ColorDrawable(Color.TRANSPARENT));
 						break;
 					default:
-						actionBarWrapper.setHomeAsUpVectorIndicator(homeAsUpVectorIndicator);
+						actionBarDelegate.setHomeAsUpVectorIndicator(homeAsUpVectorIndicator);
 				}
 			} else if (homeAsUpIndicator != ActionBarOptions.UNCHANGED) {
 				switch (homeAsUpIndicator) {
 					case ActionBarOptions.NONE:
-						actionBarWrapper.setHomeAsUpIndicator(new ColorDrawable(Color.TRANSPARENT));
+						actionBarDelegate.setHomeAsUpIndicator(new ColorDrawable(Color.TRANSPARENT));
 						break;
 					default:
-						actionBarWrapper.setHomeAsUpIndicator(homeAsUpIndicator);
+						actionBarDelegate.setHomeAsUpIndicator(homeAsUpIndicator);
 				}
 			}
 			switch (icon) {
 				case ActionBarOptions.UNCHANGED:
 					break;
 				case ActionBarOptions.NONE:
-					actionBarWrapper.setIcon(new ColorDrawable(Color.TRANSPARENT));
+					actionBarDelegate.setIcon(new ColorDrawable(Color.TRANSPARENT));
 					break;
 				default:
-					actionBarWrapper.setIcon(icon);
+					actionBarDelegate.setIcon(icon);
 			}
 			switch (title) {
 				case ActionBarOptions.UNCHANGED:
 					break;
 				case ActionBarOptions.NONE:
-					actionBarWrapper.setTitle("");
+					actionBarDelegate.setTitle("");
 					break;
 				default:
-					actionBarWrapper.setTitle(title);
+					actionBarDelegate.setTitle(title);
 			}
 		}
 

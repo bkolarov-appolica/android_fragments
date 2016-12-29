@@ -18,15 +18,14 @@
  */
 package universum.studios.android.fragment;
 
-import android.graphics.drawable.Drawable;
+import android.app.ActionBar;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v7.app.ActionBar;
-import android.support.v7.view.ActionMode;
+import android.support.v7.app.AppCompatActivity;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,31 +37,19 @@ import universum.studios.android.fragment.annotation.handler.ActionBarAnnotation
 import universum.studios.android.fragment.annotation.handler.ActionBarFragmentAnnotationHandler;
 
 /**
- * A {@link BaseFragment} implementation that provides API allowing to access {@link ActionBar} directly
- * from an implementation of this class. ActionBar is accessed through parent activity to which
- * is the ActionBarFragment implementation attached. ActionBar can be accessed via {@link #getActionBar()}
- * after the fragment has been created, so its {@link #onCreate(Bundle)} has been called.
- * <p>
- * ActionBarFragment class provides also some delegate methods to set up ActionBar without accessing
- * it. All delegate methods and methods related to the ActionBar API are listed below:
- * <ul>
- * <li>{@link #setActionBarTitle(int)}</li>
- * <li>{@link #setActionBarTitle(CharSequence)}</li>
- * <li>{@link #setActionBarIcon(int)}</li>
- * <li>{@link #setActionBarIcon(Drawable)}</li>
- * <li>{@link #setHomeAsUpIndicator(int)}</li>
- * <li>{@link #setHomeAsUpIndicator(Drawable)}</li>
- * <li>{@link #invalidateOptionsMenu()}</li>
- * <li>{@link #requestWindowFeature(int)}</li>
- * </ul>
+ * A {@link BaseFragment} implementation that provides API allowing to access an instance of
+ * {@link ActionBar} directly from an implementation of this class. ActionBar is accessed through
+ * the parent activity to which is a particular instance of ActionBarFragment attached. ActionBar may
+ * be obtained via {@link #getActionBar()} after the parent activity has been created, so fragment's
+ * {@link #onActivityCreated(Bundle)} has been called.
  *
  * <h3>Action mode</h3>
- * This fragment implementation also provides logic allowing to start an action mode via {@link #startActionMode()}
- * or {@link #startActionMode(android.support.v7.view.ActionMode.Callback)}. Whenever the new action
- * mode is started {@link #onActionModeStarted(android.support.v7.view.ActionMode)} is invoked. To
- * check whether the fragment is currently in action mode, call {@link #isInActionMode()}. The action
- * mode can be than accessed via {@link #getActionMode()}. Finishing of the started action mode can
- * be done via {@link #finishActionMode()} and {@link #onActionModeFinished()} will be invoked immediately.
+ * This fragment implementation also provides logic allowing to start an action mode via
+ * {@link #startActionMode()} or via {@link #startActionMode(ActionMode.Callback)}. Whenever a new
+ * action mode is started, {@link #onActionModeStarted(ActionMode)} is invoked. To check whether
+ * fragment is currently in action mode, call {@link #isInActionMode()}. The currently active action
+ * mode may be obtained via {@link #getActionMode()}. Finishing of the active action mode may be done
+ * via {@link #finishActionMode()} and {@link #onActionModeFinished()} will be invoked immediately.
  *
  * <h3>Accepted annotations</h3>
  * <ul>
@@ -116,15 +103,15 @@ public class ActionBarFragment extends BaseFragment {
 
 	/**
 	 * Current action mode started via {@link #startActionMode(ActionMode.Callback)}. May be {@code null}
-	 * if no action mode has been started yet or has been finished.
+	 * if no action mode has been started yet or has been already finished.
 	 */
-	ActionMode mActionMode;
+	private ActionMode mActionMode;
 
 	/**
-	 * Wrapper for ActionBar obtained from the parent activity of this fragment. Can be accessed
-	 * immediately from {@link #onCreate(Bundle)}.
+	 * Delegate for ActionBar obtained from the parent activity of this fragment. This delegate is
+	 * available between calls to {@link #onActivityCreated(Bundle)} and {@link #onDetach()}.
 	 */
-	private ActionBarWrapper mActionBarWrapper;
+	private ActionBarDelegate mActionBarDelegate;
 
 	/**
 	 * Constructors ================================================================================
@@ -206,32 +193,95 @@ public class ActionBarFragment extends BaseFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		this.configureActionBar();
+		this.mActionBarDelegate = ActionBarDelegate.create(getActivity());
+		this.invalidateActionBar();
 	}
 
 	/**
-	 * Called to configure ActionBar according to the {@link ActionBarOptions @ActionBarOptions}
-	 * annotation (if presented).
+	 * Returns a boolean flag indicating whether the parent Activity's ActionBar is available or not.
+	 *
+	 * @return {@code True} if ActionBar obtained from the parent activity is available, {@code false}
+	 * otherwise.
+	 * @see #getActionBarDelegate()
 	 */
-	private void configureActionBar() {
-		this.mActionBarWrapper = ActionBarWrapper.wrapActionBarOfActivity(getActivity());
-		this.invalidateActionBar();
+	protected final boolean isActionBarAvailable() {
+		return mActionBarDelegate != null;
+	}
+
+	/**
+	 * Returns the delegate for the ActionBar obtained from the parent activity of this fragment.
+	 * <p>
+	 * This delegate is used by this fragment for configuration of the ActionBar.
+	 *
+	 * @return Delegate for ActionBar if the parent activity has ActionBar available, {@code null}
+	 * if the ActionBar is not available.
+	 * @see #isActionBarAvailable()
+	 */
+	@NonNull
+	protected ActionBarDelegate getActionBarDelegate() {
+		if (mActionBarDelegate == null) {
+			throw new NullPointerException("The parent activity does not have ActionBar presented!");
+		}
+		return mActionBarDelegate;
+	}
+
+	/**
+	 * Returns the instance of ActionBar that can be accessed by this fragment via its parent Activity.
+	 * <p>
+	 * <b>Note</b>, that ActionBar can be accessed only for duration of {@link #onAttach(Context)}
+	 * and {@link #onDetach()}, otherwise an exception will be thrown.
+	 *
+	 * @return Instance of ActionBar obtained from the parent activity or {@code null} if the parent
+	 * activity does not have ActionBar available.
+	 * @throws java.lang.IllegalStateException If this fragment is not attached to its parent activity
+	 *                                         yet or it has been already detached.
+	 * @see #isActionBarAvailable()
+	 */
+	@Nullable
+	protected ActionBar getActionBar() {
+		if (mActivityDelegate == null) {
+			throw new IllegalStateException(
+					"Cannot access ActionBar. " + getClass() + " is not attached " +
+							"to the parent activity yet or it has been already detached!"
+			);
+		}
+		return mActivityDelegate.getActionBar();
+	}
+
+	/**
+	 * Same as {@link #getActionBar()} but this returns the instance of support ActionBar that can be
+	 * accessed by this fragment only if it is presented within context of {@link AppCompatActivity}.
+	 *
+	 * @return Instance of support ActionBar obtained from the parent activity or {@code null} if
+	 * the parent activity does not have ActionBar available or the activity is not an AppCompatActivity.
+	 * @throws java.lang.IllegalStateException If this fragment is not attached to its parent activity
+	 *                                         yet or it has been already detached.
+	 */
+	@Nullable
+	protected android.support.v7.app.ActionBar getSupportActionBar() {
+		if (mActivityDelegate == null) {
+			throw new IllegalStateException(
+					"Cannot access support ActionBar. " + getClass() + " is not attached " +
+							"to the parent activity yet or it has been already detached!"
+			);
+		}
+		return mActivityDelegate.getSupportActionBar();
 	}
 
 	/**
 	 * Called to invalidate {@link ActionBar} of the parent Activity according to the configuration
 	 * of this fragment.
 	 * <p>
-	 * Default implementation configures the ActionBar with options specified via {@link ActionBarOptions @ActionBarOptions}
-	 * annotation (if presented).
+	 * Default implementation configures the ActionBar with options specified via
+	 * {@link ActionBarOptions @ActionBarOptions} annotation (if presented).
 	 * <p>
 	 * Inheritance hierarchies of ActionBarFragment may override this method to perform custom or
 	 * additional ActionBar's invalidation.
 	 */
 	public void invalidateActionBar() {
-		if (mActionBarWrapper != null && mAnnotationHandler != null) {
+		if (mActionBarDelegate != null && mAnnotationHandler != null) {
 			final ActionBarFragmentAnnotationHandler annotationHandler = (ActionBarFragmentAnnotationHandler) mAnnotationHandler;
-			annotationHandler.configureActionBar(mActionBarWrapper);
+			annotationHandler.configureActionBar(mActionBarDelegate);
 			if (annotationHandler.hasOptionsMenu()) {
 				setHasOptionsMenu(true);
 			}
@@ -239,107 +289,8 @@ public class ActionBarFragment extends BaseFragment {
 	}
 
 	/**
-	 * Delegate method for {@link android.app.Activity#invalidateOptionsMenu()}.
-	 *
-	 * @see #isActivityAvailable()
-	 */
-	public void invalidateOptionsMenu() {
-		if (mActivityWrapper != null) mActivityWrapper.invalidateOptionsMenu();
-	}
-
-	/**
-	 * Delegate method for {@link android.app.Activity#requestWindowFeature(int)}.
-	 *
-	 * @see #isActivityAvailable()
-	 */
-	public boolean requestWindowFeature(int featureId) {
-		return mActivityWrapper != null && mActivityWrapper.requestWindowFeature(featureId);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setTitle(int)}.
-	 *
-	 * @see #setActionBarTitle(CharSequence)
-	 * @see #isActionBarAvailable()
-	 */
-	public void setActionBarTitle(@StringRes int resId) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setTitle(resId);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setTitle(CharSequence)}.
-	 *
-	 * @see #setActionBarTitle(int)
-	 * @see #isActionBarAvailable()
-	 */
-	public void setActionBarTitle(@Nullable CharSequence title) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setTitle(title);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setIcon(int)}.
-	 *
-	 * @see #setActionBarIcon(Drawable)
-	 * @see #isActionBarAvailable()
-	 */
-	public void setActionBarIcon(@DrawableRes int resId) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setIcon(resId);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setIcon(Drawable)}.
-	 *
-	 * @see #setActionBarIcon(int)
-	 * @see #isActionBarAvailable()
-	 */
-	public void setActionBarIcon(@Nullable Drawable icon) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setIcon(icon);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setDisplayHomeAsUpEnabled(boolean)}.
-	 *
-	 * @see #setHomeAsUpIndicator(int)
-	 * @see #setHomeAsUpIndicator(Drawable)
-	 */
-	public void setDisplayHomeAsUpEnabled(boolean enabled) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setDisplayHomeAsUpEnabled(enabled);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setHomeAsUpIndicator(int)}.
-	 *
-	 * @see #setDisplayHomeAsUpEnabled(boolean)
-	 * @see #setHomeAsUpIndicator(Drawable)
-	 */
-	public void setHomeAsUpIndicator(@DrawableRes int resId) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setHomeAsUpIndicator(resId);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setHomeAsUpIndicator(int)} for vector drawable
-	 * indicator.
-	 *
-	 * @see #setDisplayHomeAsUpEnabled(boolean)
-	 * @see #setHomeAsUpIndicator(Drawable)
-	 */
-	public void setHomeAsUpVectorIndicator(@DrawableRes int resId) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setHomeAsUpVectorIndicator(resId);
-	}
-
-	/**
-	 * Delegate method for {@link android.app.ActionBar#setHomeAsUpIndicator(Drawable)}.
-	 *
-	 * @see #setDisplayHomeAsUpEnabled(boolean)
-	 * @see #setHomeAsUpIndicator(int)
-	 */
-	public void setHomeAsUpIndicator(@Nullable Drawable indicator) {
-		if (mActionBarWrapper != null) mActionBarWrapper.setHomeAsUpIndicator(indicator);
-	}
-
-	/**
-	 * Same as {@link #startActionMode(android.support.v7.view.ActionMode.Callback)} with a new instance
-	 * of {@link ActionBarFragment.ActionModeCallback} for this fragment.
+	 * Same as {@link #startActionMode(ActionMode.Callback)} with a new instance of
+	 * {@link ActionBarFragment.ActionModeCallback} for this fragment.
 	 */
 	protected boolean startActionMode() {
 		return startActionMode(new ActionModeCallback(this));
@@ -353,11 +304,11 @@ public class ActionBarFragment extends BaseFragment {
 	 * is already in the action mode or the parent activity of this fragment is not available or some
 	 * error occurs.
 	 * @see #isInActionMode()
-	 * @see #isActivityAvailable()
+	 * @see #isAttached()
 	 */
 	protected boolean startActionMode(@NonNull ActionMode.Callback callback) {
-		if (!isInActionMode() && mActivityWrapper != null) {
-			final ActionMode actionMode = mActivityWrapper.startActionMode(callback);
+		if (!isInActionMode() && mActivityDelegate != null) {
+			final ActionMode actionMode = mActivityDelegate.startActionMode(callback);
 			if (actionMode != null) {
 				onActionModeStarted(actionMode);
 				return true;
@@ -367,8 +318,8 @@ public class ActionBarFragment extends BaseFragment {
 	}
 
 	/**
-	 * Invoked immediately after {@link #startActionMode(android.support.v7.view.ActionMode.Callback)}
-	 * was called and this fragment was not in the action mode yet.
+	 * Invoked immediately after {@link #startActionMode(android.view.ActionMode.Callback)} was called
+	 * and this fragment was not in the action mode yet.
 	 * <p>
 	 * <em>Derived classes should call through to the super class's implementation of this method.
 	 * If not, proper working of action mode cannot be ensured.</em>
@@ -419,8 +370,8 @@ public class ActionBarFragment extends BaseFragment {
 	}
 
 	/**
-	 * Invoked whenever {@link ActionModeCallback#onDestroyActionMode(android.support.v7.view.ActionMode)}
-	 * is called on the current action mode callback (if instance of {@link ActionBarFragment.ActionModeCallback}).
+	 * Invoked whenever {@link ActionModeCallback#onDestroyActionMode(android.view.ActionMode)} is
+	 * called on the current action mode callback (if instance of {@link ActionBarFragment.ActionModeCallback}).
 	 * <p>
 	 * <em>Derived classes should call through to the super class's implementation of this method.
 	 * If not, proper working of action mode cannot be ensured.</em>
@@ -433,40 +384,10 @@ public class ActionBarFragment extends BaseFragment {
 	}
 
 	/**
-	 * Returns a boolean flag indicating whether the parent Activity's ActionBar is available or not.
-	 *
-	 * @return {@code True} if ActionBar obtained from the parent activity is available, {@code false}
-	 * otherwise.
-	 */
-	protected boolean isActionBarAvailable() {
-		return mActionBarWrapper != null;
-	}
-
-	/**
-	 * Returns an instance of ActionBar that can be accessed by this fragment via its parent Activity.
-	 * <b>Note</b>, that ActionBar can be accessed only between {@link #onCreate(Bundle)} and {@link #onDestroy()},
-	 * otherwise exception will be thrown.
-	 *
-	 * @return Instance of ActionBar obtained from the parent activity.
-	 * @throws IllegalStateException If this fragment is not created yet or it is already
-	 *                                         destroyed.
-	 */
-	@Nullable
-	protected ActionBar getActionBar() {
-		if (!hasPrivateFlag(PFLAG_CREATED)) {
-			throw new IllegalStateException(
-					"Cannot access ActionBar. " + ((Object) this).getClass().getSimpleName() + " " +
-							"is not created yet or it is already destroyed."
-			);
-		}
-		return mActivityWrapper != null ? mActivityWrapper.getSupportActionBar() : null;
-	}
-
-	/**
 	 */
 	@Override
-	protected boolean onBackPressed() {
-		return finishActionMode() || super.onBackPressed();
+	protected boolean onBackPress() {
+		return finishActionMode() || super.onBackPress();
 	}
 
 	/**
@@ -474,7 +395,7 @@ public class ActionBarFragment extends BaseFragment {
 	 */
 
 	/**
-	 * A {@link ActionMode.Callback} base implementation for {@link ActionBarFragment} that can be
+	 * A {@link ActionMode.Callback} basic implementation for {@link ActionBarFragment} that may be
 	 * used to simplify action mode management within an implementation of such a fragment.
 	 * <p>
 	 * Instance of this action mode is by default instantiated by ActionBarFragment whenever
@@ -499,7 +420,7 @@ public class ActionBarFragment extends BaseFragment {
 		/**
 		 * Creates a new instance of ActionModeCallback for the context of the given <var>fragment</var>.
 		 *
-		 * @param fragment The instance of fragment in which is being action mode started.
+		 * @param fragment The instance of fragment in which is action mode started.
 		 */
 		public ActionModeCallback(@Nullable ActionBarFragment fragment) {
 			this.fragment = fragment;

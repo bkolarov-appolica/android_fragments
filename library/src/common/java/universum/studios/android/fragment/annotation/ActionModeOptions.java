@@ -19,7 +19,7 @@
 package universum.studios.android.fragment.annotation;
 
 import android.support.annotation.MenuRes;
-import android.support.v7.view.ActionMode;
+import android.view.ActionMode;
 import android.view.Menu;
 
 import java.lang.annotation.ElementType;
