@@ -70,9 +70,9 @@ import universum.studios.android.fragment.annotation.handler.ActionBarFragmentAn
  * <li>
  * {@link universum.studios.android.fragment.annotation.ActionModeOptions @ActionModeOptions} <b>[class - inherited]</b>
  * <p>
- * If this annotation is presented, the {@link android.support.v7.view.ActionMode} started via
- * {@link #startActionMode()} will be configured with options menu specified by this annotation
- * using an instance of {@link ActionModeCallback}.
+ * If this annotation is presented, the {@link ActionMode} started via {@link #startActionMode()}
+ * will be configured with options menu specified by this annotation using an instance of
+ * {@link ActionModeCallback}.
  * </li>
  * </ul>
  *
@@ -318,7 +318,7 @@ public class ActionBarFragment extends BaseFragment {
 	}
 
 	/**
-	 * Invoked immediately after {@link #startActionMode(android.view.ActionMode.Callback)} was called
+	 * Invoked immediately after {@link #startActionMode(ActionMode.Callback)} was called
 	 * and this fragment was not in the action mode yet.
 	 * <p>
 	 * <em>Derived classes should call through to the super class's implementation of this method.
@@ -370,7 +370,7 @@ public class ActionBarFragment extends BaseFragment {
 	}
 
 	/**
-	 * Invoked whenever {@link ActionModeCallback#onDestroyActionMode(android.view.ActionMode)} is
+	 * Invoked whenever {@link ActionModeCallback#onDestroyActionMode(ActionMode)} is
 	 * called on the current action mode callback (if instance of {@link ActionBarFragment.ActionModeCallback}).
 	 * <p>
 	 * <em>Derived classes should call through to the super class's implementation of this method.
