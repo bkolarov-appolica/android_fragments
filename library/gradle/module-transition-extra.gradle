@@ -35,5 +35,5 @@ android {
  * Library Module dependencies =====================================================================
  */
 dependencies {
-    compile 'universum.studios.android:fragment-transition-core:1.0.0@aar'
+    compile 'universum.studios.android.support:support-fragment-transition-core:1.0.0@aar'
 }
