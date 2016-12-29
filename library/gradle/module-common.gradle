@@ -32,5 +32,5 @@ android {
  * Library Module dependencies =====================================================================
  */
 dependencies {
-    compile 'universum.studios.android.support:support-fragment-base:1.0.0@aar'
+    compile 'universum.studios.android.support:support-fragments-base:1.0.0@aar'
 }
