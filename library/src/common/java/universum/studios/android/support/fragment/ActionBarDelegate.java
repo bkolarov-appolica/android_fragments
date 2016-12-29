@@ -202,15 +202,14 @@ public abstract class ActionBarDelegate {
 		 */
 		@Override
 		public void setDisplayHomeAsUpEnabled(boolean enabled) {
-			if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(enabled);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) actionBar.setDisplayHomeAsUpEnabled(enabled);
 		}
 
 		/**
 		 */
 		@Override
 		public void setHomeAsUpIndicator(@DrawableRes int resId) {
-			if (actionBar != null && Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2)
-				actionBar.setHomeAsUpIndicator(resId);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) actionBar.setHomeAsUpIndicator(resId);
 		}
 
 		/**
@@ -228,36 +227,35 @@ public abstract class ActionBarDelegate {
 		 */
 		@Override
 		public void setHomeAsUpIndicator(@Nullable Drawable indicator) {
-			if (actionBar != null && Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2)
-				actionBar.setHomeAsUpIndicator(indicator);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) actionBar.setHomeAsUpIndicator(indicator);
 		}
 
 		/**
 		 */
 		@Override
 		public void setTitle(@StringRes int resId) {
-			if (actionBar != null) actionBar.setTitle(resId);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) actionBar.setTitle(resId);
 		}
 
 		/**
 		 */
 		@Override
 		public void setTitle(@Nullable CharSequence title) {
-			if (actionBar != null) actionBar.setTitle(title);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) actionBar.setTitle(title);
 		}
 
 		/**
 		 */
 		@Override
 		public void setIcon(@DrawableRes int resId) {
-			if (actionBar != null) actionBar.setIcon(resId);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) actionBar.setIcon(resId);
 		}
 
 		/**
 		 */
 		@Override
 		public void setIcon(@Nullable Drawable icon) {
-			if (actionBar != null) actionBar.setIcon(icon);
+			if (actionBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) actionBar.setIcon(icon);
 		}
 	}
 

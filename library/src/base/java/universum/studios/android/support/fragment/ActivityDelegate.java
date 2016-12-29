@@ -20,10 +20,12 @@ package universum.studios.android.support.fragment;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ActionMode;
+import android.support.v7.view.ActionMode;
 
 /**
  * ActivityDelegate is used to wrap an instance of {@link Activity} in order to hide some implementation
@@ -99,6 +101,9 @@ public abstract class ActivityDelegate {
 		if (activity instanceof AppCompatActivity) {
 			return new AppCompatImpl((AppCompatActivity) activity);
 		}
+		if (activity instanceof FragmentActivity) {
+			return new SupportImpl((FragmentActivity) activity);
+		}
 		return new Impl(activity);
 	}
 
@@ -119,13 +124,13 @@ public abstract class ActivityDelegate {
 	public abstract ActionBar getActionBar();
 
 	/**
-	 * Delegates to {@link android.support.v7.app.AppCompatActivity#getSupportActionBar()}.
+	 * Delegates to {@link AppCompatActivity#getSupportActionBar()}.
 	 */
 	@Nullable
 	public abstract android.support.v7.app.ActionBar getSupportActionBar();
 
 	/**
-	 * Delegates to {@link Activity#startActionMode(ActionMode.Callback)}.
+	 * Delegates to {@link AppCompatActivity#startSupportActionMode(ActionMode.Callback)}.
 	 */
 	@Nullable
 	public abstract ActionMode startActionMode(@NonNull ActionMode.Callback callback);
@@ -159,7 +164,7 @@ public abstract class ActivityDelegate {
 		 */
 		@Override
 		public void invalidateOptionsMenu() {
-			mActivity.invalidateOptionsMenu();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) mActivity.invalidateOptionsMenu();
 		}
 
 		/**
@@ -167,7 +172,8 @@ public abstract class ActivityDelegate {
 		@Nullable
 		@Override
 		public ActionBar getActionBar() {
-			return mActivity.getActionBar();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) return mActivity.getActionBar();
+			else return null;
 		}
 
 		/**
@@ -175,6 +181,7 @@ public abstract class ActivityDelegate {
 		@Nullable
 		@Override
 		public android.support.v7.app.ActionBar getSupportActionBar() {
+			// Ignored for the support package.
 			return null;
 		}
 
@@ -183,12 +190,28 @@ public abstract class ActivityDelegate {
 		@Nullable
 		@Override
 		public ActionMode startActionMode(@NonNull ActionMode.Callback callback) {
-			return mActivity.startActionMode(callback);
+			// Ignored for the support package.
+			return null;
 		}
 	}
 
 	/**
-	 * A {@link Impl} implementation used to wrap {@link AppCompatActivity}.
+	 * An {@link Impl} implementation used to wrap {@link FragmentActivity}.
+	 */
+	private static final class SupportImpl extends Impl {
+
+		/**
+		 * Creates a new instance of Impl to wrap the given <var>activity</var>.
+		 *
+		 * @param activity The FragmentActivity instance to be wrapped.
+		 */
+		private SupportImpl(FragmentActivity activity) {
+			super(activity);
+		}
+	}
+
+	/**
+	 * An {@link Impl} implementation used to wrap {@link AppCompatActivity}.
 	 */
 	@SuppressWarnings("deprecation")
 	private static final class AppCompatImpl extends Impl {
@@ -212,15 +235,15 @@ public abstract class ActivityDelegate {
 		/**
 		 */
 		@Override
-		public android.support.v7.app.ActionBar getSupportActionBar() {
-			return ((AppCompatActivity) mActivity).getSupportActionBar();
+		public void invalidateOptionsMenu() {
+			((AppCompatActivity) mActivity).supportInvalidateOptionsMenu();
 		}
 
 		/**
 		 */
 		@Override
-		public void invalidateOptionsMenu() {
-			((AppCompatActivity) mActivity).supportInvalidateOptionsMenu();
+		public android.support.v7.app.ActionBar getSupportActionBar() {
+			return ((AppCompatActivity) mActivity).getSupportActionBar();
 		}
 	}
 }
