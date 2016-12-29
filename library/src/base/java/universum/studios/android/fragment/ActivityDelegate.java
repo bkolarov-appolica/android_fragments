@@ -190,7 +190,6 @@ public abstract class ActivityDelegate {
 	/**
 	 * A {@link Impl} implementation used to wrap {@link AppCompatActivity}.
 	 */
-	@SuppressWarnings("deprecation")
 	private static final class AppCompatImpl extends Impl {
 
 		/**
