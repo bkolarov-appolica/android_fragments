@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 
@@ -100,9 +99,6 @@ public abstract class ActivityDelegate {
 	public static ActivityDelegate create(Activity activity) {
 		if (activity instanceof AppCompatActivity) {
 			return new AppCompatImpl((AppCompatActivity) activity);
-		}
-		if (activity instanceof FragmentActivity) {
-			return new SupportImpl((FragmentActivity) activity);
 		}
 		return new Impl(activity);
 	}
@@ -192,21 +188,6 @@ public abstract class ActivityDelegate {
 		public ActionMode startActionMode(@NonNull ActionMode.Callback callback) {
 			// Ignored for the support package.
 			return null;
-		}
-	}
-
-	/**
-	 * An {@link Impl} implementation used to wrap {@link FragmentActivity}.
-	 */
-	private static final class SupportImpl extends Impl {
-
-		/**
-		 * Creates a new instance of Impl to wrap the given <var>activity</var>.
-		 *
-		 * @param activity The FragmentActivity instance to be wrapped.
-		 */
-		private SupportImpl(FragmentActivity activity) {
-			super(activity);
 		}
 	}
 
