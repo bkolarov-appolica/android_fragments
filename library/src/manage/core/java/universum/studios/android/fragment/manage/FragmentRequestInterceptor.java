@@ -16,44 +16,22 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.fragment.annotation;
+package universum.studios.android.fragment.manage;
 
-import android.os.Bundle;
-import android.app.Fragment;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import universum.studios.android.fragment.manage.BaseFragmentFactory;
+import android.support.annotation.NonNull;
 
 /**
- * Annotation type used to mark an <b>int</b> field that specifies an id of fragment provided by a
- * specific {@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
- *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link BaseFragmentFactory}</li>
- * </ul>
+ * todo: description
  *
  * @author Martin Albedinsky
  */
-@Target({ElementType.FIELD, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface FactoryFragment {
+public interface FragmentRequestInterceptor {
 
 	/**
-	 * Class of the desired fragment of which instance should be instantiated for this id.
+	 * todo:
 	 *
-	 * @see BaseFragmentFactory#createFragment(int, Bundle)
+	 * @param request
+	 * @return
 	 */
-	Class<? extends Fragment> value() default Fragment.class;
-
-	/**
-	 * Name of the associated fragment to be placed into its TAG.
-	 *
-	 * @see BaseFragmentFactory#createFragmentTag(Class, String)
-	 */
-	String taggedName() default "";
+	boolean interceptFragmentRequest(@NonNull FragmentRequest request);
 }

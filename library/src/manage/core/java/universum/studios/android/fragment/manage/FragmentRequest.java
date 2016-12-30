@@ -20,8 +20,6 @@ package universum.studios.android.fragment.manage;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -30,18 +28,18 @@ import android.support.annotation.StyleRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
+import android.transition.Transition;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import universum.studios.android.fragment.FragmentsConfig;
 import universum.studios.android.fragment.transition.BasicFragmentTransition;
 
 /**
  * A FragmentTransactionOptions class holds options used when showing a specific fragment via
- * {@link FragmentController#showFragment(FragmentTransactionOptions)} and related methods.
+ * {@link FragmentController#showFragment(FragmentRequest)} and related methods.
  * <p>
  * These options contains for example id of view container in which should be a view hierarchy of
  * the showing fragment placed. Such an id can be specified via {@link #containerId(int)}. When
@@ -71,9 +69,9 @@ import universum.studios.android.fragment.transition.BasicFragmentTransition;
  *
  * @author Martin Albedinsky
  * @see FragmentController
- * @see universum.studios.android.fragment.manage.FragmentController.FragmentFactory
+ * @see FragmentFactory
  */
-public class FragmentTransactionOptions implements Parcelable {
+public final class FragmentRequest {
 
 	/**
 	 * Interface ===================================================================================
@@ -86,15 +84,20 @@ public class FragmentTransactionOptions implements Parcelable {
 	/**
 	 * Log TAG.
 	 */
-	// private static final String TAG = "FragmentTransactionOptions";
+	// private static final String TAG = "FragmentRequest";
 
 	/**
 	 * Constant used to determine that no fragment id has been specified for a particular instance
 	 * of FragmentTransactionOptions (regardless <var>incoming</var> or <var>outgoing</var> fragment id).
 	 *
-	 * @see #FragmentTransactionOptions(int, int)
+	 * @see #FragmentRequest(int, int)
 	 */
-	public static final int NO_FRAGMENT_ID = -1;
+	public static final int NO_ID = -1;
+
+	/**
+	 * todo:
+	 */
+	public static final int NO_STYLE = -1;
 
 	/**
 	 * Flag indicating whether {@link #mEnterTransition} has been specified or not.
@@ -131,46 +134,37 @@ public class FragmentTransactionOptions implements Parcelable {
 	 */
 
 	/**
-	 * Creator used to create an instance or array of instances of TransactionOptions from {@link Parcel}.
-	 */
-	public static final Creator<FragmentTransactionOptions> CREATOR = new Creator<FragmentTransactionOptions>() {
-		/**
-		 */
-		@Override
-		public FragmentTransactionOptions createFromParcel(@NonNull Parcel source) {
-			return new FragmentTransactionOptions(source);
-		}
-
-		/**
-		 */
-		@Override
-		public FragmentTransactionOptions[] newArray(int size) {
-			return new FragmentTransactionOptions[size];
-		}
-	};
-
-	/**
 	 * Members =================================================================================
 	 */
 
 	/**
+	 * todo:
+	 */
+	final Fragment mFragment;
+
+	/**
+	 * todo:
+	 */
+	private final FragmentController mController;
+
+	/**
 	 * Id of incoming fragment associated with these transaction options.
 	 * <p>
-	 * May be {@link #NO_FRAGMENT_ID} if these options are used outside of context of
-	 * {@link FragmentController.FragmentFactory}.
+	 * May be {@link #NO_ID} if these options are used outside of context of
+	 * {@link FragmentFactory}.
 	 *
-	 * @see #FragmentTransactionOptions(int, int)
+	 * @see #FragmentRequest(int, int)
 	 */
 	public final int incomingFragmentId;
 
 	/**
 	 * Id of outgoing fragment associated with these transaction options.
 	 * <p>
-	 * May be {@link #NO_FRAGMENT_ID} if these options are used outside of context of
-	 * {@link FragmentController.FragmentFactory} or for set up of these options is relevant only
+	 * May be {@link #NO_ID} if these options are used outside of context of
+	 * {@link FragmentFactory} or for set up of these options is relevant only
 	 * {@link #incomingFragmentId}.
 	 *
-	 * @see #FragmentTransactionOptions(int, int)
+	 * @see #FragmentRequest(int, int)
 	 */
 	public final int outgoingFragmentId;
 
@@ -222,7 +216,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * Set of transitions used when showing new fragment. These transitions are also used when
 	 * popping old fragment from the back stack.
 	 */
-	protected BasicFragmentTransition mTransition = null;
+	protected FragmentTransition mTransition = null;
 
 	/**
 	 * Resource id of the style containing transitions used to animate fragment.
@@ -234,42 +228,42 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * <p>
 	 * See {@link android.support.v4.app.Fragment#setEnterTransition(Object)} for more information.
 	 */
-	protected Object mEnterTransition;
+	protected Transition mEnterTransition;
 
 	/**
 	 * Exit transition for a new incoming fragment.
 	 * <p>
 	 * See {@link android.support.v4.app.Fragment#setExitTransition(Object)} for more information.
 	 */
-	protected Object mExitTransition;
+	protected Transition mExitTransition;
 
 	/**
 	 * Reenter transition for a new incoming fragment.
 	 * <p>
 	 * See {@link android.support.v4.app.Fragment#setReenterTransition(Object)} for more information.
 	 */
-	protected Object mReenterTransition;
+	protected Transition mReenterTransition;
 
 	/**
 	 * Return transition for a new incoming fragment.
 	 * <p>
 	 * See {@link android.support.v4.app.Fragment#setReturnTransition(Object)} for more information.
 	 */
-	protected Object mReturnTransition;
+	protected Transition mReturnTransition;
 
 	/**
 	 * Shared element's enter transition for a new incoming fragment.
 	 * <p>
 	 * See {@link android.support.v4.app.Fragment#setSharedElementEnterTransition(Object)} for more information.
 	 */
-	protected Object mSharedElementEnterTransition;
+	protected Transition mSharedElementEnterTransition;
 
 	/**
 	 * Shared element's return transition for a new incoming fragment.
 	 * <p>
 	 * See {@link android.support.v4.app.Fragment#setSharedElementReturnTransition(Object)} for more information.
 	 */
-	protected Object mSharedElementReturnTransition;
+	protected Transition mSharedElementReturnTransition;
 
 	/**
 	 * Set of transition flags determining which transitions has been requested.
@@ -298,33 +292,50 @@ public class FragmentTransactionOptions implements Parcelable {
 	protected Boolean mAllowReturnTransitionOverlap;
 
 	/**
+	 * Boolean flag indicating whether this request has been already executed via {@link #execute()}
+	 * or not.
+	 */
+	private boolean mExecuted = false;
+
+	/**
 	 * Constructors ============================================================================
 	 */
 
 	/**
-	 * Same as {@link #FragmentTransactionOptions(int, int)} with both fragment ids set to {@link #NO_FRAGMENT_ID}.
-	 * <p>
-	 * This constructor can be used to instantiate transaction options to show instance of fragment
-	 * outside of context of {@link FragmentController.FragmentFactory}.
+	 * todo:
+	 *
+	 * @param fragment
+	 * @param controller
 	 */
-	@SuppressWarnings("ResourceType")
-	public FragmentTransactionOptions() {
-		this(NO_FRAGMENT_ID, NO_FRAGMENT_ID);
+	FragmentRequest(Fragment fragment, FragmentController controller) {
+		this.mFragment = fragment;
+		this.mController = controller;
 	}
 
 	/**
-	 * Same as {@link #FragmentTransactionOptions(int, int)} with <var>outgoingFragmentId</var> set
-	 * to {@link #NO_FRAGMENT_ID}.
+	 * Same as {@link #FragmentRequest(int, int)} with both fragment ids set to {@link #NO_ID}.
 	 * <p>
 	 * This constructor can be used to instantiate transaction options to show instance of fragment
-	 * provided by {@link FragmentController.FragmentFactory} where only id of incoming fragment is
+	 * outside of context of {@link FragmentFactory}.
+	 */
+	@SuppressWarnings("ResourceType")
+	FragmentRequest() {
+		this(NO_ID, NO_ID);
+	}
+
+	/**
+	 * Same as {@link #FragmentRequest(int, int)} with <var>outgoingFragmentId</var> set
+	 * to {@link #NO_ID}.
+	 * <p>
+	 * This constructor can be used to instantiate transaction options to show instance of fragment
+	 * provided by {@link FragmentFactory} where only id of incoming fragment is
 	 * relevant to properly set up its options.
 	 *
 	 * @param fragmentId Id of the incoming fragment associated with these options.
 	 */
 	@SuppressWarnings("ResourceType")
-	public FragmentTransactionOptions(@IntRange(from = 0) int fragmentId) {
-		this(fragmentId, NO_FRAGMENT_ID);
+	FragmentRequest(@IntRange(from = 0) int fragmentId) {
+		this(fragmentId, NO_ID);
 	}
 
 	/**
@@ -332,35 +343,15 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * and <var>outgoingFragmentId</var>.
 	 * <p>
 	 * This constructor can be used to instantiate transaction options to show instance of fragment
-	 * provided by {@link FragmentController.FragmentFactory} where as id of incoming fragment so
+	 * provided by {@link FragmentFactory} where as id of incoming fragment so
 	 * id of outgoing fragment are relevant to properly set up options of incoming fragment.
 	 *
 	 * @param incomingFragmentId Id of the incoming fragment associated with these options.
 	 * @param outgoingFragmentId Id of the outgoing fragment associated with these options.
 	 */
-	public FragmentTransactionOptions(@IntRange(from = 0) int incomingFragmentId, @IntRange(from = 0) int outgoingFragmentId) {
+	FragmentRequest(@IntRange(from = 0) int incomingFragmentId, @IntRange(from = 0) int outgoingFragmentId) {
 		this.incomingFragmentId = incomingFragmentId;
 		this.outgoingFragmentId = outgoingFragmentId;
-	}
-
-	/**
-	 * Called form {@link #CREATOR} to create an instance of FragmentTransactionOptions form the
-	 * given parcel <var>source</var>.
-	 *
-	 * @param source Parcel with data for the new instance.
-	 */
-	FragmentTransactionOptions(@NonNull Parcel source) {
-		this.incomingFragmentId = source.readInt();
-		this.outgoingFragmentId = source.readInt();
-		this.mContainerId = source.readInt();
-		this.mTag = source.readString();
-		this.mAddToBackStack = source.readInt() == 1;
-		this.mReplaceSame = source.readInt() == 1;
-		this.mCommitAllowingStateLoss = source.readInt() == 1;
-		this.mShowImmediate = source.readInt() == 1;
-		this.mAdd = source.readInt() == 1;
-		this.mTransition = source.readParcelable(FragmentsConfig.class.getClassLoader());
-		this.mTransitionStyle = source.readInt();
 	}
 
 	/**
@@ -370,34 +361,10 @@ public class FragmentTransactionOptions implements Parcelable {
 	/**
 	 */
 	@Override
-	public void writeToParcel(@NonNull Parcel dest, int flags) {
-		dest.writeInt(incomingFragmentId);
-		dest.writeInt(outgoingFragmentId);
-		dest.writeInt(mContainerId);
-		dest.writeString(mTag);
-		dest.writeInt(mAddToBackStack ? 1 : 0);
-		dest.writeInt(mReplaceSame ? 1 : 0);
-		dest.writeInt(mCommitAllowingStateLoss ? 1 : 0);
-		dest.writeInt(mShowImmediate ? 1 : 0);
-		dest.writeInt(mAdd ? 1 : 0);
-		mTransition.writeToParcel(dest, flags);
-		dest.writeInt(mTransitionStyle);
-	}
-
-	/**
-	 */
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	/**
-	 */
-	@Override
 	@SuppressWarnings("StringBufferReplaceableByString")
 	public String toString() {
-		final StringBuilder builder = new StringBuilder("FragmentTransactionOptions{");
-		builder.append("incomingFragmentId: ");
+		final StringBuilder builder = new StringBuilder(128);
+		builder.append("FragmentRequest{incomingFragmentId: ");
 		builder.append(incomingFragmentId);
 		builder.append(", outgoingFragmentId: ");
 		builder.append(outgoingFragmentId);
@@ -408,7 +375,7 @@ public class FragmentTransactionOptions implements Parcelable {
 		builder.append(", arguments: ");
 		builder.append(mArguments);
 		builder.append(", transition: ");
-		builder.append(mTransition != null ? mTransition.name : "null");
+		builder.append(mTransition != null ? mTransition.getName() : "null");
 		builder.append(", transitionStyle: ");
 		builder.append(mTransitionStyle);
 		builder.append(", backStacked: ");
@@ -419,8 +386,7 @@ public class FragmentTransactionOptions implements Parcelable {
 		builder.append(mReplaceSame);
 		builder.append(", add: ");
 		builder.append(mAdd);
-		builder.append("}");
-		return builder.toString();
+		return builder.append("}").toString();
 	}
 
 	/**
@@ -431,7 +397,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentTransaction#replace(int, android.support.v4.app.Fragment, String)
 	 * @see #tag()
 	 */
-	public final FragmentTransactionOptions tag(@Nullable String fragmentTag) {
+	public final FragmentRequest tag(@Nullable String fragmentTag) {
 		this.mTag = fragmentTag;
 		return this;
 	}
@@ -457,7 +423,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentTransaction#addToBackStack(String)
 	 * @see #addToBackStack()
 	 */
-	public final FragmentTransactionOptions addToBackStack(boolean add) {
+	public final FragmentRequest addToBackStack(boolean add) {
 		this.mAddToBackStack = add;
 		return this;
 	}
@@ -480,7 +446,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see Fragment#setArguments(Bundle)
 	 * @see #arguments()
 	 */
-	public final FragmentTransactionOptions arguments(@Nullable Bundle arguments) {
+	public final FragmentRequest arguments(@Nullable Bundle arguments) {
 		this.mArguments = arguments;
 		return this;
 	}
@@ -505,7 +471,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentTransaction#replace(int, android.support.v4.app.Fragment, String)
 	 * @see #add()
 	 */
-	public final FragmentTransactionOptions add(boolean add) {
+	public final FragmentRequest add(boolean add) {
 		this.mAdd = add;
 		return this;
 	}
@@ -522,8 +488,6 @@ public class FragmentTransactionOptions implements Parcelable {
 
 	/**
 	 * Sets a transition used to animate views change of incoming and outgoing fragments.
-	 * <p>
-	 * Default: <b>{@link BasicFragmentTransition#NONE}</b>
 	 *
 	 * @param transition Transition with animations.
 	 * @return These options to allow methods chaining.
@@ -531,19 +495,19 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentTransaction#setCustomAnimations(int, int, int, int)
 	 * @see #transition()
 	 */
-	public final FragmentTransactionOptions transition(@Nullable BasicFragmentTransition transition) {
+	public final FragmentRequest transition(@Nullable FragmentTransition transition) {
 		this.mTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #transition(BasicFragmentTransition)}.
+	 * Returns the transition specified via {@link #transition(FragmentTransition)}.
 	 *
 	 * @return Transition used to animate views change of incoming and outgoing fragments associated
 	 * with these options.
 	 */
 	@Nullable
-	public final BasicFragmentTransition transition() {
+	public final FragmentTransition transition() {
 		return mTransition;
 	}
 
@@ -558,7 +522,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentTransaction#setTransitionStyle(int)
 	 * @see #transitionStyle()
 	 */
-	public final FragmentTransactionOptions transitionStyle(@StyleRes int transitionStyle) {
+	public final FragmentRequest transitionStyle(@StyleRes int transitionStyle) {
 		this.mTransitionStyle = transitionStyle;
 		return this;
 	}
@@ -586,7 +550,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentController#setFragmentContainerId(int)
 	 * @see #containerId()
 	 */
-	public final FragmentTransactionOptions containerId(@IdRes int layoutId) {
+	public final FragmentRequest containerId(@IdRes int layoutId) {
 		this.mContainerId = layoutId;
 		return this;
 	}
@@ -612,7 +576,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #replaceSame()
 	 */
-	public final FragmentTransactionOptions replaceSame(boolean replace) {
+	public final FragmentRequest replaceSame(boolean replace) {
 		this.mReplaceSame = replace;
 		return this;
 	}
@@ -637,7 +601,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see FragmentManager#executePendingTransactions()
 	 * @see #showImmediate()
 	 */
-	public final FragmentTransactionOptions showImmediate(boolean immediate) {
+	public final FragmentRequest showImmediate(boolean immediate) {
 		this.mShowImmediate = immediate;
 		return this;
 	}
@@ -663,7 +627,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see FragmentTransaction#commitAllowingStateLoss()
 	 */
-	public final FragmentTransactionOptions commitAllowingStateLoss(boolean allowing) {
+	public final FragmentRequest commitAllowingStateLoss(boolean allowing) {
 		this.mCommitAllowingStateLoss = allowing;
 		return this;
 	}
@@ -693,7 +657,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see FragmentTransaction#addSharedElement(View, String)
 	 */
-	public final FragmentTransactionOptions sharedElement(@NonNull View element, @NonNull String name) {
+	public final FragmentRequest sharedElement(@NonNull View element, @NonNull String name) {
 		return sharedElements(new Pair<>(element, name));
 	}
 
@@ -706,7 +670,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @see #sharedElements()
 	 */
 	@SafeVarargs
-	public final FragmentTransactionOptions sharedElements(@NonNull Pair<View, String>... elements) {
+	public final FragmentRequest sharedElements(@NonNull Pair<View, String>... elements) {
 		if (mSharedElements == null) mSharedElements = new ArrayList<>(1);
 		mSharedElements.addAll(Arrays.asList(elements));
 		return this;
@@ -743,7 +707,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #enterTransition()
 	 */
-	public final FragmentTransactionOptions enterTransition(@Nullable Object transition) {
+	public final FragmentRequest enterTransition(@Nullable Object transition) {
 		this.setTransitionRequested(ENTER_TRANSITION);
 		this.mEnterTransition = transition;
 		return this;
@@ -771,7 +735,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #exitTransition()
 	 */
-	public final FragmentTransactionOptions exitTransition(@Nullable Object transition) {
+	public final FragmentRequest exitTransition(@Nullable Object transition) {
 		this.setTransitionRequested(EXIT_TRANSITION);
 		this.mExitTransition = transition;
 		return this;
@@ -799,7 +763,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #reenterTransition()
 	 */
-	public final FragmentTransactionOptions reenterTransition(@Nullable Object transition) {
+	public final FragmentRequest reenterTransition(@Nullable Object transition) {
 		this.setTransitionRequested(REENTER_TRANSITION);
 		this.mReenterTransition = transition;
 		return this;
@@ -827,7 +791,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #returnTransition()
 	 */
-	public final FragmentTransactionOptions returnTransition(@Nullable Object transition) {
+	public final FragmentRequest returnTransition(@Nullable Object transition) {
 		this.setTransitionRequested(RETURN_TRANSITION);
 		this.mReturnTransition = transition;
 		return this;
@@ -855,7 +819,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #sharedElementEnterTransition(Object)
 	 */
-	public final FragmentTransactionOptions sharedElementEnterTransition(@Nullable Object transition) {
+	public final FragmentRequest sharedElementEnterTransition(@Nullable Object transition) {
 		this.setTransitionRequested(SHARED_ELEMENT_ENTER_TRANSITION);
 		this.mSharedElementEnterTransition = transition;
 		return this;
@@ -883,7 +847,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 * @return These options to allow methods chaining.
 	 * @see #sharedElementReturnTransition(Object)
 	 */
-	public final FragmentTransactionOptions sharedElementReturnTransition(@Nullable Object transition) {
+	public final FragmentRequest sharedElementReturnTransition(@Nullable Object transition) {
 		this.setTransitionRequested(SHARED_ELEMENT_RETURN_TRANSITION);
 		this.mSharedElementReturnTransition = transition;
 		return this;
@@ -911,7 +875,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 *                     otherwise.
 	 * @return This options to allow methods chaining.
 	 */
-	public final FragmentTransactionOptions allowEnterTransitionOverlap(boolean allowOverlap) {
+	public final FragmentRequest allowEnterTransitionOverlap(boolean allowOverlap) {
 		this.mAllowEnterTransitionOverlap = allowOverlap;
 		return this;
 	}
@@ -937,7 +901,7 @@ public class FragmentTransactionOptions implements Parcelable {
 	 *                     otherwise.
 	 * @return This options to allow methods chaining.
 	 */
-	public final FragmentTransactionOptions allowReturnTransitionOverlap(boolean allowOverlap) {
+	public final FragmentRequest allowReturnTransitionOverlap(boolean allowOverlap) {
 		this.mAllowReturnTransitionOverlap = allowOverlap;
 		return this;
 	}
@@ -962,19 +926,22 @@ public class FragmentTransactionOptions implements Parcelable {
 	}
 
 	/**
-	 * Clears all scene transitions attached to these options. This should be called whenever the
-	 * transitions has been already attached to a particular Fragment instance.
+	 * todo:
+	 *
+	 * @return
 	 */
-	protected final void clearTransitions() {
-		this.mRequestedTransitions = 0;
-		this.mEnterTransition = null;
-		this.mExitTransition = null;
-		this.mReenterTransition = null;
-		this.mReturnTransition = null;
-		this.mSharedElementEnterTransition = null;
-		this.mSharedElementReturnTransition = null;
-		this.mAllowEnterTransitionOverlap = null;
-		this.mAllowReturnTransitionOverlap = null;
+	@Nullable
+	public Fragment execute() {
+		this.assertNotExecuted();
+		return mController.executeRequest(this);
+	}
+
+	/**
+	 * Asserts that this request has not been executed yet. If it has been executed, an exception is
+	 * thrown.
+	 */
+	private void assertNotExecuted() {
+		if (mExecuted) throw new IllegalArgumentException("Already executed!");
 	}
 
 	/**

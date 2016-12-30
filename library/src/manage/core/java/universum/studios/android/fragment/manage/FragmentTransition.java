@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
 /**
  * FragmentTransition provides a foursome of animation resources that are meant for {@link FragmentTransaction}.
  * <p>
- * Implementations of FragmentTransition class may be supplied to {@link FragmentTransactionOptions}
+ * Implementations of FragmentTransition class may be supplied to {@link FragmentRequest}
  * to animate changes between desired fragments.
  *
  * @author Martin Albedinsky

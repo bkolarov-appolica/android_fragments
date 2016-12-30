@@ -18,18 +18,44 @@
  */
 package universum.studios.android.samples.fragment.ui;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 
+import universum.studios.android.fragment.manage.FragmentController;
+import universum.studios.android.fragment.manage.FragmentRequest;
+import universum.studios.android.fragment.manage.FragmentRequestInterceptor;
+import universum.studios.android.fragment.transition.FragmentTransitions;
 import universum.studios.android.samples.ui.SamplesNavigationActivity;
 
 /**
  * @author Martin Albedinsky
  */
-public final class MainActivity extends SamplesNavigationActivity {
+public final class MainActivity extends SamplesNavigationActivity implements FragmentRequestInterceptor {
 
 	@SuppressWarnings("unused")
 	private static final String TAG = "MainActivity";
+
+	private FragmentController fragmentController;
+
+	@Override
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.fragmentController = new FragmentController(this);
+		this.fragmentController.setFactory(new SampleFragmentsFactory());
+		if (savedInstanceState == null) {
+			fragmentController.newRequest(SampleFragmentsFactory.ACTION_BAR)
+					.transition(FragmentTransitions.CROSS_FADE)
+					.execute();
+		}
+	}
+
+	@Override
+	public boolean interceptFragmentRequest(@NonNull FragmentRequest request) {
+		// todo:
+		return false;
+	}
 
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {

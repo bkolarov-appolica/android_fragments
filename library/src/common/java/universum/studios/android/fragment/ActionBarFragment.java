@@ -56,7 +56,7 @@ import universum.studios.android.fragment.annotation.handler.ActionBarFragmentAn
  * <li>
  * {@link universum.studios.android.fragment.annotation.ActionBarOptions @ActionBarOptions} <b>[class - inherited]</b>
  * <p>
- * If this annotation is presented, all options presented within this annotation will be used to set
+ * If this annotation is presented, all options specified via this annotation will be used to set
  * up an instance of ActionBar accessible from within context of a sub-class of ActionBarFragment.
  * Such a set up is accomplished in {@link #onViewCreated(android.view.View, Bundle)}.
  * </li>
@@ -64,14 +64,14 @@ import universum.studios.android.fragment.annotation.handler.ActionBarFragmentAn
  * {@link universum.studios.android.fragment.annotation.MenuOptions @MenuOptions} <b>[class - inherited]</b>
  * <p>
  * If this annotation is presented, options menu will be requested in {@link #onCreate(Bundle)}
- * by {@link #setHasOptionsMenu(boolean)} and menu will be created in {@link #onCreateOptionsMenu(Menu, MenuInflater)}
- * according to the options presented within this annotation.
+ * via {@link #setHasOptionsMenu(boolean)} and menu will be created in {@link #onCreateOptionsMenu(Menu, MenuInflater)}
+ * according to the options specified via this annotation.
  * </li>
  * <li>
  * {@link universum.studios.android.fragment.annotation.ActionModeOptions @ActionModeOptions} <b>[class - inherited]</b>
  * <p>
  * If this annotation is presented, the {@link ActionMode} started via {@link #startActionMode()}
- * will be configured with options menu specified by this annotation using an instance of
+ * will be configured with options menu specified via this annotation using an instance of
  * {@link ActionModeCallback}.
  * </li>
  * </ul>

@@ -75,7 +75,7 @@ public abstract class ActionBarDelegate {
 	 *
 	 * @param context The context used to access application data.
 	 */
-	private ActionBarDelegate(@NonNull Context context) {
+	protected ActionBarDelegate(@NonNull Context context) {
 		this.mContext = context;
 	}
 
