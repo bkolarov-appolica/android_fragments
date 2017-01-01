@@ -19,57 +19,30 @@
 package universum.studios.android.fragment.manage;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.IntRange;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
 import android.transition.Transition;
 import android.view.View;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import universum.studios.android.fragment.transition.BasicFragmentTransition;
-
 /**
- * A FragmentTransactionOptions class holds options used when showing a specific fragment via
- * {@link FragmentController#showFragment(FragmentRequest)} and related methods.
- * <p>
- * These options contains for example id of view container in which should be a view hierarchy of
- * the showing fragment placed. Such an id can be specified via {@link #containerId(int)}. When
- * you want to show the desired fragment with some transition, you can specify it via
- * {@link #transition(BasicFragmentTransition)}.
- *
- * <h3>Default options</h3>
- * Below are listed default values of all arguments within the FragmentTransactionOptions:
- * <ul>
- * <li>tag: <b>unspecified</b></li>
- * <li>container id: <b>-1</b></li>
- * <li>back-stacking: <b>false</b></li>
- * <li>arguments: <b>unspecified</b></li>
- * <li>replacing same: <b>true</b></li>
- * <li>showing immediately: <b>false</b></li>
- * <li>transition: <b>unspecified</b></li>
- * <li>transition style: <b>-1</b></li>
- * <li>enter transition: <b>unspecified</b></li>
- * <li>exit transition: <b>unspecified</b></li>
- * <li>reenter transition: <b>unspecified</b></li>
- * <li>return transition: <b>unspecified</b></li>
- * <li>shared element enter transition: <b>unspecified</b></li>
- * <li>shared element return transition: <b>unspecified</b></li>
- * <li>enter transition overlapping: <b>unspecified</b></li>
- * <li>return transition overlapping: <b>unspecified</b></li>
- * </ul>
+ * todo:
  *
  * @author Martin Albedinsky
  * @see FragmentController
- * @see FragmentFactory
+ * @see FragmentRequestInterceptor
  */
 public final class FragmentRequest {
 
@@ -87,47 +60,171 @@ public final class FragmentRequest {
 	// private static final String TAG = "FragmentRequest";
 
 	/**
-	 * Constant used to determine that no fragment id has been specified for a particular instance
-	 * of FragmentTransactionOptions (regardless <var>incoming</var> or <var>outgoing</var> fragment id).
-	 *
-	 * @see #FragmentRequest(int, int)
+	 * Constant used to determine that no fragment id has been specified.
 	 */
 	public static final int NO_ID = -1;
 
 	/**
-	 * todo:
+	 * Constant used to determine that no style resource has been specified.
 	 */
 	public static final int NO_STYLE = -1;
 
 	/**
+	 * Defines an annotation for determining available transaction types for {@link #transaction(int)}
+	 * method.
+	 */
+	@IntDef({
+			REPLACE,
+			ADD, REMOVE,
+			SHOW, HIDE,
+			ATTACH, DETACH
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface Transaction {
+	}
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>replace</b> operation.
+	 *
+	 * @see FragmentTransaction#replace(int, Fragment, String)
+	 */
+	public static final int REPLACE = 0x00;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>add</b> operation.
+	 *
+	 * @see FragmentTransaction#add(int, Fragment, String)
+	 */
+	public static final int ADD = 0x01;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>remove</b> operation.
+	 *
+	 * @see FragmentTransaction#remove(Fragment)
+	 */
+	public static final int REMOVE = 0x02;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>show</b> operation.
+	 *
+	 * @see FragmentTransaction#show(Fragment)
+	 */
+	public static final int SHOW = 0x03;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>hide</b> operation.
+	 *
+	 * @see FragmentTransaction#hide(Fragment)
+	 */
+	public static final int HIDE = 0x04;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>attach</b> operation.
+	 *
+	 * @see FragmentTransaction#attach(Fragment)
+	 */
+	public static final int ATTACH = 0x05;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using <b>detach</b> operation.
+	 *
+	 * @see FragmentTransaction#detach(Fragment)
+	 */
+	public static final int DETACH = 0x06;
+
+	/**
+	 * Defines an annotation for determining available boolean flags for FragmentRequest.
+	 */
+	@IntDef(flag = true, value = {
+			REPLACE_SAME,
+			ADD_TO_BACK_STACK,
+			EXECUTE_ALLOWING_STATE_LOSS,
+			EXECUTE_IMMEDIATE
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface Flag {
+	}
+
+	/**
+	 * Flag indicating that a same fragment (currently showing) can be replaced by the associated fragment.
+	 *
+	 * @see FragmentTransaction#replace(int, Fragment, String)
+	 */
+	static final int REPLACE_SAME = 0x00000001;
+
+	/**
+	 * Flag indicating that the associated fragment should be added into back stack.
+	 *
+	 * @see FragmentTransaction#addToBackStack(String)
+	 */
+	static final int ADD_TO_BACK_STACK = 0x00000001 << 1;
+
+	/**
+	 * Flag indicating that the associated {@link FragmentTransaction} should be committed allowing
+	 * state loss.
+	 *
+	 * @see FragmentTransaction#commitAllowingStateLoss()
+	 */
+	static final int EXECUTE_ALLOWING_STATE_LOSS = 0x00000001 << 4;
+
+	/**
+	 * Flag indicating that the associated {@link FragmentTransaction} should be executed immediately.
+	 *
+	 * @see FragmentManager#executePendingTransactions()
+	 */
+	static final int EXECUTE_IMMEDIATE = 0x00000001 << 5;
+
+	/**
+	 * Defines an annotation for determining available transition flags for FragmentRequest.
+	 */
+	@IntDef(flag = true, value = {
+			TRANSITION_ENTER,
+			TRANSITION_EXIT,
+			TRANSITION_REENTER,
+			TRANSITION_RETURN,
+			TRANSITION_SHARED_ELEMENT_ENTER,
+			TRANSITION_SHARED_ELEMENT_RETURN
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface TransitionFlag {
+	}
+
+	/**
 	 * Flag indicating whether {@link #mEnterTransition} has been specified or not.
 	 */
-	static final int ENTER_TRANSITION = 0x00000001;
+	static final int TRANSITION_ENTER = 0x00000001;
 
 	/**
 	 * Flag indicating whether {@link #mExitTransition} has been specified or not.
 	 */
-	static final int EXIT_TRANSITION = 0x00000002;
+	static final int TRANSITION_EXIT = 0x00000001 << 1;
 
 	/**
 	 * Flag indicating whether {@link #mReenterTransition} has been specified or not.
 	 */
-	static final int REENTER_TRANSITION = 0x00000004;
+	static final int TRANSITION_REENTER = 0x00000001 << 2;
 
 	/**
 	 * Flag indicating whether {@link #mReturnTransition} has been specified or not.
 	 */
-	static final int RETURN_TRANSITION = 0x00000008;
+	static final int TRANSITION_RETURN = 0x00000001 << 3;
 
 	/**
 	 * Flag indicating whether {@link #mSharedElementEnterTransition} has been specified or not.
 	 */
-	static final int SHARED_ELEMENT_ENTER_TRANSITION = 0x00000010;
+	static final int TRANSITION_SHARED_ELEMENT_ENTER = 0x00000001 << 4;
 
 	/**
 	 * Flag indicating whether {@link #mSharedElementReturnTransition} has been specified or not.
 	 */
-	static final int SHARED_ELEMENT_RETURN_TRANSITION = 0x00000020;
+	static final int TRANSITION_SHARED_ELEMENT_RETURN = 0x00000001 << 5;
 
 	/**
 	 * Static members ==============================================================================
@@ -138,158 +235,142 @@ public final class FragmentRequest {
 	 */
 
 	/**
-	 * todo:
+	 * Fragment instance associated with this request.
 	 */
 	final Fragment mFragment;
 
 	/**
-	 * todo:
+	 * Controller that has been used to create this request and also is responsible for execution
+	 * of this request.
+	 *
+	 * @see #execute()
 	 */
 	private final FragmentController mController;
 
 	/**
-	 * Id of incoming fragment associated with these transaction options.
-	 * <p>
-	 * May be {@link #NO_ID} if these options are used outside of context of
-	 * {@link FragmentFactory}.
+	 * Id of the associated fragment.
+	 */
+	private int mFragmentId = NO_ID;
+
+	/**
+	 * Id of the outgoing fragment that will be replaced by the associated fragment.
+	 */
+	private int mOutgoingFragmentId = NO_ID;
+
+	/**
+	 * Arguments for the associated fragment.
 	 *
-	 * @see #FragmentRequest(int, int)
+	 * @see Fragment#setArguments(Bundle)
 	 */
-	public final int incomingFragmentId;
+	Bundle mArguments;
 
 	/**
-	 * Id of outgoing fragment associated with these transaction options.
-	 * <p>
-	 * May be {@link #NO_ID} if these options are used outside of context of
-	 * {@link FragmentFactory} or for set up of these options is relevant only
-	 * {@link #incomingFragmentId}.
+	 * Type determining what {@link FragmentTransaction} to perform for the associated fragment.
 	 *
-	 * @see #FragmentRequest(int, int)
+	 * @see Transaction @Transaction
 	 */
-	public final int outgoingFragmentId;
+	int mTransaction = REPLACE;
 
 	/**
-	 * Tag for fragment.
+	 * Tag for the associated fragment.
 	 */
-	protected String mTag = null;
+	String mTag;
 
 	/**
-	 * Fragment container layout id. This is a view group into which should be a view hierarchy
-	 * of the new fragment placed.
+	 * Id of a view container where to place view hierarchy of the associated fragment.
 	 */
-	protected int mContainerId = -1;
+	int mViewContainerId = FragmentController.NO_CONTAINER_ID;
 
 	/**
-	 * Flag indicating, whether fragment should be added to back stack or not.
+	 * Transition object specifying transition resources for the associated {@link FragmentTransaction}.
+	 *
+	 * @see FragmentTransaction#setCustomAnimations(int, int, int, int)
 	 */
-	protected boolean mAddToBackStack = false;
-
-	/**
-	 * Arguments for incoming fragment associated with these options.
-	 */
-	protected Bundle mArguments;
-
-	/**
-	 * Flag indicating, whether a same fragment (currently showing) can be replaced by a new one
-	 * with this options containing same tag or not.
-	 */
-	protected boolean mReplaceSame = true;
-
-	/**
-	 * Flag indicating, whether a corresponding {@link FragmentTransaction} should be committed via
-	 * {@link FragmentTransaction#commitAllowingStateLoss()} or via default {@link FragmentTransaction#commit()}
-	 * method.
-	 */
-	protected boolean mCommitAllowingStateLoss = false;
-
-	/**
-	 * Flag indicating, whether a new fragment should be showed immediately or not.
-	 */
-	protected boolean mShowImmediate = false;
-
-	/**
-	 * Flag indicating, whether to add a new fragment or replace old one.
-	 */
-	protected boolean mAdd;
-
-	/**
-	 * Set of transitions used when showing new fragment. These transitions are also used when
-	 * popping old fragment from the back stack.
-	 */
-	protected FragmentTransition mTransition = null;
+	FragmentTransition mTransition;
 
 	/**
 	 * Resource id of the style containing transitions used to animate fragment.
+	 *
+	 * @see FragmentTransaction#setTransitionStyle(int)
 	 */
-	protected int mTransitionStyle = -1;
+	int mTransitionStyle = -1;
 
 	/**
-	 * Enter transition for a new incoming fragment.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setEnterTransition(Object)} for more information.
+	 * Enter transition the associated fragment.
+	 *
+	 * @see Fragment#setEnterTransition(Transition)
 	 */
-	protected Transition mEnterTransition;
+	Transition mEnterTransition;
 
 	/**
-	 * Exit transition for a new incoming fragment.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setExitTransition(Object)} for more information.
+	 * Exit transition the associated fragment.
+	 *
+	 * @see Fragment#setExitTransition(Transition)
 	 */
-	protected Transition mExitTransition;
+	Transition mExitTransition;
 
 	/**
-	 * Reenter transition for a new incoming fragment.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setReenterTransition(Object)} for more information.
+	 * Reenter transition the associated fragment.
+	 *
+	 * @see Fragment#setReenterTransition(Transition)
 	 */
-	protected Transition mReenterTransition;
+	Transition mReenterTransition;
 
 	/**
-	 * Return transition for a new incoming fragment.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setReturnTransition(Object)} for more information.
+	 * Return transition the associated fragment.
+	 *
+	 * @see Fragment#setReturnTransition(Transition)
 	 */
-	protected Transition mReturnTransition;
+	Transition mReturnTransition;
 
 	/**
-	 * Shared element's enter transition for a new incoming fragment.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setSharedElementEnterTransition(Object)} for more information.
+	 * Shared element's enter transition the associated fragment.
+	 *
+	 * @see Fragment#setSharedElementEnterTransition(Transition)
 	 */
-	protected Transition mSharedElementEnterTransition;
+	Transition mSharedElementEnterTransition;
 
 	/**
-	 * Shared element's return transition for a new incoming fragment.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setSharedElementReturnTransition(Object)} for more information.
+	 * Shared element's return transition the associated fragment.
+	 *
+	 * @see Fragment#setSharedElementReturnTransition(Transition)
 	 */
-	protected Transition mSharedElementReturnTransition;
+	Transition mSharedElementReturnTransition;
 
 	/**
-	 * Set of transition flags determining which transitions has been requested.
+	 * Transition flags determining which transitions has been specified for this request.
+	 *
+	 * @see TransitionFlag @TransitionFlag
 	 */
-	int mRequestedTransitions;
+	private int mSpecifiedTransitions;
 
 	/**
-	 * Set of shared elements for the new incoming fragment.
-	 * <p>
-	 * This option is only temporary and it is always removed from these options after it is properly used.
+	 * Flag indicating whether enter transition for the associated fragment can overlap or not.
+	 *
+	 * @see Fragment#setAllowReturnTransitionOverlap(boolean)
 	 */
-	protected List<Pair<View, String>> mSharedElements;
+	Boolean mAllowEnterTransitionOverlap;
 
 	/**
-	 * Flag indicating whether enter transitions within a new incoming fragment can overlap or not.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setAllowEnterTransitionOverlap(boolean)} for more information.
+	 * Flag indicating whether return transition for the associated fragment can overlap or not.
+	 *
+	 * @see Fragment#setAllowEnterTransitionOverlap(boolean)
 	 */
-	protected Boolean mAllowEnterTransitionOverlap;
+	Boolean mAllowReturnTransitionOverlap;
 
 	/**
-	 * Flag indicating whether return transitions within a new incoming fragment can overlap or not.
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setAllowReturnTransitionOverlap(boolean)} for more information.
+	 * Set of shared elements for the associated fragment.
+	 *
+	 * @see FragmentTransaction#addSharedElement(View, String)
 	 */
-	protected Boolean mAllowReturnTransitionOverlap;
+	List<Pair<View, String>> mSharedElements;
+
+	/**
+	 * Flags specified for this request.
+	 *
+	 * @see Flag @Flag
+	 */
+	private int mFlags;
 
 	/**
 	 * Boolean flag indicating whether this request has been already executed via {@link #execute()}
@@ -302,10 +383,11 @@ public final class FragmentRequest {
 	 */
 
 	/**
-	 * todo:
+	 * Creates a new instance of FragmentRequest for the given <var>fragment</var>.
 	 *
-	 * @param fragment
-	 * @param controller
+	 * @param fragment   The fragment to associate with the new request.
+	 * @param controller Fragment controller that creates the new request and is also responsible
+	 *                   for its execution.
 	 */
 	FragmentRequest(Fragment fragment, FragmentController controller) {
 		this.mFragment = fragment;
@@ -313,29 +395,53 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Same as {@link #FragmentRequest(int, int)} with both fragment ids set to {@link #NO_ID}.
-	 * <p>
-	 * This constructor can be used to instantiate transaction options to show instance of fragment
-	 * outside of context of {@link FragmentFactory}.
+	 * Methods =================================================================================
 	 */
-	@SuppressWarnings("ResourceType")
-	FragmentRequest() {
-		this(NO_ID, NO_ID);
+
+	/**
+	 */
+	@Override
+	@SuppressWarnings("StringBufferReplaceableByString")
+	public String toString() {
+		final StringBuilder builder = new StringBuilder(128);
+		builder.append("FragmentRequest{fragmentId: ");
+		builder.append(mFragmentId);
+		builder.append(", outgoingFragmentId: ");
+		builder.append(mOutgoingFragmentId);
+		builder.append(", arguments: ");
+		builder.append(mArguments);
+		builder.append(", transactionType: ");
+		builder.append(mTransition);
+		builder.append(", tag: ");
+		builder.append(mTag);
+		builder.append(", viewContainerId: ");
+		builder.append(mViewContainerId);
+		builder.append(", transition: ");
+		builder.append(mTransition != null ? mTransition.getName() : "null");
+		builder.append(", transitionStyle: ");
+		builder.append(mTransitionStyle);
+		builder.append(", replaceSame: ");
+		builder.append(hasFlag(REPLACE_SAME));
+		builder.append(", addToBackStack: ");
+		builder.append(hasFlag(ADD_TO_BACK_STACK));
+		builder.append(", executeAllowingStateLoss: ");
+		builder.append(hasFlag(EXECUTE_ALLOWING_STATE_LOSS));
+		builder.append(", executeImmediate: ");
+		builder.append(hasFlag(EXECUTE_IMMEDIATE));
+		builder.append(", executed: ");
+		builder.append(mExecuted);
+		return builder.append("}").toString();
 	}
 
 	/**
-	 * Same as {@link #FragmentRequest(int, int)} with <var>outgoingFragmentId</var> set
-	 * to {@link #NO_ID}.
-	 * <p>
-	 * This constructor can be used to instantiate transaction options to show instance of fragment
-	 * provided by {@link FragmentFactory} where only id of incoming fragment is
-	 * relevant to properly set up its options.
+	 * Returns the fragment instance associated with this request.
 	 *
-	 * @param fragmentId Id of the incoming fragment associated with these options.
+	 * @return This request's fragment.
+	 * @see FragmentController#newRequest(Fragment)
 	 */
-	@SuppressWarnings("ResourceType")
-	FragmentRequest(@IntRange(from = 0) int fragmentId) {
-		this(fragmentId, NO_ID);
+	@NonNull
+	public Fragment fragment() {
+		return mFragment;
 	}
 
 	/**
@@ -349,112 +455,53 @@ public final class FragmentRequest {
 	 * @param incomingFragmentId Id of the incoming fragment associated with these options.
 	 * @param outgoingFragmentId Id of the outgoing fragment associated with these options.
 	 */
-	FragmentRequest(@IntRange(from = 0) int incomingFragmentId, @IntRange(from = 0) int outgoingFragmentId) {
-		this.incomingFragmentId = incomingFragmentId;
-		this.outgoingFragmentId = outgoingFragmentId;
-	}
 
 	/**
-	 * Methods =================================================================================
-	 */
-
-	/**
-	 */
-	@Override
-	@SuppressWarnings("StringBufferReplaceableByString")
-	public String toString() {
-		final StringBuilder builder = new StringBuilder(128);
-		builder.append("FragmentRequest{incomingFragmentId: ");
-		builder.append(incomingFragmentId);
-		builder.append(", outgoingFragmentId: ");
-		builder.append(outgoingFragmentId);
-		builder.append(", tag: ");
-		builder.append(mTag);
-		builder.append(", container: ");
-		builder.append(mContainerId);
-		builder.append(", arguments: ");
-		builder.append(mArguments);
-		builder.append(", transition: ");
-		builder.append(mTransition != null ? mTransition.getName() : "null");
-		builder.append(", transitionStyle: ");
-		builder.append(mTransitionStyle);
-		builder.append(", backStacked: ");
-		builder.append(mAddToBackStack);
-		builder.append("), commitAllowingStateLoss: ");
-		builder.append(mCommitAllowingStateLoss);
-		builder.append("), replace: ");
-		builder.append(mReplaceSame);
-		builder.append(", add: ");
-		builder.append(mAdd);
-		return builder.append("}").toString();
-	}
-
-	/**
-	 * Sets a tag for associated fragment to be shown.
-	 *
-	 * @param fragmentTag The desired fragment tag.
-	 * @return These options to allow methods chaining.
-	 * @see FragmentTransaction#replace(int, android.support.v4.app.Fragment, String)
-	 * @see #tag()
-	 */
-	public final FragmentRequest tag(@Nullable String fragmentTag) {
-		this.mTag = fragmentTag;
-		return this;
-	}
-
-	/**
-	 * Returns the tag specified via {@link #tag(String)}.
-	 *
-	 * @return Tag for the associated fragment to be shown using these options.
-	 */
-	@Nullable
-	public final String tag() {
-		return mTag;
-	}
-
-	/**
-	 * Sets a flag indicating, whether associated fragment should be added to the fragments back stack
-	 * or not.
+	 * todo:
 	 * <p>
-	 * Default: <b>false</b>
+	 * Default value: <b>{@link #NO_ID}</b>
 	 *
-	 * @param add {@code True} to add fragment to the back stack, {@code false} otherwise.
-	 * @return These options to allow methods chaining.
-	 * @see FragmentTransaction#addToBackStack(String)
-	 * @see #addToBackStack()
+	 * @param fragmentId
+	 * @return
 	 */
-	public final FragmentRequest addToBackStack(boolean add) {
-		this.mAddToBackStack = add;
+	public FragmentRequest fragmentId(int fragmentId) {
+		this.mFragmentId = fragmentId;
 		return this;
 	}
 
 	/**
-	 * Returns the boolean flag specified via {@link #addToBackStack(boolean)}.
+	 * todo:
+	 * <p>
+	 * Default value: <b>{@link #NO_ID}</b>
 	 *
-	 * @return {@code True} if associated fragment to be shown using these options should be added
-	 * into back stack, {@code false} otherwise.
+	 * @param fragmentId
+	 * @return
 	 */
-	public final boolean addToBackStack() {
-		return mAddToBackStack;
+	public FragmentRequest outgoingFragmentId(int fragmentId) {
+		this.mOutgoingFragmentId = fragmentId;
+		return this;
 	}
 
 	/**
-	 * Sets an arguments for associated fragment.
+	 * Sets an arguments for the associated fragment.
 	 *
-	 * @param arguments The desired arguments for fragment.
-	 * @return These options to allow methods chaining.
+	 * @param arguments The desired arguments for fragment. May be {@code null}.
+	 * @return This request to allow methods chaining.
 	 * @see Fragment#setArguments(Bundle)
 	 * @see #arguments()
 	 */
-	public final FragmentRequest arguments(@Nullable Bundle arguments) {
+	public FragmentRequest arguments(@Nullable Bundle arguments) {
 		this.mArguments = arguments;
 		return this;
 	}
 
 	/**
-	 * Returns the arguments specified via {@link #arguments(Bundle)}.
+	 * Returns the arguments that should be attached to the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Arguments for associated fragment to be shown using these options.
+	 * @return Arguments for fragment or {@code null} if no arguments have been specified yet.
+	 * @see #arguments(Bundle)
 	 */
 	@Nullable
 	public final Bundle arguments() {
@@ -462,35 +509,73 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Sets a boolean flag indicating, whether to add or replace associated fragment.
-	 * <p>
-	 * Default: <b>false</b>
+	 * todo:
 	 *
-	 * @return These options to allow methods chaining.
-	 * @see FragmentTransaction#add(int, android.support.v4.app.Fragment, String)
-	 * @see FragmentTransaction#replace(int, android.support.v4.app.Fragment, String)
-	 * @see #add()
+	 * @param transaction
+	 * @return This request to allow methods chaining.
 	 */
-	public final FragmentRequest add(boolean add) {
-		this.mAdd = add;
+	public FragmentRequest transaction(@Transaction int transaction) {
+		this.mTransaction = transaction;
 		return this;
 	}
 
 	/**
-	 * Returns the boolean flag specified via {@link #add(boolean)}.
+	 * Sets a tag for the associated fragment.
 	 *
-	 * @return {@code True} if view of associated fragment will be added into container's view hierarchy,
-	 * {@code false} if it will replace the current container's view hierarchy.
+	 * @param fragmentTag The desired fragment tag. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #tag()
+	 * @see Fragment#getTag()
 	 */
-	public final boolean add() {
-		return mAdd;
+	public final FragmentRequest tag(@Nullable String fragmentTag) {
+		this.mTag = fragmentTag;
+		return this;
+	}
+
+	/**
+	 * Returns the tag by which should be the associated fragment identified.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
+	 *
+	 * @return Tag for the associated fragment to be shown using these options.
+	 * @see #tag(String)
+	 */
+	@Nullable
+	public final String tag() {
+		return mTag;
+	}
+
+	/**
+	 * Sets an id of the layout container into which should be an incoming fragment's view placed.
+	 * <p>
+	 * Default: <b>-1</b>
+	 *
+	 * @param layoutId An id of the desired layout container to be used as container for associated
+	 *                 fragment's view.
+	 * @return This request to allow methods chaining.
+	 * @see #viewContainerId()
+	 */
+	public FragmentRequest viewContainerId(@IdRes int layoutId) {
+		this.mViewContainerId = layoutId;
+		return this;
+	}
+
+	/**
+	 * Returns the id of the layout container specified via {@link #viewContainerId(int)}.
+	 *
+	 * @return Id of layout container into which should be an incoming fragment's view placed.
+	 * @see #viewContainerId(int)
+	 */
+	@IdRes
+	public int viewContainerId() {
+		return mViewContainerId;
 	}
 
 	/**
 	 * Sets a transition used to animate views change of incoming and outgoing fragments.
 	 *
 	 * @param transition Transition with animations.
-	 * @return These options to allow methods chaining.
+	 * @return This request to allow methods chaining.
 	 * @see FragmentTransaction#setCustomAnimations(int, int)
 	 * @see FragmentTransaction#setCustomAnimations(int, int, int, int)
 	 * @see #transition()
@@ -502,6 +587,8 @@ public final class FragmentRequest {
 
 	/**
 	 * Returns the transition specified via {@link #transition(FragmentTransition)}.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
 	 * @return Transition used to animate views change of incoming and outgoing fragments associated
 	 * with these options.
@@ -518,7 +605,7 @@ public final class FragmentRequest {
 	 * Default: <b>-1</b>
 	 *
 	 * @param transitionStyle Resource id of the desired style.
-	 * @return These options to allow methods chaining.
+	 * @return This request to allow methods chaining.
 	 * @see FragmentTransaction#setTransitionStyle(int)
 	 * @see #transitionStyle()
 	 */
@@ -529,6 +616,8 @@ public final class FragmentRequest {
 
 	/**
 	 * Returns the transition style specified via {@link #transitionStyle(int)}.
+	 * <p>
+	 * Default value: <b>{@link #NO_STYLE}</b>
 	 *
 	 * @return Style containing animations used to animate views change of incoming and outgoing
 	 * fragments.
@@ -539,341 +628,175 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Sets an id of the layout container into which should be an incoming fragment's view placed.
-	 * <p>
-	 * Default: <b>-1</b>
+	 * Sets an enter transition for the associated fragment.
 	 *
-	 * @param layoutId An id of the desired layout container to be used as container for associated
-	 *                 fragment's view.
-	 * @return These options to allow methods chaining.
-	 * @see FragmentTransaction#replace(int, android.support.v4.app.Fragment, String)
-	 * @see FragmentController#setFragmentContainerId(int)
-	 * @see #containerId()
-	 */
-	public final FragmentRequest containerId(@IdRes int layoutId) {
-		this.mContainerId = layoutId;
-		return this;
-	}
-
-	/**
-	 * Returns the id of the layout container specified via {@link #containerId(int)}.
-	 *
-	 * @return Id of layout container into which should be an incoming fragment's view placed.
-	 */
-	@IdRes
-	public final int containerId() {
-		return mContainerId;
-	}
-
-	/**
-	 * Sets a boolean flag indicating, whether the currently showing fragment with the same TAG can be
-	 * replaced by a new one (using this options) or not.
-	 * <p>
-	 * Default: <b>true</b>
-	 *
-	 * @param replace {@code True} to replace an existing fragment with the same TAG as specified
-	 *                via {@link #tag(String)} with associated one, {@code false} otherwise.
-	 * @return These options to allow methods chaining.
-	 * @see #replaceSame()
-	 */
-	public final FragmentRequest replaceSame(boolean replace) {
-		this.mReplaceSame = replace;
-		return this;
-	}
-
-	/**
-	 * Return the boolean flag specified via {@link #replaceSame(boolean)}.
-	 *
-	 * @return {@code True} to replace an existing fragment with the same tag as specified via {@link #tag(String)},
-	 * {@code false} otherwise.
-	 */
-	public final boolean replaceSame() {
-		return mReplaceSame;
-	}
-
-	/**
-	 * Sets a boolean flag indicating, whether a new fragment should be showed immediately or not.
-	 * <p>
-	 * Default: <b>false</b>
-	 *
-	 * @param immediate {@code True} to show immediately (synchronously), {@code false} otherwise.
-	 * @return These options to allow methods chaining.
-	 * @see FragmentManager#executePendingTransactions()
-	 * @see #showImmediate()
-	 */
-	public final FragmentRequest showImmediate(boolean immediate) {
-		this.mShowImmediate = immediate;
-		return this;
-	}
-
-	/**
-	 * Returns the boolean flag specified via {@link #showImmediate(boolean)}.
-	 *
-	 * @return {@code True} if associated fragment should be shown immediately (synchronously),
-	 * {@code false} otherwise.
-	 */
-	public final boolean showImmediate() {
-		return mShowImmediate;
-	}
-
-	/**
-	 * Sets a boolean flag indicating, whether transaction for a new fragment can be committed
-	 * allowing state loss or not.
-	 * <p>
-	 * Default: <b>false</b>
-	 *
-	 * @param allowing {@code True} to allow state loss when committing transaction, {@code false}
-	 *                 otherwise.
-	 * @return These options to allow methods chaining.
-	 * @see FragmentTransaction#commitAllowingStateLoss()
-	 */
-	public final FragmentRequest commitAllowingStateLoss(boolean allowing) {
-		this.mCommitAllowingStateLoss = allowing;
-		return this;
-	}
-
-	/**
-	 * Returns the boolean flag specified via {@link #commitAllowingStateLoss(boolean)}.
-	 *
-	 * @return {@code True} if transaction for associated fragment should be committed allowing state
-	 * loss, {@code false} to be committed in a standard fashion.
-	 */
-	public final boolean commitAllowingStateLoss() {
-		return mCommitAllowingStateLoss;
-	}
-
-	/**
-	 * Specifies a shared element view and its name for a new incoming fragment.
-	 * <p>
-	 * Multiple calls to this method will just append already specified shared elements and theirs
-	 * names.
-	 * <p>
-	 * <b>Note, that this option is only temporary in terms of storing within these options. All
-	 * shared elements will be removed from these options immediately after they are passed to
-	 * the FragmentTransaction object.</b>
-	 *
-	 * @param element The view to be shared with the new incoming fragment.
-	 * @param name    The name of the shared element.
-	 * @return These options to allow methods chaining.
-	 * @see FragmentTransaction#addSharedElement(View, String)
-	 */
-	public final FragmentRequest sharedElement(@NonNull View element, @NonNull String name) {
-		return sharedElements(new Pair<>(element, name));
-	}
-
-	/**
-	 * Same as {@link #sharedElement(View, String)}, but this method allows to specify
-	 * a set of shared elements at once.
-	 *
-	 * @param elements The desired shared elements pairs.
-	 * @return These options to allow methods chaining.
-	 * @see #sharedElements()
-	 */
-	@SafeVarargs
-	public final FragmentRequest sharedElements(@NonNull Pair<View, String>... elements) {
-		if (mSharedElements == null) mSharedElements = new ArrayList<>(1);
-		mSharedElements.addAll(Arrays.asList(elements));
-		return this;
-	}
-
-	/**
-	 * Returns all shared elements specified via {@link #sharedElement(View, String)} or
-	 * {@link #sharedElements(Pair[])} for these options.
-	 *
-	 * @return List of shared element pairs for associated fragment.
-	 */
-	@Nullable
-	public final List<Pair<View, String>> sharedElements() {
-		return mSharedElements;
-	}
-
-	/**
-	 * Clears the shared elements attached to these options. This should be called whenever the
-	 * shared elements has been already attached to a particular FragmentTransaction object.
-	 */
-	protected final void clearSharedElements() {
-		this.mSharedElements = null;
-	}
-
-	/**
-	 * Specifies the enter transition for a new incoming fragment.
-	 * <p>
-	 * Default: <b>none</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setEnterTransition(Object)} for more information.
-	 *
-	 * @param transition The desired enter transition. Can be {@code null} to clear the default
-	 *                   one.
-	 * @return These options to allow methods chaining.
+	 * @param transition The desired enter transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
 	 * @see #enterTransition()
+	 * @see Fragment#setEnterTransition(Transition)
 	 */
-	public final FragmentRequest enterTransition(@Nullable Object transition) {
-		this.setTransitionRequested(ENTER_TRANSITION);
+	public FragmentRequest enterTransition(@Nullable Transition transition) {
+		this.setHasTransition(TRANSITION_ENTER);
 		this.mEnterTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #enterTransition(Object)}.
+	 * Returns the enter transition to be played for the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Enter transition for the associated fragment to be shown.
+	 * @return Transition or {@code null} if no enter transition has been specified yet.
+	 * @see #enterTransition(Transition)
 	 */
 	@Nullable
-	public final Object enterTransition() {
+	public Transition enterTransition() {
 		return mEnterTransition;
 	}
 
 	/**
-	 * Specifies the exit transition for a new incoming fragment.
-	 * <p>
-	 * Default: <b>none</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setExitTransition(Object)} for more information.
+	 * Sets an exit transition for the associated fragment.
 	 *
-	 * @param transition The desired exit transition. Can be {@code null} to clear the default
-	 *                   one.
-	 * @return These options to allow methods chaining.
+	 * @param transition The desired exit transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
 	 * @see #exitTransition()
+	 * @see Fragment#setExitTransition(Transition)
 	 */
-	public final FragmentRequest exitTransition(@Nullable Object transition) {
-		this.setTransitionRequested(EXIT_TRANSITION);
+	public FragmentRequest exitTransition(@Nullable Transition transition) {
+		this.setHasTransition(TRANSITION_EXIT);
 		this.mExitTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #exitTransition(Object)}.
+	 * Returns the exit transition to be played for the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Exit transition for the associated fragment to be shown.
+	 * @return Transition or {@code null} if no exit transition has been specified yet.
+	 * @see #exitTransition(Transition)
 	 */
 	@Nullable
-	public final Object exitTransition() {
+	public Transition exitTransition() {
 		return mExitTransition;
 	}
 
 	/**
-	 * Specifies the reenter transition for a new incoming fragment.
-	 * <p>
-	 * Default: <b>none</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setReenterTransition(Object)} for more information.
+	 * Sets a reenter transition for the associated fragment.
 	 *
-	 * @param transition The desired reenter transition. Can be {@code null} to clear the default
-	 *                   one.
-	 * @return These options to allow methods chaining.
+	 * @param transition The desired reenter transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
 	 * @see #reenterTransition()
+	 * @see Fragment#setReenterTransition(Transition)
 	 */
-	public final FragmentRequest reenterTransition(@Nullable Object transition) {
-		this.setTransitionRequested(REENTER_TRANSITION);
+	public FragmentRequest reenterTransition(@Nullable Transition transition) {
+		this.setHasTransition(TRANSITION_REENTER);
 		this.mReenterTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #reenterTransition(Object)}.
+	 * Returns the reenter transition to be played for the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Re-enter transition for the associated fragment to be shown.
+	 * @return Transition or {@code null} if no reenter transition has been specified yet.
+	 * @see #reenterTransition(Transition)
 	 */
 	@Nullable
-	public final Object reenterTransition() {
+	public Transition reenterTransition() {
 		return mReenterTransition;
 	}
 
 	/**
-	 * Specifies the return transition for a new incoming fragment.
-	 * <p>
-	 * Default: <b>none</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setReturnTransition(Object)} for more information.
+	 * Sets a return transition for the associated fragment.
 	 *
-	 * @param transition The desired return transition. Can be {@code null} to clear the default
-	 *                   one.
-	 * @return These options to allow methods chaining.
-	 * @see #returnTransition()
+	 * @param transition The desired return transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #exitTransition()
+	 * @see Fragment#setReturnTransition(Transition)
 	 */
-	public final FragmentRequest returnTransition(@Nullable Object transition) {
-		this.setTransitionRequested(RETURN_TRANSITION);
+	public FragmentRequest returnTransition(@Nullable Transition transition) {
+		this.setHasTransition(TRANSITION_RETURN);
 		this.mReturnTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #returnTransition(Object)}.
+	 * Returns the return transition to be played for the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Return transition for the associated fragment to be shown.
+	 * @return Transition or {@code null} if no return transition has been specified yet.
+	 * @see #returnTransition(Transition)
 	 */
 	@Nullable
-	public final Object returnTransition() {
-		return mEnterTransition;
+	public Transition returnTransition() {
+		return mReturnTransition;
 	}
 
 	/**
-	 * Specifies the enter transition for a shared element of a new incoming fragment.
-	 * <p>
-	 * Default: <b>none</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setSharedElementEnterTransition(Object)} for more information.
+	 * Sets an enter transition for shared elements of the associated fragment.
 	 *
-	 * @param transition The desired shared element's enter transition. Can be {@code null} to
-	 *                   clear the default one.
-	 * @return These options to allow methods chaining.
-	 * @see #sharedElementEnterTransition(Object)
+	 * @param transition The desired shared elements's enter transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElementEnterTransition()
+	 * @see Fragment#setSharedElementEnterTransition(Transition)
 	 */
-	public final FragmentRequest sharedElementEnterTransition(@Nullable Object transition) {
-		this.setTransitionRequested(SHARED_ELEMENT_ENTER_TRANSITION);
+	public FragmentRequest sharedElementEnterTransition(@Nullable Transition transition) {
+		this.setHasTransition(TRANSITION_SHARED_ELEMENT_ENTER);
 		this.mSharedElementEnterTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #sharedElementEnterTransition(Object)}.
+	 * Returns the enter transition to be played for shared elements of the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Enter transition for shared element of the associated fragment to be shown.
+	 * @return Transition or {@code null} if no shared element enter transition has been specified yet.
+	 * @see #sharedElementEnterTransition(Transition)
 	 */
 	@Nullable
-	public final Object sharedElementEnterTransition() {
+	public Transition sharedElementEnterTransition() {
 		return mSharedElementEnterTransition;
 	}
 
 	/**
-	 * Specifies the return transition for a shared element of a new incoming fragment.
-	 * <p>
-	 * Default: <b>none</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setSharedElementReturnTransition(Object)} for more information.
+	 * Sets an return transition for shared elements of the associated fragment.
 	 *
-	 * @param transition The desired shared element's return transition. Can be {@code null} to
-	 *                   clear the default one.
-	 * @return These options to allow methods chaining.
-	 * @see #sharedElementReturnTransition(Object)
+	 * @param transition The desired shared elements's return transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElementEnterTransition()
+	 * @see Fragment#setSharedElementReturnTransition(Transition)
 	 */
-	public final FragmentRequest sharedElementReturnTransition(@Nullable Object transition) {
-		this.setTransitionRequested(SHARED_ELEMENT_RETURN_TRANSITION);
+	public FragmentRequest sharedElementReturnTransition(@Nullable Transition transition) {
+		this.setHasTransition(TRANSITION_SHARED_ELEMENT_RETURN);
 		this.mSharedElementReturnTransition = transition;
 		return this;
 	}
 
 	/**
-	 * Returns the transition specified via {@link #sharedElementReturnTransition(Object)}.
+	 * Returns the return transition to be played for shared elements of the associated fragment.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return Return transition for shared element of the associated fragment to be shown.
+	 * @return Transition or {@code null} if no shared element return transition has been specified yet.
+	 * @see #sharedElementReturnTransition(Transition)
 	 */
 	@Nullable
-	public final Object sharedElementReturnTransition() {
+	public Transition sharedElementReturnTransition() {
 		return mSharedElementReturnTransition;
 	}
 
 	/**
-	 * Specifies a boolean flag indicating whether enter transition of a new incoming fragment
-	 * can overlap or not.
-	 * <p>
-	 * Default: <b>false</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setAllowEnterTransitionOverlap(boolean)} for more information.
+	 * Sets a boolean flag indicating whether enter transition for the associated fragment may overlap
+	 * or not.
 	 *
-	 * @param allowOverlap {@code True} to allow enter transition overlapping, {@code false}
-	 *                     otherwise.
-	 * @return This options to allow methods chaining.
+	 * @param allowOverlap {@code True} to allow enter transition overlapping, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see Fragment#setAllowEnterTransitionOverlap(boolean)
+	 * @see #allowEnterTransitionOverlap()
 	 */
 	public final FragmentRequest allowEnterTransitionOverlap(boolean allowOverlap) {
 		this.mAllowEnterTransitionOverlap = allowOverlap;
@@ -881,25 +804,26 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Returns the boolean flag specified via {@link #allowEnterTransitionOverlap(boolean)}.
+	 * Returns boolean flag indicating whether overlapping for enter transition is allowed.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return {@code True} to allow enter transition overlapping, {@code false} otherwise.
+	 * @return {@code True} if overlapping for enter transition is allowed, {@code false} otherwise
+	 * or {@code null} if this option has not been specified yet.
+	 * @see #allowEnterTransitionOverlap(boolean) 
 	 */
-	public final boolean allowEnterTransitionOverlap() {
+	public final Boolean allowEnterTransitionOverlap() {
 		return mAllowEnterTransitionOverlap;
 	}
 
 	/**
-	 * Specifies a boolean flag indicating whether return transition of a new incoming fragment
-	 * can overlap or not.
-	 * <p>
-	 * Default: <b>false</b>
-	 * <p>
-	 * See {@link android.support.v4.app.Fragment#setAllowReturnTransitionOverlap(boolean)} for more information.
+	 * Sets a boolean flag indicating whether return transition for the associated fragment may overlap
+	 * or not.
 	 *
-	 * @param allowOverlap {@code True} to allow return transition overlapping, {@code false}
-	 *                     otherwise.
-	 * @return This options to allow methods chaining.
+	 * @param allowOverlap {@code True} to allow return transition overlapping, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see Fragment#setAllowReturnTransitionOverlap(boolean)
+	 * @see #allowReturnTransitionOverlap()
 	 */
 	public final FragmentRequest allowReturnTransitionOverlap(boolean allowOverlap) {
 		this.mAllowReturnTransitionOverlap = allowOverlap;
@@ -907,22 +831,215 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Returns the boolean flag specified via {@link #allowReturnTransitionOverlap(boolean)}.
+	 * Returns boolean flag indicating whether overlapping for return transition is allowed.
+	 * <p>
+	 * Default value: <b>{@code null}</b>
 	 *
-	 * @return {@code True} to allow return transition overlapping, {@code false} otherwise.
+	 * @return {@code True} if overlapping for return transition is allowed, {@code false} otherwise
+	 * or {@code null} if this option has not been specified yet.
+	 * @see #allowReturnTransitionOverlap(boolean)
 	 */
 	public final boolean allowReturnTransitionOverlap() {
-		return mAllowReturnTransitionOverlap;
+		return mAllowReturnTransitionOverlap != null && mAllowReturnTransitionOverlap;
 	}
 
 	/**
-	 * Specifies that a scene transition with the specified <var>transition</var> flag has been
+	 * Specifies that a transition with the specified <var>transition</var> flag has been
 	 * requested.
 	 *
-	 * @param transition Flag of the requested transition.
+	 * @param transitionFlag Flag of the requested transition.
 	 */
-	private void setTransitionRequested(int transition) {
-		this.mRequestedTransitions |= transition;
+	private void setHasTransition(@TransitionFlag int transitionFlag) {
+		this.mSpecifiedTransitions |= transitionFlag;
+	}
+
+	/**
+	 * Checks whether a transition with the specified <var>transitionFlag</var> has been specified
+	 * for this request or not.
+	 * <p>
+	 * <b>Note</b>, that also {@code null} transitions may be specified.
+	 *
+	 * @param transitionFlag One of transition flags defined by {@link TransitionFlag @TransitionFlag}
+	 *                       annotation.
+	 * @return {@code True} if transition has been specified, {@code false} otherwise.
+	 */
+	boolean hasTransition(@TransitionFlag int transitionFlag) {
+		return (mSpecifiedTransitions & transitionFlag) != 0;
+	}
+
+	/**
+	 * Bulk method for adding shared element pairs into this request.
+	 *
+	 * @param elements The desired shared elements pairs.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElement(View, String)
+	 */
+	@SafeVarargs
+	public final FragmentRequest sharedElements(@NonNull Pair<View, String>... elements) {
+		if (mSharedElements == null) {
+			this.mSharedElements = new ArrayList<>(elements.length);
+		}
+		this.mSharedElements.addAll(Arrays.asList(elements));
+		return this;
+	}
+
+	/**
+	 * Adds a shared element view and its name for the associated fragment.
+	 * <p>
+	 * Multiple calls to this method will append list of already specified shared element pairs.
+	 *
+	 * @param element The view to be shared via transition.
+	 * @param name    The name of the shared element.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#addSharedElement(View, String)
+	 */
+	public final FragmentRequest sharedElement(@NonNull View element, @NonNull String name) {
+		if (mSharedElements == null) {
+			this.mSharedElements = new ArrayList<>(1);
+		}
+		this.mSharedElements.add(new Pair<>(element, name));
+		return this;
+	}
+
+	/**
+	 * Returns all shared elements specified for this request.
+	 *
+	 * @return List with shared element pairs for the associated fragment or {@code null} if no
+	 * pairs has been specified yet.
+	 * @see #sharedElement(View, String)
+	 * @see #sharedElements(Pair[])
+	 */
+	@Nullable
+	public final List<Pair<View, String>> sharedElements() {
+		return mSharedElements;
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether the already showing fragment with the same TAG as
+	 * specified for this request may be replaced by the associated fragment or not.
+	 *
+	 * @param replace {@code True} to replace an existing fragment with the same TAG as specified
+	 *                via {@link #tag(String)} with associated one, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see #replaceSame()
+	 */
+	public final FragmentRequest replaceSame(boolean replace) {
+		return setHasFlag(REPLACE_SAME, replace);
+	}
+
+	/**
+	 * Return boolean flag indicating whether already showing fragment with the same TAG may be replaced
+	 * by a new one.
+	 * <p>
+	 * Default value: <b>{@code false}</b>
+	 *
+	 * @return {@code True} if already showing fragment with the same tag may be replaced, {@code false}
+	 * otherwise.
+	 * @see #replaceSame(boolean)
+	 */
+	public final boolean replaceSame() {
+		return hasFlag(REPLACE_SAME);
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether the associated fragment should be added into fragments
+	 * back stack under its tag or not.
+	 *
+	 * @param add {@code True} to add fragment into back stack, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#addToBackStack(String)
+	 * @see #addToBackStack()
+	 */
+	public final FragmentRequest addToBackStack(boolean add) {
+		return setHasFlag(ADD_TO_BACK_STACK, add);
+	}
+
+	/**
+	 * Returns boolean indicating whether to add fragment into back stack.
+	 * <p>
+	 * Default value: <b>{@code false}</b>
+	 *
+	 * @return {@code True} if to add the associated fragment into back stack, {@code false} otherwise.
+	 * @see #addToBackStack(boolean)
+	 */
+	public final boolean addToBackStack() {
+		return hasFlag(ADD_TO_BACK_STACK);
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether {@link FragmentTransaction} for the associated fragment
+	 * may be committed allowing state loss or not.
+	 *
+	 * @param allowing {@code True} to allow state loss when committing transaction, {@code false}
+	 *                 otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#commitAllowingStateLoss()
+	 */
+	public final FragmentRequest executeAllowingStateLoss(boolean allowing) {
+		return setHasFlag(EXECUTE_ALLOWING_STATE_LOSS, allowing);
+	}
+
+	/**
+	 * Returns boolean flag indicating whether to commit fragment transaction allowing state loss.
+	 * <p>
+	 * Default value: <b>{@code false}</b>
+	 *
+	 * @return {@code True} if transaction may be committed allowing state loss, {@code false} otherwise.
+	 * @see #executeAllowingStateLoss(boolean)
+	 */
+	public final boolean executeAllowingStateLoss() {
+		return hasFlag(EXECUTE_ALLOWING_STATE_LOSS);
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether {@link FragmentTransaction} for the associated fragment
+	 * should be executed immediately or not.
+	 *
+	 * @param immediate {@code True} to execute immediately (synchronously), {@code false} otherwise
+	 *                  (asynchronously).
+	 * @return This request to allow methods chaining.
+	 * @see FragmentManager#executePendingTransactions()
+	 * @see #executeImmediate()
+	 */
+	public FragmentRequest executeImmediate(boolean immediate) {
+		return setHasFlag(EXECUTE_IMMEDIATE, immediate);
+	}
+
+	/**
+	 * Returns boolean indicating whether to execute fragment transaction immediately.
+	 * <p>
+	 * Default value: <b>{@code false}</b>
+	 *
+	 * @return {@code True} if fragment transaction should be executed immediately (synchronously),
+	 * {@code false} otherwise (asynchronously).
+	 * @see #executeImmediate(boolean)
+	 */
+	public boolean executeImmediate() {
+		return hasFlag(EXECUTE_IMMEDIATE);
+	}
+
+	/**
+	 * Sets whether this request has the specified <var>flag</var> registered or not.
+	 *
+	 * @param flag One of flags defined by {@link Flag @Flag} annotation.
+	 * @param has  {@code True} to determine that this request has this flag, {@code false} that it
+	 *             has not.
+	 * @return This request to allow methods chaining.
+	 */
+	private FragmentRequest setHasFlag(@Flag int flag, boolean has) {
+		if (has) this.mFlags |= flag;
+		else this.mFlags &= ~flag;
+		return this;
+	}
+
+	/**
+	 * Checks whether this request has the specified <var>flag</var> registered or not.
+	 *
+	 * @param flag One of flags defined by {@link Flag @Flag} annotation.
+	 * @return {@code True} if flag is registered, {@code false} otherwise.
+	 */
+	boolean hasFlag(@Flag int flag) {
+		return (mFlags & flag) != 0;
 	}
 
 	/**
@@ -933,6 +1050,7 @@ public final class FragmentRequest {
 	@Nullable
 	public Fragment execute() {
 		this.assertNotExecuted();
+		// todo: assert that we have all required parameters ...
 		return mController.executeRequest(this);
 	}
 
