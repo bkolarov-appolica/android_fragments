@@ -18,7 +18,6 @@
  */
 package universum.studios.android.fragment.annotation;
 
-import android.os.Bundle;
 import android.app.Fragment;
 
 import java.lang.annotation.ElementType;
@@ -46,7 +45,7 @@ public @interface FactoryFragment {
 	/**
 	 * Class of the desired fragment of which instance should be instantiated for this id.
 	 *
-	 * @see BaseFragmentFactory#createFragment(int, Bundle)
+	 * @see BaseFragmentFactory#createFragment(int)
 	 */
 	Class<? extends Fragment> value() default Fragment.class;
 
