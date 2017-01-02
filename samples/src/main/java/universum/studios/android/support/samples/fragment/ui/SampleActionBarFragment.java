@@ -18,7 +18,7 @@
  */
 package universum.studios.android.support.samples.fragment.ui;
 
-import universum.studios.android.fragment.ActionBarFragment;
+import universum.studios.android.support.fragment.ActionBarFragment;
 
 /**
  * @author Martin Albedinsky

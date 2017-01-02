@@ -23,7 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import universum.studios.android.fragment.manage.FragmentFactory;
+import universum.studios.android.support.fragment.manage.FragmentFactory;
 
 /**
  * Defines an annotation for determining set of Fragment ids that are provided by a specific

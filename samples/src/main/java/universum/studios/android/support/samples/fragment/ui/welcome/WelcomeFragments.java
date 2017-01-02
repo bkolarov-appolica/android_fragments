@@ -18,8 +18,8 @@
  */
 package universum.studios.android.support.samples.fragment.ui.welcome;
 
-import universum.studios.android.fragment.annotation.FactoryFragment;
-import universum.studios.android.fragment.manage.BaseFragmentFactory;
+import universum.studios.android.support.fragment.annotation.FactoryFragment;
+import universum.studios.android.support.fragment.manage.BaseFragmentFactory;
 
 /**
  * @author Martin Albedinsky

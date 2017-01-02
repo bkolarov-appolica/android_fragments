@@ -33,7 +33,7 @@ import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.view.ViewGroup;
 
-import universum.studios.android.fragment.FragmentsConfig;
+import universum.studios.android.support.fragment.FragmentsConfig;
 
 /**
  * Utility class for the Fragments library.

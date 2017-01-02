@@ -26,7 +26,9 @@ import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.transition.Transition;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,10 +37,10 @@ import android.view.ViewGroup;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import universum.studios.android.fragment.annotation.FragmentAnnotations;
-import universum.studios.android.fragment.annotation.handler.BaseAnnotationHandlers;
-import universum.studios.android.fragment.annotation.handler.FragmentAnnotationHandler;
-import universum.studios.android.fragment.util.FragmentUtils;
+import universum.studios.android.support.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.support.fragment.annotation.handler.BaseAnnotationHandlers;
+import universum.studios.android.support.fragment.annotation.handler.FragmentAnnotationHandler;
+import universum.studios.android.support.fragment.util.FragmentUtils;
 
 /**
  * A {@link Fragment} implementation designed to provide extended API and logic that is useful almost

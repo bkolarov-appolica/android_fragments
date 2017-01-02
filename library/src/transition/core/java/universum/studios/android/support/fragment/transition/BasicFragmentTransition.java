@@ -20,7 +20,7 @@ package universum.studios.android.support.fragment.transition;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.AnimatorRes;
+import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
 
 import universum.studios.android.support.fragment.manage.FragmentTransition;
@@ -107,14 +107,14 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	 * Same as {@link #BasicFragmentTransition(int, int, int, int)} with back-stack animations set to
 	 * {@code 0}.
 	 */
-	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim) {
+	public BasicFragmentTransition(@AnimRes int inAnim, @AnimRes int outAnim) {
 		this(inAnim, outAnim, NO_ANIMATION, NO_ANIMATION);
 	}
 
 	/**
 	 * Same as {@link #BasicFragmentTransition(int, int, int, int, String)} with empty name.
 	 */
-	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim, @AnimatorRes int inBackAnim, @AnimatorRes int outBackAnim) {
+	public BasicFragmentTransition(@AnimRes int inAnim, @AnimRes int outAnim, @AnimRes int inBackAnim, @AnimRes int outBackAnim) {
 		this(inAnim, outAnim, inBackAnim, outBackAnim, "");
 	}
 
@@ -130,7 +130,7 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	 *                    replaced by the incoming one.
 	 * @param name        The name for the new transition.
 	 */
-	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim, @AnimatorRes int inBackAnim, @AnimatorRes int outBackAnim, @NonNull String name) {
+	public BasicFragmentTransition(@AnimRes int inAnim, @AnimRes int outAnim, @AnimRes int inBackAnim, @AnimRes int outBackAnim, @NonNull String name) {
 		this.mInAnimRes = inAnim;
 		this.mOutAnimRes = outAnim;
 		this.mInBackAnimRes = inBackAnim;
@@ -176,32 +176,32 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 
 	/**
 	 */
+	@AnimRes
 	@Override
-	@AnimatorRes
 	public int getIncomingAnimation() {
 		return mInAnimRes;
 	}
 
 	/**
 	 */
+	@AnimRes
 	@Override
-	@AnimatorRes
 	public int getOutgoingAnimation() {
 		return mOutAnimRes;
 	}
 
 	/**
 	 */
+	@AnimRes
 	@Override
-	@AnimatorRes
 	public int getIncomingBackStackAnimation() {
 		return mInBackAnimRes;
 	}
 
 	/**
 	 */
+	@AnimRes
 	@Override
-	@AnimatorRes
 	public int getOutgoingBackStackAnimation() {
 		return mOutBackAnimRes;
 	}

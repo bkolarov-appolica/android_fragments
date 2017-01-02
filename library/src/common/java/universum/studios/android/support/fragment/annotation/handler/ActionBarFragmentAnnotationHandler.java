@@ -18,7 +18,7 @@
  */
 package universum.studios.android.support.fragment.annotation.handler;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.v7.view.ActionMode;

@@ -18,19 +18,19 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import universum.studios.android.fragment.FragmentsConfig;
-import universum.studios.android.fragment.annotation.FactoryFragment;
-import universum.studios.android.fragment.annotation.FactoryFragments;
-import universum.studios.android.fragment.annotation.FragmentAnnotations;
-import universum.studios.android.fragment.annotation.handler.BaseManagementAnnotationHandlers;
-import universum.studios.android.fragment.annotation.handler.FragmentFactoryAnnotationHandler;
+import universum.studios.android.support.fragment.FragmentsConfig;
+import universum.studios.android.support.fragment.annotation.FactoryFragment;
+import universum.studios.android.support.fragment.annotation.FactoryFragments;
+import universum.studios.android.support.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.support.fragment.annotation.handler.BaseManagementAnnotationHandlers;
+import universum.studios.android.support.fragment.annotation.handler.FragmentFactoryAnnotationHandler;
 
 /**
  * A {@link FragmentFactory} base implementation that may be used for fragment factories used
@@ -51,7 +51,7 @@ import universum.studios.android.fragment.annotation.handler.FragmentFactoryAnno
  * <li>
  * {@link universum.studios.android.support.fragment.annotation.FactoryFragment @FactoryFragment} <b>[member - inherited]</b>
  * <p>
- * This annotation provides same result as {@link universum.studios.android.fragment.annotation.FactoryFragments @FactoryFragments}
+ * This annotation provides same result as {@link universum.studios.android.support.fragment.annotation.FactoryFragments @FactoryFragments}
  * annotation, but this annotation is meant to be used to mark directly constant fields that specify
  * fragment ids and also provides more configuration options like the type of fragment that should
  * be instantiated for the specified id.

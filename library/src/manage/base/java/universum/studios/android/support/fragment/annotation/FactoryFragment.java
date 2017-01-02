@@ -19,18 +19,18 @@
 package universum.studios.android.support.fragment.annotation;
 
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import universum.studios.android.fragment.manage.BaseFragmentFactory;
+import universum.studios.android.support.fragment.manage.BaseFragmentFactory;
 
 /**
  * Annotation type used to mark an <b>int</b> field that specifies an id of fragment provided by a
- * specific {@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
+ * specific {@link universum.studios.android.support.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
  *
  * <h3>Usage</h3>
  * <ul>

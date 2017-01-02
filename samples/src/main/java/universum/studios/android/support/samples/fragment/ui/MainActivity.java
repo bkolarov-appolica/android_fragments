@@ -23,7 +23,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import universum.studios.android.samples.fragment.R;
-import universum.studios.android.samples.fragment.ui.welcome.WelcomeActivity;
+import universum.studios.android.support.samples.fragment.ui.welcome.WelcomeActivity;
 import universum.studios.android.samples.ui.SamplesNavigationActivity;
 
 /**

@@ -18,16 +18,15 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.View;
 
@@ -220,8 +219,8 @@ public class FragmentController {
 	 * @param parentActivity The activity that wants to use the new fragment controller.
 	 * @see #FragmentController(Fragment)
 	 */
-	public FragmentController(@NonNull Activity parentActivity) {
-		this(parentActivity.getFragmentManager());
+	public FragmentController(@NonNull FragmentActivity parentActivity) {
+		this(parentActivity.getSupportFragmentManager());
 		if (parentActivity instanceof FragmentRequestInterceptor) {
 			setRequestInterceptor((FragmentRequestInterceptor) parentActivity);
 		}
@@ -251,7 +250,7 @@ public class FragmentController {
 	 * also destroyed.</b>
 	 *
 	 * @param parentFragment The fragment that wants to use the new fragment controller.
-	 * @see #FragmentController(Activity)
+	 * @see #FragmentController(FragmentActivity)
 	 */
 	public FragmentController(@NonNull Fragment parentFragment) {
 		this(parentFragment.getFragmentManager());
@@ -270,7 +269,7 @@ public class FragmentController {
 	 * Creates a new instance of FragmentController with the given <var>fragmentManager</var>.
 	 *
 	 * @param fragmentManager Fragment manager that will be used to perform fragments related operations.
-	 * @see #FragmentController(Activity)
+	 * @see #FragmentController(FragmentActivity)
 	 * @see #FragmentController(Fragment)
 	 */
 	public FragmentController(@NonNull FragmentManager fragmentManager) {
@@ -594,12 +593,12 @@ public class FragmentController {
 	 * Also transitions related configuration will be performed for the fragment that is attached to
 	 * the request via methods listed below:
 	 * <ul>
-	 * <li>{@link Fragment#setEnterTransition(Transition)}
-	 * <li>{@link Fragment#setExitTransition(Transition)}</li>
-	 * <li>{@link Fragment#setReenterTransition(Transition)}</li>
-	 * <li>{@link Fragment#setReturnTransition(Transition)}</li>
-	 * <li>{@link Fragment#setSharedElementEnterTransition(Transition)}</li>
-	 * <li>{@link Fragment#setSharedElementReturnTransition(Transition)}</li>
+	 * <li>{@link Fragment#setEnterTransition(Object)}
+	 * <li>{@link Fragment#setExitTransition(Object)}</li>
+	 * <li>{@link Fragment#setReenterTransition(Object)}</li>
+	 * <li>{@link Fragment#setReturnTransition(Object)}</li>
+	 * <li>{@link Fragment#setSharedElementEnterTransition(Object)}</li>
+	 * <li>{@link Fragment#setSharedElementReturnTransition(Object)}</li>
 	 * <li>{@link Fragment#setAllowEnterTransitionOverlap(boolean)}</li>
 	 * <li>{@link Fragment#setAllowReturnTransitionOverlap(boolean)}</li>
 	 * </ul>

@@ -21,8 +21,8 @@ package universum.studios.android.support.samples.fragment.ui.welcome;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import universum.studios.android.fragment.BaseFragment;
-import universum.studios.android.fragment.annotation.ContentView;
+import universum.studios.android.support.fragment.BaseFragment;
+import universum.studios.android.support.fragment.annotation.ContentView;
 import universum.studios.android.samples.fragment.R;
 
 /**
