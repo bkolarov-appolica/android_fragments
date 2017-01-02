@@ -19,14 +19,9 @@
  * =================================================================================================
  */
 -->
-<resources>
-
-	<!-- ### APPLICATION ======================================================================= -->
-
-	<string name="app_name">Fragments (support)</string>
-
-	<!-- ### NAVIGATION ======================================================================== -->
-
-	<string name="navigation_item_home">Home</string>
-	<string name="navigation_item_welcome">Welcome</string>
-</resources>
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+       android:interpolator="@anim/fragment_interpolator"
+       android:duration="@integer/fragment_config_anim_alpha_out_duration"
+       android:fromAlpha="1.0"
+       android:toAlpha="0.0"
+       android:zAdjustment="bottom"/>

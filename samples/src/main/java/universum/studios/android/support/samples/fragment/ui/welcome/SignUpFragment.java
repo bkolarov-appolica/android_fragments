@@ -20,7 +20,7 @@ package universum.studios.android.support.samples.fragment.ui.welcome;
 
 import universum.studios.android.support.fragment.BaseFragment;
 import universum.studios.android.support.fragment.annotation.ContentView;
-import universum.studios.android.samples.fragment.R;
+import universum.studios.android.support.samples.fragment.R;
 
 /**
  * @author Martin Albedinsky

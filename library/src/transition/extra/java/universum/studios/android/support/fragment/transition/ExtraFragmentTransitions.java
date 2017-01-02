@@ -45,21 +45,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_scale_in}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_left}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_slide_in_right_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_scale_out_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_scale_in}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_slide_out_left}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_slide_in_right_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_scale_out_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_LEFT = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_scale_in,
+			R.anim.fragment_scale_in,
 			// Outgoing animation.
-			R.animator.fragment_slide_out_left,
+			R.anim.fragment_slide_out_left,
 			// Incoming back-stack animation.
-			R.animator.fragment_slide_in_right_back,
+			R.anim.fragment_slide_in_right_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_scale_out_back,
+			R.anim.fragment_scale_out_back,
 			"SCALE_IN_AND_SLIDE_TO_LEFT"
 	);
 
@@ -69,21 +69,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_scale_in}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_right}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_slide_in_left_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_scale_out_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_scale_in}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_slide_out_right}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_slide_in_left_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_scale_out_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_RIGHT = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_scale_in,
+			R.anim.fragment_scale_in,
 			// Outgoing animation.
-			R.animator.fragment_slide_out_right,
+			R.anim.fragment_slide_out_right,
 			// Incoming back-stack animation.
-			R.animator.fragment_slide_in_left_back,
+			R.anim.fragment_slide_in_left_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_scale_out_back,
+			R.anim.fragment_scale_out_back,
 			"SCALE_IN_AND_SLIDE_TO_RIGHT"
 	);
 
@@ -93,21 +93,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_scale_in}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_top}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_slide_in_bottom_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_scale_out_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_scale_in}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_slide_out_top}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_slide_in_bottom_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_scale_out_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_TOP = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_scale_in,
+			R.anim.fragment_scale_in,
 			// Outgoing animation.
-			R.animator.fragment_slide_out_top,
+			R.anim.fragment_slide_out_top,
 			// Incoming back-stack animation.
-			R.animator.fragment_slide_in_bottom_back,
+			R.anim.fragment_slide_in_bottom_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_scale_out_back,
+			R.anim.fragment_scale_out_back,
 			"SCALE_IN_AND_SLIDE_TO_TOP"
 	);
 
@@ -117,21 +117,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_scale_in}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_slide_out_bottom}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_slide_in_top_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_scale_out_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_scale_in}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_slide_out_bottom}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_slide_in_top_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_scale_out_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_BOTTOM = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_scale_in,
+			R.anim.fragment_scale_in,
 			// Outgoing animation.
-			R.animator.fragment_slide_out_bottom,
+			R.anim.fragment_slide_out_bottom,
 			// Incoming back-stack animation.
-			R.animator.fragment_slide_in_top_back,
+			R.anim.fragment_slide_in_top_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_scale_out_back,
+			R.anim.fragment_scale_out_back,
 			"SCALE_IN_AND_SLIDE_TO_BOTTOM"
 	);
 
@@ -141,21 +141,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_left}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_scale_out}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_scale_in_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_slide_out_right_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_slide_in_left}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_scale_out}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_scale_in_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_slide_out_right_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SLIDE_TO_LEFT_AND_SCALE_OUT = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_slide_in_left,
+			R.anim.fragment_slide_in_left,
 			// Outgoing animation.
-			R.animator.fragment_scale_out,
+			R.anim.fragment_scale_out,
 			// Incoming back-stack animation.
-			R.animator.fragment_scale_in_back,
+			R.anim.fragment_scale_in_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_slide_out_right_back,
+			R.anim.fragment_slide_out_right_back,
 			"SLIDE_TO_LEFT_AND_SCALE_OUT"
 	);
 
@@ -165,21 +165,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_right}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_scale_out}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_scale_in_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_slide_out_left_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_slide_in_right}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_scale_out}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_scale_in_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_slide_out_left_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SLIDE_TO_RIGHT_AND_SCALE_OUT = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_slide_in_right,
+			R.anim.fragment_slide_in_right,
 			// Outgoing animation.
-			R.animator.fragment_scale_out,
+			R.anim.fragment_scale_out,
 			// Incoming back-stack animation.
-			R.animator.fragment_scale_in_back,
+			R.anim.fragment_scale_in_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_slide_out_left_back,
+			R.anim.fragment_slide_out_left_back,
 			"SLIDE_TO_RIGHT_AND_SCALE_OUT"
 	);
 
@@ -189,21 +189,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_top}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_scale_out}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_scale_in_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_slide_out_bottom_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_slide_in_top}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_scale_out}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_scale_in_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_slide_out_bottom_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SLIDE_TO_TOP_AND_SCALE_OUT = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_slide_in_top,
+			R.anim.fragment_slide_in_top,
 			// Outgoing animation.
-			R.animator.fragment_scale_out,
+			R.anim.fragment_scale_out,
 			// Incoming back-stack animation.
-			R.animator.fragment_scale_in_back,
+			R.anim.fragment_scale_in_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_slide_out_bottom_back,
+			R.anim.fragment_slide_out_bottom_back,
 			"SLIDE_TO_TOP_AND_SCALE_OUT"
 	);
 
@@ -213,21 +213,21 @@ public final class ExtraFragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_slide_in_bottom}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_scale_out}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_scale_in_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_slide_out_top_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_slide_in_bottom}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_scale_out}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_scale_in_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_slide_out_top_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition SLIDE_TO_BOTTOM_AND_SCALE_OUT = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_slide_in_bottom,
+			R.anim.fragment_slide_in_bottom,
 			// Outgoing animation.
-			R.animator.fragment_scale_out,
+			R.anim.fragment_scale_out,
 			// Incoming back-stack animation.
-			R.animator.fragment_scale_in_back,
+			R.anim.fragment_scale_in_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_slide_out_top_back,
+			R.anim.fragment_slide_out_top_back,
 			"SLIDE_TO_BOTTOM_AND_SCALE_OUT"
 	);
 

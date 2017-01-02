@@ -19,14 +19,22 @@
  * =================================================================================================
  */
 -->
-<resources>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+     android:interpolator="@anim/fragment_interpolator"
+     android:zAdjustment="bottom">
 
-	<!-- ### APPLICATION ======================================================================= -->
+    <alpha
+            android:duration="@integer/fragment_config_anim_scale_alpha_in_duration"
+            android:fromAlpha="0.5"
+            android:toAlpha="1.0"/>
 
-	<string name="app_name">Fragments (support)</string>
-
-	<!-- ### NAVIGATION ======================================================================== -->
-
-	<string name="navigation_item_home">Home</string>
-	<string name="navigation_item_welcome">Welcome</string>
-</resources>
+    <scale
+            android:duration="@integer/fragment_config_anim_scale_in_duration"
+            android:startOffset="@integer/fragment_config_anim_scale_in_delay"
+            android:fromXScale="0.8"
+            android:toXScale="1.0"
+            android:pivotX="50%"
+            android:fromYScale="0.8"
+            android:toYScale="1.0"
+            android:pivotY="50%"/>
+</set>
