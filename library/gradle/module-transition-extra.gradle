@@ -35,5 +35,10 @@ android {
  * Library Module dependencies =====================================================================
  */
 dependencies {
-    compile 'universum.studios.android.support:support-fragments-transition-core:1.0.0@aar'
+    final String supportVersion = project.property('android.support.version')
+    compile 'com.android.support:support-v4:' + supportVersion
+    compile 'universum.studios.android:fragments-core:1.0.0@aar'
+    compile 'universum.studios.android:fragments-manage-core:1.0.0@aar'
+    compile 'universum.studios.android:fragments-transition-core:1.0.0@aar'
+    compile 'universum.studios.android:fragments-transition-common:1.0.0@aar'
 }

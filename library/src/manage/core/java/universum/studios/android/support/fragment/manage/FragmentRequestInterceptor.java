@@ -16,24 +16,31 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-/**
- * Library Module options ==========================================================================
- */
-android {
-    sourceSets {
-        main.manifest.srcFile 'src/common/AndroidManifest.xml'
-        main.java.srcDirs = [
-                'src/common/java'
-        ]
-    }
-}
+package universum.studios.android.support.fragment.manage;
+
+import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
- * Library Module dependencies =====================================================================
+ * Interface that may be used to intercept a specific {@link FragmentRequest} when it is being executed
+ * via its associated {@link FragmentController}.
+ *
+ * @author Martin Albedinsky
+ * @see FragmentController#setRequestInterceptor(FragmentRequestInterceptor)
  */
-dependencies {
-    final String supportVersion = project.property('android.support.version')
-    compile 'com.android.support:appcompat-v7:' + supportVersion
-    compile 'universum.studios.android:fragments-core:1.0.0@aar'
-    compile 'universum.studios.android:fragments-base:1.0.0@aar'
+public interface FragmentRequestInterceptor {
+
+	/**
+	 * Called to allow this request interceptor to intercept execution of the given fragment <var>request</var>.
+	 * <p>
+	 * Interceptor may also just change configuration of the request and return {@code null} to indicate
+	 * that the associated fragment controller should handle the execution.
+	 *
+	 * @param request The request to be executed.
+	 * @return Fragment associated with the request as result of the handled execution, {@code null}
+	 * to let the fragment controller handle the execution.
+	 */
+	@Nullable
+	Fragment interceptFragmentRequest(@NonNull FragmentRequest request);
 }

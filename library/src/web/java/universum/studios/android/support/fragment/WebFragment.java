@@ -80,7 +80,7 @@ import universum.studios.android.support.fragment.annotation.handler.WebFragment
  * <li>
  * {@link universum.studios.android.support.fragment.annotation.WebContent @WebContent} <b>[class]</b>
  * <p>
- * If this annotation is presented, the content provided by this annotation will be loaded into
+ * If this annotation is presented, the content specified via this annotation will be loaded into
  * {@link WebView} of an instance of annotated WebFragment sub-class.
  * </li>
  * </ul>

@@ -18,31 +18,15 @@
  */
 package universum.studios.android.support.samples.fragment.ui;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.view.MenuItem;
-
-import universum.studios.android.samples.fragment.R;
-import universum.studios.android.samples.fragment.ui.welcome.WelcomeActivity;
-import universum.studios.android.samples.ui.SamplesNavigationActivity;
+import universum.studios.android.fragment.annotation.FactoryFragment;
+import universum.studios.android.fragment.manage.BaseFragmentFactory;
 
 /**
  * @author Martin Albedinsky
  */
-public final class MainActivity extends SamplesNavigationActivity {
+final class SampleFragmentsFactory extends BaseFragmentFactory {
 
-	@SuppressWarnings("unused")
-	private static final String TAG = "MainActivity";
+	@FactoryFragment(SampleActionBarFragment.class)
+	static final int ACTION_BAR = 0x01;
 
-	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.navigation_item_home:
-				return true;
-			case R.id.navigation_item_welcome:
-				startActivity(new Intent(this, WelcomeActivity.class));
-				return false;
-		}
-		return false;
-	}
 }

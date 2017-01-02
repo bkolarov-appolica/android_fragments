@@ -18,13 +18,22 @@
  */
 package universum.studios.android.support.fragment.util;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.TransitionRes;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
+import android.view.ViewGroup;
+
+import universum.studios.android.fragment.FragmentsConfig;
 
 /**
  * Utility class for the Fragments library.
@@ -73,6 +82,38 @@ public final class FragmentUtils {
 	/**
 	 * Methods =====================================================================================
 	 */
+
+	/**
+	 * Inflates a desired Transition from the specified <var>resource</var>.
+	 *
+	 * @param context  Context used for inflation process.
+	 * @param resource Resource id of the desired transition to inflate.
+	 * @return Inflated transition or {@code null} if the current API level does not support transitions.
+	 * @see TransitionInflater#inflateTransition(int)
+	 * @see #inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Nullable
+	@SuppressLint("NewApi")
+	public static Transition inflateTransition(@NonNull Context context, @TransitionRes int resource) {
+		return FragmentsConfig.TRANSITIONS_SUPPORTED ? TransitionInflater.from(context).inflateTransition(resource) : null;
+	}
+
+	/**
+	 * Inflates a desired TransitionManager from the specified <var>resource</var>.
+	 *
+	 * @param context   Context used for inflation process.
+	 * @param resource  Resource id of the desired transition manager to inflate.
+	 * @param sceneRoot Root of the scene for which to inflate transition manager.
+	 * @return Inflated transition manager or {@code null} if the current API level does not support
+	 * transitions.
+	 * @see TransitionInflater#inflateTransitionManager(int, ViewGroup)
+	 * @see #inflateTransition(Context, int)
+	 */
+	@Nullable
+	@SuppressLint("NewApi")
+	public static TransitionManager inflateTransitionManager(@NonNull Context context, @TransitionRes int resource, @NonNull ViewGroup sceneRoot) {
+		return FragmentsConfig.TRANSITIONS_SUPPORTED ? TransitionInflater.from(context).inflateTransitionManager(resource, sceneRoot) : null;
+	}
 
 	/**
 	 * Obtains vector drawable with the specified <var>resId</var> using the given <var>resources</var>.

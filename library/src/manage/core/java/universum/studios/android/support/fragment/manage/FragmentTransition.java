@@ -18,14 +18,14 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
 import android.support.annotation.AnimatorRes;
 import android.support.annotation.NonNull;
 
 /**
  * FragmentTransition provides a foursome of animation resources that are meant for {@link FragmentTransaction}.
  * <p>
- * Implementations of FragmentTransition class may be supplied to {@link FragmentTransactionOptions}
+ * Implementations of FragmentTransition class may be supplied to {@link FragmentRequest}
  * to animate changes between desired fragments.
  *
  * @author Martin Albedinsky
@@ -46,41 +46,47 @@ public interface FragmentTransition {
 	 */
 
 	/**
-	 * todo:
+	 * Returns the animation resource for a new incoming fragment.
 	 *
-	 * @return
+	 * @return Animation resource or {@link #NO_ANIMATION} if no animation should be played for
+	 * incoming fragment.
 	 */
 	@AnimatorRes
 	int getIncomingAnimation();
 
 	/**
-	 * todo:
+	 * Returns the animation resource for an old outgoing fragment.
 	 *
-	 * @return
+	 * @return Animation resource or {@link #NO_ANIMATION} if no animation should be played for
+	 * outgoing fragment.
 	 */
 	@AnimatorRes
 	int getOutgoingAnimation();
 
 	/**
-	 * todo:
+	 * Returns the animation resource for an old incoming fragment when it is being popped from
+	 * the back stack.
 	 *
-	 * @return
+	 * @return Animation resource or {@link #NO_ANIMATION} if no animation should be played for
+	 * outgoing back-stacked fragment.
 	 */
 	@AnimatorRes
 	int getIncomingBackStackAnimation();
 
 	/**
-	 * todo:
+	 * Returns the animation resource for a current outgoing fragment when it is being popped from
+	 * the back stack.
 	 *
-	 * @return
+	 * @return Animation resource or {@link #NO_ANIMATION} if no animation should be played for
+	 * outgoing back-stacked fragment.
 	 */
 	@AnimatorRes
 	int getOutgoingBackStackAnimation();
 
 	/**
-	 * todo:
+	 * Returns the name of this fragment transition.
 	 *
-	 * @return
+	 * @return Name of this transition.
 	 */
 	@NonNull
 	String getName();

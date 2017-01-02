@@ -36,6 +36,7 @@ import universum.studios.android.support.fragment.manage.FragmentTransition;
  */
 @SuppressWarnings("unused")
 public final class FragmentTransitions {
+
 	/**
 	 * Transition that may be used for changing of two fragments without any animation.
 	 */
@@ -160,4 +161,10 @@ public final class FragmentTransitions {
 			R.animator.fragment_slide_out_top_back,
 			"SLIDE_TO_BOTTOM"
 	);
+
+	/**
+	 */
+	private FragmentTransitions() {
+		// Creation of instances of this class is not publicly allowed.
+	}
 }

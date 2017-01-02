@@ -37,8 +37,7 @@ import universum.studios.android.support.fragment.util.FragmentUtils;
  *
  * @author Martin Albedinsky
  */
-@SuppressWarnings("WeakerAccess")
-public abstract class ActionBarDelegate {
+@SuppressWarnings("WeakerAccess") public abstract class ActionBarDelegate {
 
 	/**
 	 * Interface ===================================================================================
@@ -75,7 +74,7 @@ public abstract class ActionBarDelegate {
 	 *
 	 * @param context The context used to access application data.
 	 */
-	private ActionBarDelegate(@NonNull Context context) {
+	protected ActionBarDelegate(@NonNull Context context) {
 		this.mContext = context;
 	}
 

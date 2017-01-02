@@ -85,13 +85,12 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	private final int mOutAnimRes;
 
 	/**
-	 * Animation resource for an old incoming fragment used when popping fragments from the back stack.
+	 * Animation resource for an old incoming fragment when it is being popped from the back stack.
 	 */
 	private final int mInBackAnimRes;
 
 	/**
-	 * Animation resource for a current outgoing fragment used when popping fragments from
-	 * the back stack.
+	 * Animation resource for a current outgoing fragment when it is being popped from the back stack.
 	 */
 	private final int mOutBackAnimRes;
 
@@ -109,7 +108,7 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	 * {@code 0}.
 	 */
 	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim) {
-		this(inAnim, outAnim, 0, 0);
+		this(inAnim, outAnim, NO_ANIMATION, NO_ANIMATION);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /*
  * =================================================================================================
- *                             Copyright (C) 2016 Universum Studios
+ *                             Copyright (C) 2017 Universum Studios
  * =================================================================================================
  *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
  * -------------------------------------------------------------------------------------------------
@@ -16,33 +16,25 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.support.samples.fragment.ui;
+package universum.studios.android.support.samples.fragment.ui.welcome;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.view.MenuItem;
-
-import universum.studios.android.samples.fragment.R;
-import universum.studios.android.samples.fragment.ui.welcome.WelcomeActivity;
-import universum.studios.android.samples.ui.SamplesNavigationActivity;
+import universum.studios.android.fragment.annotation.FactoryFragment;
+import universum.studios.android.fragment.manage.BaseFragmentFactory;
 
 /**
  * @author Martin Albedinsky
  */
-public final class MainActivity extends SamplesNavigationActivity {
+final class WelcomeFragments extends BaseFragmentFactory {
 
-	@SuppressWarnings("unused")
-	private static final String TAG = "MainActivity";
+	@FactoryFragment(WelcomeFragment.class)
+	static final int WELCOME = 0x01;
 
-	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.navigation_item_home:
-				return true;
-			case R.id.navigation_item_welcome:
-				startActivity(new Intent(this, WelcomeActivity.class));
-				return false;
-		}
-		return false;
-	}
+	@FactoryFragment(SignInFragment.class)
+	static final int SIGN_IN = 0x02;
+
+	@FactoryFragment(SignUpFragment.class)
+	static final int SIGN_UP = 0x03;
+
+	@FactoryFragment(LostPasswordFragment.class)
+	static final int LOST_PASSWORD = 0x04;
 }

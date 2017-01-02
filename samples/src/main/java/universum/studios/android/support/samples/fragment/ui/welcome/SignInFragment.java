@@ -1,6 +1,6 @@
 /*
  * =================================================================================================
- *                             Copyright (C) 2016 Universum Studios
+ *                             Copyright (C) 2017 Universum Studios
  * =================================================================================================
  *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
  * -------------------------------------------------------------------------------------------------
@@ -16,33 +16,18 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.support.samples.fragment.ui;
+package universum.studios.android.support.samples.fragment.ui.welcome;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.view.MenuItem;
-
+import universum.studios.android.fragment.BaseFragment;
+import universum.studios.android.fragment.annotation.ContentView;
 import universum.studios.android.samples.fragment.R;
-import universum.studios.android.samples.fragment.ui.welcome.WelcomeActivity;
-import universum.studios.android.samples.ui.SamplesNavigationActivity;
 
 /**
  * @author Martin Albedinsky
  */
-public final class MainActivity extends SamplesNavigationActivity {
+@ContentView(R.layout.fragment_sign_in)
+public final class SignInFragment extends BaseFragment {
 
 	@SuppressWarnings("unused")
-	private static final String TAG = "MainActivity";
-
-	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.navigation_item_home:
-				return true;
-			case R.id.navigation_item_welcome:
-				startActivity(new Intent(this, WelcomeActivity.class));
-				return false;
-		}
-		return false;
-	}
+	private static final String TAG = "SignInFragment";
 }

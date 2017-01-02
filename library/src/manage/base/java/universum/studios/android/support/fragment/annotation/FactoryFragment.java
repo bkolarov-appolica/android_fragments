@@ -18,22 +18,23 @@
  */
 package universum.studios.android.support.fragment.annotation;
 
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
+import android.app.Fragment;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import universum.studios.android.support.fragment.manage.FragmentTransactionOptions;
+import universum.studios.android.fragment.manage.BaseFragmentFactory;
 
 /**
- * Annotation type used to mark an <b>int</b> field that specifies an id of fragment provided by
- * instance of {@link universum.studios.android.support.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
+ * Annotation type used to mark an <b>int</b> field that specifies an id of fragment provided by a
+ * specific {@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
  *
  * <h3>Usage</h3>
  * <ul>
- * <li>{@link universum.studios.android.support.fragment.manage.BaseFragmentFactory BaseFragmentFactory}</li>
+ * <li>{@link BaseFragmentFactory}</li>
  * </ul>
  *
  * @author Martin Albedinsky
@@ -43,14 +44,16 @@ import universum.studios.android.support.fragment.manage.FragmentTransactionOpti
 public @interface FactoryFragment {
 
 	/**
-	 * Class of the desired fragment of which instance should be instantiated when calling
-	 * {@link universum.studios.android.support.fragment.manage.BaseFragmentFactory#createFragmentInstance(FragmentTransactionOptions) BaseFragmentFactory#createFragmentInstance(FragmentTransactionOptions)}
-	 * for this id.
+	 * Class of the desired fragment of which instance should be instantiated for this id.
+	 *
+	 * @see BaseFragmentFactory#createFragment(int, Bundle)
 	 */
 	Class<? extends Fragment> value() default Fragment.class;
 
 	/**
-	 * Name of the associated fragment to be placed within TAG used when showing the fragment.
+	 * Name of the associated fragment to be placed into its TAG.
+	 *
+	 * @see BaseFragmentFactory#createFragmentTag(Class, String)
 	 */
 	String taggedName() default "";
 }

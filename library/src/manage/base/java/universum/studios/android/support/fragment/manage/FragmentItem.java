@@ -27,8 +27,8 @@ import android.util.Log;
 import universum.studios.android.support.fragment.annotation.FactoryFragment;
 
 /**
- * Item holder that is used by {@link BaseFragmentFactory} to instantiate new fragments via reflection
- * that has been specified via {@link FactoryFragment @FactoryFragment} annotation.
+ * Item that is used by {@link BaseFragmentFactory} to instantiate new fragments that has been
+ * specified via {@link FactoryFragment @FactoryFragment} annotation.
  *
  * @author Martin Albedinsky
  */
@@ -102,8 +102,9 @@ public final class FragmentItem {
 	 * Creates a new instance of Fragment type of specified for this item.
 	 *
 	 * @param arguments Arguments to be attached to the new Fragment instance via {@link Fragment#setArguments(Bundle)}.
-	 * @return New fragment instance or {@code null} if type of this item is {@link Fragment Fragment.class}
-	 * which is default and can not be instantiated or some instantiation error occurred.
+	 * @return New fragment instance or {@code null} if fragment type specified for this item is
+	 * {@link Fragment Fragment.class} which is a default type and such type cannot be instantiated
+	 * or some instantiation error occurs.
 	 */
 	@Nullable
 	public Fragment newFragmentInstance(@Nullable Bundle arguments) {
@@ -117,9 +118,12 @@ public final class FragmentItem {
 			}
 			return fragment;
 		} catch (Exception e) {
-			final String fragmentName = type.getSimpleName();
-			Log.e(TAG, "Failed to instantiate a new fragment instance class of(" + fragmentName + "). " +
-					"Make sure that this fragment is accessible and has public empty constructor.", e);
+			Log.e(
+					TAG,
+					"Failed to instantiate a new fragment instance class of(" + type + "). " +
+							"Make sure that this fragment class is accessible and has public empty constructor.",
+					e
+			);
 		}
 		return null;
 	}

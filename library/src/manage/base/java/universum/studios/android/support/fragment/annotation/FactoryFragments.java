@@ -23,11 +23,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import universum.studios.android.support.fragment.manage.FragmentController;
+import universum.studios.android.fragment.manage.FragmentFactory;
 
 /**
  * Defines an annotation for determining set of Fragment ids that are provided by a specific
- * {@link FragmentController.FragmentFactory}.
+ * {@link FragmentFactory}.
  *
  * <h3>Usage</h3>
  * <ul>
@@ -43,7 +43,7 @@ public @interface FactoryFragments {
 	/**
 	 * An array with Fragment ids to be provided by FragmentFactory.
 	 *
-	 * @see FragmentController.FragmentFactory#isFragmentProvided(int)
+	 * @see FragmentFactory#isFragmentProvided(int)
 	 */
 	int[] value();
 }

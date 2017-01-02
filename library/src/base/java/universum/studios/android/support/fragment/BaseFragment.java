@@ -18,7 +18,6 @@
  */
 package universum.studios.android.support.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -27,13 +26,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.TransitionRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,9 +35,10 @@ import android.view.ViewGroup;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import universum.studios.android.support.fragment.annotation.FragmentAnnotations;
-import universum.studios.android.support.fragment.annotation.handler.BaseAnnotationHandlers;
-import universum.studios.android.support.fragment.annotation.handler.FragmentAnnotationHandler;
+import universum.studios.android.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.fragment.annotation.handler.BaseAnnotationHandlers;
+import universum.studios.android.fragment.annotation.handler.FragmentAnnotationHandler;
+import universum.studios.android.fragment.util.FragmentUtils;
 
 /**
  * A {@link Fragment} implementation designed to provide extended API and logic that is useful almost
@@ -182,18 +176,14 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	private int mLifecycleFlags;
 
 	/**
-	 * Inflater that is used to inflate transitions for this fragment.
-	 */
-	private TransitionInflater mTransitionInflater;
-
-	/**
 	 * Constructors ================================================================================
 	 */
 
 	/**
-	 * Creates a new instance of BaseFragment. If annotations processing is enabled via {@link FragmentsConfig}
-	 * all annotations supported by this fragment class will be processed/obtained here so they can
-	 * be later used.
+	 * Creates a new instance of BaseFragment.
+	 * <p>
+	 * If annotations processing is enabled via {@link FragmentsConfig} all annotations supported by
+	 * this class will be processed/obtained here so they can be later used.
 	 */
 	public BaseFragment() {
 		this.mAnnotationHandler = onCreateAnnotationHandler();
@@ -423,8 +413,8 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	}
 
 	/**
-	 * @see #inflateTransition(int)
-	 * @see #inflateTransitionManager(int, ViewGroup)
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
 	public void setEnterTransition(Object transition) {
@@ -432,8 +422,8 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	}
 
 	/**
-	 * @see #inflateTransition(int)
-	 * @see #inflateTransitionManager(int, ViewGroup)
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
 	public void setExitTransition(Object transition) {
@@ -441,8 +431,8 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	}
 
 	/**
-	 * @see #inflateTransition(int)
-	 * @see #inflateTransitionManager(int, ViewGroup)
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
 	public void setReenterTransition(Object transition) {
@@ -450,8 +440,8 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	}
 
 	/**
-	 * @see #inflateTransition(int)
-	 * @see #inflateTransitionManager(int, ViewGroup)
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
 	public void setReturnTransition(Object transition) {
@@ -459,8 +449,8 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	}
 
 	/**
-	 * @see #inflateTransition(int)
-	 * @see #inflateTransitionManager(int, ViewGroup)
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
 	public void setSharedElementEnterTransition(Object transition) {
@@ -468,53 +458,12 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	}
 
 	/**
-	 * @see #inflateTransition(int)
-	 * @see #inflateTransitionManager(int, ViewGroup)
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
 	public void setSharedElementReturnTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setSharedElementReturnTransition(transition);
-	}
-
-	/**
-	 * Inflates a new transition from the specified Xml <var>resource</var>.
-	 *
-	 * @param resource Resource id of the desired transition to be inflated.
-	 * @return Inflated transition or {@code null} if the current Android version does not support
-	 * inflating of transitions from the Xml or this fragment instance is not attached to the parent
-	 * context.
-	 */
-	@Nullable
-	@SuppressLint("NewApi")
-	protected final Transition inflateTransition(@TransitionRes int resource) {
-		if (isAttached() && FragmentsConfig.TRANSITIONS_SUPPORTED) {
-			if (mTransitionInflater == null) {
-				this.mTransitionInflater = TransitionInflater.from(getActivity());
-			}
-			return mTransitionInflater.inflateTransition(resource);
-		}
-		return null;
-	}
-
-	/**
-	 * Inflates a new transition manager from the specified Xml <var>resource</var>.
-	 *
-	 * @param resource  Resource id of the desired transition manager to be inflated.
-	 * @param sceneRoot Scene root with which to create the requested manager.
-	 * @return Inflated transition manager or {@code null} if the current Android version does not
-	 * support inflating of transitions from the Xml or this fragment instance is not attached to
-	 * the parent context.
-	 */
-	@Nullable
-	@SuppressLint("NewApi")
-	protected final TransitionManager inflateTransitionManager(@TransitionRes int resource, @NonNull ViewGroup sceneRoot) {
-		if (isAttached() && FragmentsConfig.TRANSITIONS_SUPPORTED) {
-			if (mTransitionInflater == null) {
-				this.mTransitionInflater = TransitionInflater.from(getActivity());
-			}
-			return mTransitionInflater.inflateTransitionManager(resource, sceneRoot);
-		}
-		return null;
 	}
 
 	/**
@@ -541,7 +490,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	@Override
 	public boolean dispatchViewClick(@NonNull View view) {
 		onViewClick(view);
-		return true;
+		return false;
 	}
 
 	/**
