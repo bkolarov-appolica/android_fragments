@@ -15,9 +15,10 @@ Available from the **Android [API Level 9](http://developer.android.com/about/ve
 
 ### Dependencies ###
 
-- [`com.android.support:support-annotations`](http://developer.android.com/tools/support-library/features.html#annotations)
-- [`com.android.support:support-v4`](http://developer.android.com/tools/support-library/features.html#v4)
-- [`com.android.support:support-vector-drawable`](https://developer.android.com/topic/libraries/support-library/features.html#support-vector-drawable)
+- [`com.android.support:support-annotations`](https://developer.android.com/topic/libraries/support-library/packages.html#annotations)
+- [`com.android.support:support-v4`](https://developer.android.com/topic/libraries/support-library/packages.html#v4)
+- [`com.android.support:appcompat-v7`](https://developer.android.com/topic/libraries/support-library/packages.html#v7)
+- [`com.android.support:support-vector-drawable`](https://developer.android.com/topic/libraries/support-library/packages.html#vector-drawable)
 
 ## License ##
 
