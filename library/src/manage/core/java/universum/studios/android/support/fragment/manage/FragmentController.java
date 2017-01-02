@@ -622,6 +622,18 @@ public class FragmentController {
 		if (request.mArguments != null) {
 			fragment.setArguments(request.mArguments);
 		}
+		// Attach animations to the transaction from the FragmentTransition parameter.
+		if (request.mTransition != null) {
+			transaction.setCustomAnimations(
+					request.mTransition.getIncomingAnimation(),
+					request.mTransition.getOutgoingAnimation(),
+					request.mTransition.getIncomingBackStackAnimation(),
+					request.mTransition.getOutgoingBackStackAnimation()
+			);
+		} else if (request.mTransitionStyle != FragmentRequest.NO_STYLE) {
+			transaction.setTransitionStyle(request.mTransitionStyle);
+		}
+		// Resolve transaction type.
 		switch (request.mTransaction) {
 			case FragmentRequest.REPLACE:
 				if (request.mViewContainerId == NO_CONTAINER_ID) {
@@ -650,17 +662,6 @@ public class FragmentController {
 			case FragmentRequest.DETACH:
 				transaction.detach(fragment);
 				break;
-		}
-		// Attach animations to the transaction from the FragmentTransition parameter.
-		if (request.mTransition != null) {
-			transaction.setCustomAnimations(
-					request.mTransition.getIncomingAnimation(),
-					request.mTransition.getOutgoingAnimation(),
-					request.mTransition.getIncomingBackStackAnimation(),
-					request.mTransition.getOutgoingBackStackAnimation()
-			);
-		} else if (request.mTransitionStyle != FragmentRequest.NO_STYLE) {
-			transaction.setTransitionStyle(request.mTransitionStyle);
 		}
 		// Attach transitions with shared elements, if specified and supported.
 		if (CAN_ATTACH_TRANSITIONS) {
