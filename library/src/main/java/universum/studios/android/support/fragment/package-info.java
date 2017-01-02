@@ -17,8 +17,8 @@
  * =================================================================================================
  */
 /**
- * Provides base and common {@link android.support.v4.app.Fragment Fragment} implementations that may be used
- * in an Android application as base classes for a specific fragment implementations.
+ * Provides base and common {@link android.support.v4.app.Fragment Fragment} implementations that may
+ * be used in an Android application as base classes for a specific fragment implementations.
  *
  * @author Martin Albedinsky
  */
