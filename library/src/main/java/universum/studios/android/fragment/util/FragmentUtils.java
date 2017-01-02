@@ -84,11 +84,13 @@ public final class FragmentUtils {
 	 */
 
 	/**
-	 * todo:
+	 * Inflates a desired Transition from the specified <var>resource</var>.
 	 *
-	 * @param context
-	 * @param resource
-	 * @return
+	 * @param context  Context used for inflation process.
+	 * @param resource Resource id of the desired transition to inflate.
+	 * @return Inflated transition or {@code null} if the current API level does not support transitions.
+	 * @see TransitionInflater#inflateTransition(int)
+	 * @see #inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Nullable
 	@SuppressLint("NewApi")
@@ -97,12 +99,15 @@ public final class FragmentUtils {
 	}
 
 	/**
-	 * todo:
+	 * Inflates a desired TransitionManager from the specified <var>resource</var>.
 	 *
-	 * @param context
-	 * @param resource
-	 * @param sceneRoot
-	 * @return
+	 * @param context   Context used for inflation process.
+	 * @param resource  Resource id of the desired transition manager to inflate.
+	 * @param sceneRoot Root of the scene for which to inflate transition manager.
+	 * @return Inflated transition manager or {@code null} if the current API level does not support
+	 * transitions.
+	 * @see TransitionInflater#inflateTransitionManager(int, ViewGroup)
+	 * @see #inflateTransition(Context, int)
 	 */
 	@Nullable
 	@SuppressLint("NewApi")
@@ -128,7 +133,8 @@ public final class FragmentUtils {
 	@Nullable
 	public static Drawable getVectorDrawable(@NonNull Resources resources, @DrawableRes int resId, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
 		if (resId == 0) return null;
-		else return ACCESS_LOLLIPOP ? getDrawable(resources, resId, theme) : VectorDrawableCompat.create(resources, resId, theme);
+		else
+			return ACCESS_LOLLIPOP ? getDrawable(resources, resId, theme) : VectorDrawableCompat.create(resources, resId, theme);
 	}
 
 	/**
@@ -149,7 +155,8 @@ public final class FragmentUtils {
 	@SuppressWarnings({"NewApi", "deprecation"})
 	public static Drawable getDrawable(@NonNull Resources resources, @DrawableRes int resId, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
 		if (resId == 0) return null;
-		else return ACCESS_LOLLIPOP ? resources.getDrawable(resId, theme) : resources.getDrawable(resId);
+		else
+			return ACCESS_LOLLIPOP ? resources.getDrawable(resId, theme) : resources.getDrawable(resId);
 	}
 
 	/**

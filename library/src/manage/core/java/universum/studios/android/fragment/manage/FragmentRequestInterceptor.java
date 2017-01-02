@@ -18,20 +18,29 @@
  */
 package universum.studios.android.fragment.manage;
 
+import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
- * todo: description
+ * Interface that may be used to intercept a specific {@link FragmentRequest} when it is being executed
+ * via its associated {@link FragmentController}.
  *
  * @author Martin Albedinsky
+ * @see FragmentController#setRequestInterceptor(FragmentRequestInterceptor)
  */
 public interface FragmentRequestInterceptor {
 
 	/**
-	 * todo:
+	 * Called to allow this request interceptor to intercept execution of the given fragment <var>request</var>.
+	 * <p>
+	 * Interceptor may also just change configuration of the request and return {@code null} to indicate
+	 * that the associated fragment controller should handle the execution.
 	 *
-	 * @param request
-	 * @return
+	 * @param request The request to be executed.
+	 * @return Fragment associated with the request as result of the handled execution, {@code null}
+	 * to let the fragment controller handle the execution.
 	 */
-	boolean interceptFragmentRequest(@NonNull FragmentRequest request);
+	@Nullable
+	Fragment interceptFragmentRequest(@NonNull FragmentRequest request);
 }

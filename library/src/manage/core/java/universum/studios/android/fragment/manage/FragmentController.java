@@ -307,11 +307,11 @@ public class FragmentController {
 	 * <b>Note</b>, that this container id is used to specify initial/default container id for all
 	 * {@link FragmentRequest FragmentRequests} created via {@link #newRequest(Fragment)}
 	 *
-	 * @param layoutId The desired view container id.
+	 * @param containerId The desired view container id.
 	 * @see #getViewContainerId()
 	 */
-	public final void setViewContainerId(@IdRes int layoutId) {
-		this.mViewContainerId = layoutId;
+	public final void setViewContainerId(@IdRes int containerId) {
+		this.mViewContainerId = containerId;
 	}
 
 	/**
@@ -517,21 +517,20 @@ public class FragmentController {
 	 * Performs execution of the given fragment <var>request</var>.
 	 * <p>
 	 * This method also notifies all registered {@link OnRequestListener OnRequestListeners} about
-	 * the request execution if it has not been intercepted.
+	 * the request execution.
 	 * <p>
 	 * <b>Note</b>, that this method does not check if the request has been already executed or not.
 	 *
 	 * @param request The fragment request to be executed.
-	 * @return The fragment associated with the request or {@code null} if the request execution has
-	 * been intercepted by the current request interceptor.
+	 * @return The fragment associated with the request.
 	 * @see FragmentRequestInterceptor#interceptFragmentRequest(FragmentRequest)
 	 */
 	final Fragment executeRequest(FragmentRequest request) {
 		this.assertNotDestroyed("EXECUTE REQUEST");
-		if (mRequestInterceptor != null && mRequestInterceptor.interceptFragmentRequest(request)) {
-			return null;
+		Fragment fragment = mRequestInterceptor != null ? mRequestInterceptor.interceptFragmentRequest(request) : null;
+		if (fragment == null) {
+			fragment = onExecuteRequest(request);
 		}
-		final Fragment fragment = onExecuteRequest(request);
 		this.notifyRequestExecuted(request);
 		return fragment;
 	}
@@ -631,13 +630,13 @@ public class FragmentController {
 		switch (request.mTransaction) {
 			case FragmentRequest.REPLACE:
 				if (request.mViewContainerId == NO_CONTAINER_ID) {
-					throw new IllegalArgumentException("Cannot create REPLACE transaction. No fragment container id specified!");
+					throw new IllegalArgumentException("Cannot create REPLACE transaction. No view container id specified!");
 				}
 				transaction.replace(request.mViewContainerId, fragment, request.mTag);
 				break;
 			case FragmentRequest.ADD:
 				if (request.mViewContainerId == NO_CONTAINER_ID) {
-					throw new IllegalArgumentException("Cannot create ADD transaction. No fragment container id specified!");
+					throw new IllegalArgumentException("Cannot create ADD transaction. No view container id specified!");
 				}
 				transaction.add(request.mViewContainerId, fragment, request.mTag);
 				break;

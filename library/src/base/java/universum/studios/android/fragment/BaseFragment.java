@@ -493,7 +493,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	@Override
 	public boolean dispatchViewClick(@NonNull View view) {
 		onViewClick(view);
-		return true;
+		return false;
 	}
 
 	/**

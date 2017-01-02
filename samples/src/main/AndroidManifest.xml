@@ -39,5 +39,7 @@
 
 			<meta-data android:name="universum.studios.android.samples.SamplesMetaData.NAVIGATION_MENU" android:resource="@menu/navigation"/>
 		</activity>
+
+		<activity android:name=".ui.welcome.WelcomeActivity" />
 	</application>
 </manifest>
