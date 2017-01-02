@@ -65,10 +65,6 @@ import universum.studios.android.fragment.FragmentsConfig;
  * Fragments that are provided by factory attached to the fragment controller may be found via
  * {@link #findFragmentByFactoryId(int)} (when already showing) by theirs corresponding id defined
  * in the related factory.
- * <p>
- * {@link BaseFragmentFactory} which specifies base implementation of FragmentFactory may be used so
- * you do not need to implement all those interface required methods if taking advantage of using of
- * annotations processed by the base fragment factory class.
  *
  * <h3>Callbacks</h3>
  * If you want to listen for fragment request executions, a desired {@link OnRequestListener} may
@@ -216,9 +212,9 @@ public class FragmentController {
 	 * This constructor attaches the given activity to the new controller as one of interfaces
 	 * listed below if the activity implements listed interfaces respectively:
 	 * <ul>
-	 * <li>{@link FragmentRequestInterceptor} -> {@link #setRequestInterceptor(FragmentRequestInterceptor)}</li>
-	 * <li>{@link OnRequestListener} -> {@link #registerOnRequestListener(OnRequestListener)}</li>
-	 * <li>{@link OnBackStackChangeListener} -> {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}</li>
+	 * <li>{@link FragmentRequestInterceptor} -&gt; {@link #setRequestInterceptor(FragmentRequestInterceptor)}</li>
+	 * <li>{@link OnRequestListener} -&gt; {@link #registerOnRequestListener(OnRequestListener)}</li>
+	 * <li>{@link OnBackStackChangeListener} -&gt; {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}</li>
 	 * </ul>
 	 *
 	 * @param parentActivity The activity that wants to use the new fragment controller.
@@ -246,9 +242,9 @@ public class FragmentController {
 	 * This constructor attaches the given fragment to the new controller as one of interfaces
 	 * listed below if the fragment implements listed interfaces respectively:
 	 * <ul>
-	 * <li>{@link FragmentRequestInterceptor} -> {@link #setRequestInterceptor(FragmentRequestInterceptor)}</li>
-	 * <li>{@link OnRequestListener} -> {@link #registerOnRequestListener(OnRequestListener)}</li>
-	 * <li>{@link OnBackStackChangeListener} -> {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}</li>
+	 * <li>{@link FragmentRequestInterceptor} -&gt; {@link #setRequestInterceptor(FragmentRequestInterceptor)}</li>
+	 * <li>{@link OnRequestListener} -&gt; {@link #registerOnRequestListener(OnRequestListener)}</li>
+	 * <li>{@link OnBackStackChangeListener} -&gt; {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}</li>
 	 * </ul>
 	 * <p>
 	 * <b>Do not forget to destroy the new controller via {@link #destroy()} when the fragment is
@@ -745,6 +741,7 @@ public class FragmentController {
 	 * exception is thrown.
 	 *
 	 * @param factoryFragmentId Id of the desired factory fragment to find.
+	 * @return The requested fragment if found, {@code null} otherwise.
 	 * @throws NullPointerException     If there is no factory attached.
 	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
 	 *                                  specified id.

@@ -31,8 +31,7 @@ import android.view.ActionMode;
  *
  * @author Martin Albedinsky
  */
-@SuppressWarnings("WeakerAccess")
-public abstract class ActivityDelegate {
+@SuppressWarnings("WeakerAccess") public abstract class ActivityDelegate {
 
 	/**
 	 * Interface ===================================================================================

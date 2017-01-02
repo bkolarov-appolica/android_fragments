@@ -37,8 +37,7 @@ import universum.studios.android.fragment.util.FragmentUtils;
  *
  * @author Martin Albedinsky
  */
-@SuppressWarnings("WeakerAccess")
-public abstract class ActionBarDelegate {
+@SuppressWarnings("WeakerAccess") public abstract class ActionBarDelegate {
 
 	/**
 	 * Interface ===================================================================================

@@ -29,12 +29,6 @@ added in the future.**
     -keepclassmembers class * extends universum.studios.android.fragment.manage.BaseFragmentFactory {
         @universum.studios.android.fragment.annotation.FactoryFragment <fields>;
     }
-    # Keep FragmentFactory implementation details:
-    # - public empty constructor for proper working of instantiation process using reflection when joining
-    #   factories via annotation.
-    -keepclassmembers class * implements universum.studios.android.fragment.manage.FragmentController$FragmentFactory {
-        public <init>();
-    }
     # Keep annotation handlers implementation details:
     # - constructor taking Class parameter [always]
     -keepclassmembers class * extends universum.studios.android.fragment.annotation.handler.BaseAnnotationHandler {

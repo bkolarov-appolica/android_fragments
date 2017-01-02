@@ -133,8 +133,7 @@ public final class FragmentUtils {
 	@Nullable
 	public static Drawable getVectorDrawable(@NonNull Resources resources, @DrawableRes int resId, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
 		if (resId == 0) return null;
-		else
-			return ACCESS_LOLLIPOP ? getDrawable(resources, resId, theme) : VectorDrawableCompat.create(resources, resId, theme);
+		else return ACCESS_LOLLIPOP ? getDrawable(resources, resId, theme) : VectorDrawableCompat.create(resources, resId, theme);
 	}
 
 	/**
@@ -155,8 +154,7 @@ public final class FragmentUtils {
 	@SuppressWarnings({"NewApi", "deprecation"})
 	public static Drawable getDrawable(@NonNull Resources resources, @DrawableRes int resId, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
 		if (resId == 0) return null;
-		else
-			return ACCESS_LOLLIPOP ? resources.getDrawable(resId, theme) : resources.getDrawable(resId);
+		else return ACCESS_LOLLIPOP ? resources.getDrawable(resId, theme) : resources.getDrawable(resId);
 	}
 
 	/**

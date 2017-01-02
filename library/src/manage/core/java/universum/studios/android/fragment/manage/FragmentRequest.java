@@ -104,6 +104,19 @@ public final class FragmentRequest {
 	/**
 	 * Defines an annotation for determining available transaction types for {@link #transaction(int)}
 	 * method.
+	 *
+	 * <h3>Available types:</h3>
+	 * <ul>
+	 * <li>{@link #REPLACE}</li>
+	 * <li>{@link #ADD}</li>
+	 * <li>{@link #REMOVE}</li>
+	 * <li>{@link #SHOW}</li>
+	 * <li>{@link #HIDE}</li>
+	 * <li>{@link #ATTACH}</li>
+	 * <li>{@link #DETACH}</li>
+	 * </ul>
+	 *
+	 * @see #transaction(int)
 	 */
 	@IntDef({
 			REPLACE,
@@ -572,10 +585,13 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * todo:
+	 * Sets a transaction type determining what {@link FragmentTransaction} to perform for the
+	 * associated fragment.
 	 *
-	 * @param transaction
+	 * @param transaction The desired transaction type. One of types defined by {@link Transaction @Transaction}
+	 *                    annotation.
 	 * @return This request to allow methods chaining.
+	 * @see #transaction()
 	 */
 	public FragmentRequest transaction(@Transaction int transaction) {
 		this.mTransaction = transaction;
@@ -583,9 +599,12 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * todo:
+	 * Returns the transaction type determining what {@link FragmentTransaction} to perform.
+	 * <p>
+	 * Default value: <b>{@link #REPLACE}</b>
 	 *
-	 * @return
+	 * @return One of transaction types defined by {@link Transaction @Transaction} annotation.
+	 * @see #transaction(int)
 	 */
 	@Transaction
 	public int transaction() {

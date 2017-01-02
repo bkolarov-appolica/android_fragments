@@ -230,4 +230,10 @@ public final class ExtraFragmentTransitions {
 			R.animator.fragment_slide_out_top_back,
 			"SLIDE_TO_BOTTOM_AND_SCALE_OUT"
 	);
+
+	/**
+	 */
+	private ExtraFragmentTransitions() {
+		// Creation of instances of this class is not publicly allowed.
+	}
 }
