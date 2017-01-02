@@ -18,7 +18,7 @@ Available from the **Android [API Level 14](http://developer.android.com/about/v
 - [`com.android.support:support-annotations`](https://developer.android.com/topic/libraries/support-library/packages.html#annotations)
 - [`com.android.support:support-v4`](https://developer.android.com/topic/libraries/support-library/packages.html#v4)
 - [`com.android.support:appcompat-v7`](https://developer.android.com/topic/libraries/support-library/packages.html#v7)
-- [`com.android.support:support-vector-drawable`](https://developer.android.com/topic/libraries/support-library/packages.html#support-vector-drawable)
+- [`com.android.support:support-vector-drawable`](https://developer.android.com/topic/libraries/support-library/packages.html#vector-drawable)
 
 ## License ##
 
