@@ -31,11 +31,6 @@ import universum.studios.android.fragment.manage.BaseFragmentFactory;
  * Annotation type used to mark an <b>int</b> field that specifies an id of fragment provided by a
  * specific {@link universum.studios.android.fragment.manage.BaseFragmentFactory BaseFragmentFactory}.
  *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link BaseFragmentFactory}</li>
- * </ul>
- *
  * @author Martin Albedinsky
  */
 @Target({ElementType.FIELD, ElementType.TYPE})

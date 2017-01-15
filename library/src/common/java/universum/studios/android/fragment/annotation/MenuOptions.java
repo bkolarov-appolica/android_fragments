@@ -29,11 +29,6 @@ import java.lang.annotation.Target;
 /**
  * Defines an annotation for determining how a {@link android.view.Menu Menu} should be set.
  *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link universum.studios.android.fragment.ActionBarFragment ActionBarFragment}</li>
- * </ul>
- *
  * @author Martin Albedinsky
  */
 @Target(ElementType.TYPE)
