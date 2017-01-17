@@ -40,7 +40,7 @@ public final class FragmentTransitions {
 	/**
 	 * Transition that may be used for changing of two fragments without any animation.
 	 */
-	public static final BasicFragmentTransition NONE = new BasicFragmentTransition(0, 0, 0, 0, "NONE");
+	public static final FragmentTransition NONE = new BasicFragmentTransition(0, 0, 0, 0, "NONE");
 
 	/**
 	 * Transition that may be used to fade a new incoming fragment into the screen and an outgoing

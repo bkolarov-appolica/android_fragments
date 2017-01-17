@@ -2,7 +2,7 @@ Change-Log
 ===============
 
 ### Release 1.0.1 ###
-> --.01.2017
+> 17.01.2017
 
 - Removed interpolator from **alpha** animations/transitions.
 - Updated **JavaDoc** for annotations.

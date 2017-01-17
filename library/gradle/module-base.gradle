@@ -34,5 +34,5 @@ android {
 dependencies {
     final String supportVersion = project.property('android.support.version')
     compile 'com.android.support:appcompat-v7:' + supportVersion
-    compile 'universum.studios.android:fragments-core:1.0.0@aar'
+    compile 'universum.studios.android:fragments-core:1.0.1@aar'
 }
