@@ -30,11 +30,6 @@ import java.lang.annotation.Target;
 /**
  * Defines an annotation for determining a layout resource that should be inflated as a root view.
  *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link universum.studios.android.support.fragment.BaseFragment BaseFragment}</li>
- * </ul>
- *
  * @author Martin Albedinsky
  */
 @Target(ElementType.TYPE)

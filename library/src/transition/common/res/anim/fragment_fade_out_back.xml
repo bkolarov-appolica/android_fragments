@@ -20,7 +20,6 @@
  */
 -->
 <alpha xmlns:android="http://schemas.android.com/apk/res/android"
-       android:interpolator="@anim/fragment_interpolator"
        android:duration="@integer/fragment_config_anim_alpha_out_back_duration"
        android:fromAlpha="1.0"
        android:toAlpha="0.0"

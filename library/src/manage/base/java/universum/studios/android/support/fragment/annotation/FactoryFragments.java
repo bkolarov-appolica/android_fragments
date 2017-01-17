@@ -29,11 +29,6 @@ import universum.studios.android.support.fragment.manage.FragmentFactory;
  * Defines an annotation for determining set of Fragment ids that are provided by a specific
  * {@link FragmentFactory}.
  *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link universum.studios.android.support.fragment.manage.BaseFragmentFactory BaseFragmentFactory}</li>
- * </ul>
- *
  * @author Martin Albedinsky
  */
 @Target(ElementType.TYPE)

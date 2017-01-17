@@ -32,11 +32,6 @@ import java.lang.annotation.Target;
 /**
  * Defines an annotation for determining how an {@link ActionBar} should be set.
  *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link universum.studios.android.support.fragment.ActionBarFragment ActionBarFragment}</li>
- * </ul>
- *
  * @author Martin Albedinsky
  */
 @Target(ElementType.TYPE)

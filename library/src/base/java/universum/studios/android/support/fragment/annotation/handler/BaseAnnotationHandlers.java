@@ -29,7 +29,7 @@ import universum.studios.android.support.fragment.annotation.ContentView;
 
 /**
  * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
- * base fragments and classes.
+ * classes from the fragments base package.
  *
  * @author Martin Albedinsky
  */

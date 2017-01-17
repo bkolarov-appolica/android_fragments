@@ -22,87 +22,87 @@ as usually.
         }
     }
 
-**[Core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main)**
+**[Core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)**
 
-    compile 'universum.studios.android.support:support-fragments-core:1.0.0@aar'
+    compile 'universum.studios.android:fragments-core:1.0.1@aar'
 
-**[Base](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/base)**
+**[Base](https://github.com/universum-studios/android_fragments/tree/master/library/src/base)**
 
-    compile 'universum.studios.android.support:support-fragments-base:1.0.0@aar'
-
-_depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main)
-
-**[Common](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/common)**
-
-    compile 'universum.studios.android.support:support-fragments-common:1.0.0@aar'
+    compile 'universum.studios.android:fragments-base:1.0.1@aar'
 
 _depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-base](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/base)
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)
 
-**[Web](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/web)**
+**[Common](https://github.com/universum-studios/android_fragments/tree/master/library/src/common)**
 
-    compile 'universum.studios.android.support:support-fragments-web:1.0.0@aar'
-
-_depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-base](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/base),
-[support-fragments-common](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/common)
-
-**[Manage](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage)**
-
-    compile 'universum.studios.android.support:support-fragments-manage:1.0.0@aar'
+    compile 'universum.studios.android:fragments-common:1.0.1@aar'
 
 _depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main)
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-base](https://github.com/universum-studios/android_fragments/tree/master/library/src/base)
 
-**[Manage-Core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/core)**
+**[Web](https://github.com/universum-studios/android_fragments/tree/master/library/src/web)**
 
-    compile 'universum.studios.android.support:support-fragments-manage-core:1.0.0@aar'
-
-_depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main)
-
-**[Manage-Base](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/base)**
-
-    compile 'universum.studios.android.support:support-fragments-manage-base:1.0.0@aar'
+    compile 'universum.studios.android:fragments-web:1.0.1@aar'
 
 _depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/core)
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-base](https://github.com/universum-studios/android_fragments/tree/master/library/src/base),
+[fragments-common](https://github.com/universum-studios/android_fragments/tree/master/library/src/common)
 
-**[Transition](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition)**
+**[Manage](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage)**
 
-    compile 'universum.studios.android.support:support-fragments-transition:1.0.0@aar'
-
-_depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/core)
-
-**[Transition-Core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition/core)**
-
-    compile 'universum.studios.android.support:support-fragments-transition-core:1.0.0@aar'
+    compile 'universum.studios.android:fragments-manage:1.0.1@aar'
 
 _depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/core)
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)
 
-**[Transition-Common](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition/common)**
+**[Manage-Core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core)**
 
-    compile 'universum.studios.android.support:support-fragments-transition-common:1.0.0@aar'
-
-_depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/core),
-[support-fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition/core)
-
-**[Transition-Extra](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition/extra)**
-
-    compile 'universum.studios.android.support:support-fragments-transition-extra:1.0.0@aar'
+    compile 'universum.studios.android:fragments-manage-core:1.0.1@aar'
 
 _depends on:_
-[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/main),
-[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/manage/core),
-[support-fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition/core),
-[support-fragments-transition-extra](https://github.com/universum-studios/android_fragments/tree/support-master/library/src/transition/extra)
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)
+
+**[Manage-Base](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/base)**
+
+    compile 'universum.studios.android:fragments-manage-base:1.0.1@aar'
+
+_depends on:_
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core)
+
+**[Transition](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition)**
+
+    compile 'universum.studios.android:fragments-transition:1.0.1@aar'
+
+_depends on:_
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core)
+
+**[Transition-Core](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/core)**
+
+    compile 'universum.studios.android:fragments-transition-core:1.0.1@aar'
+
+_depends on:_
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core)
+
+**[Transition-Common](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/common)**
+
+    compile 'universum.studios.android:fragments-transition-common:1.0.1@aar'
+
+_depends on:_
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core),
+[fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/core)
+
+**[Transition-Extra](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/extra)**
+
+    compile 'universum.studios.android:fragments-transition-extra:1.0.1@aar'
+
+_depends on:_
+[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
+[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core),
+[fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/core),
+[fragments-transition-extra](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/extra)

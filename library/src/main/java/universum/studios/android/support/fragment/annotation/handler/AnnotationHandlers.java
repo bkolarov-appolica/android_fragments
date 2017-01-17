@@ -31,7 +31,7 @@ import universum.studios.android.support.fragment.FragmentsConfig;
  *
  * @author Martin Albedinsky
  */
-public abstract class AnnotationHandlers {
+public class AnnotationHandlers {
 
 	/**
 	 * Interface ===================================================================================

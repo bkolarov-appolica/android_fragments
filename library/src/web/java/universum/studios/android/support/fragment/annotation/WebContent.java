@@ -28,11 +28,6 @@ import java.lang.annotation.Target;
 /**
  * Defines an annotation for determining a content to be loaded into {@link android.webkit.WebView WebView}.
  *
- * <h3>Usage</h3>
- * <ul>
- * <li>{@link universum.studios.android.support.fragment.WebFragment WebFragment}</li>
- * </ul>
- *
  * @author Martin Albedinsky
  */
 @Target(ElementType.TYPE)
