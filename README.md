@@ -3,7 +3,7 @@ Android Fragments (support)
 
 ## Download ##
 
-Download the latest **[release](https://github.com/universum-studios/android_fragments/releases/tag/support-1.0.0 "Latest Releases page")** or **add as dependency** in your project via:
+Download the latest **[release](https://github.com/universum-studios/android_fragments/releases/tag/support-1.1.0 "Latest Releases page")** or **add as dependency** in your project via:
 
 ### Gradle ###
 
