@@ -74,21 +74,21 @@ public final class FragmentTransitions {
 	 *
 	 * <h3>Powered by animations:</h3>
 	 * <ul>
-	 * <li><b>Incoming:</b> {@link R.animator#fragment_fade_in}</li>
-	 * <li><b>Outgoing:</b> {@link R.animator#fragment_hold}</li>
-	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_hold_back}</li>
-	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_fade_out_back}</li>
+	 * <li><b>Incoming:</b> {@link R.anim#fragment_fade_in}</li>
+	 * <li><b>Outgoing:</b> {@link R.anim#fragment_hold}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.anim#fragment_hold_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.anim#fragment_fade_out_back}</li>
 	 * </ul>
 	 */
 	public static final FragmentTransition CROSS_FADE_AND_HOLD = new BasicFragmentTransition(
 			// Incoming animation.
-			R.animator.fragment_fade_in,
+			R.anim.fragment_fade_in,
 			// Outgoing animation.
-			R.animator.fragment_hold,
+			R.anim.fragment_hold,
 			// Incoming back-stack animation.
-			R.animator.fragment_hold_back,
+			R.anim.fragment_hold_back,
 			// Outgoing back-stack animation.
-			R.animator.fragment_fade_out_back,
+			R.anim.fragment_fade_out_back,
 			"CROSS_FADE_AND_HOLD"
 	);
 
