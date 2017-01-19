@@ -898,32 +898,47 @@ public final class FragmentRequest {
 	/**
 	 * Adds a shared element view and its name for the associated fragment.
 	 * <p>
-	 * Multiple calls to this method will append list of already specified shared element pairs.
+	 * Subsequent calls to this method will append list of already specified shared element pairs.
 	 *
-	 * @param element The view to be shared via transition.
-	 * @param name    The name of the shared element.
+	 * @param element     The view to be shared via transition.
+	 * @param elementName The name of the shared element.
 	 * @return This request to allow methods chaining.
+	 * @see #sharedElements(Pair[])
 	 * @see FragmentTransaction#addSharedElement(View, String)
 	 */
-	public final FragmentRequest sharedElement(@NonNull View element, @NonNull String name) {
+	public final FragmentRequest sharedElement(@NonNull View element, @NonNull String elementName) {
 		if (mSharedElements == null) {
 			this.mSharedElements = new ArrayList<>(1);
 		}
-		this.mSharedElements.add(new Pair<>(element, name));
+		this.mSharedElements.add(new Pair<>(element, elementName));
 		return this;
 	}
 
 	/**
-	 * Returns all shared elements specified for this request.
+	 * Returns a list of all shared elements specified for this request.
 	 *
-	 * @return List with shared element pairs for the associated fragment or {@code null} if no
-	 * pairs has been specified yet.
+	 * @return List of shared elements or {@code null} if there are no shared elements specified.
 	 * @see #sharedElement(View, String)
 	 * @see #sharedElements(Pair[])
 	 */
 	@Nullable
 	public final List<Pair<View, String>> sharedElements() {
 		return mSharedElements;
+	}
+
+	/**
+	 * Returns the single shared element at the {@code 0} position among the current shared elements.
+	 * <p>
+	 * This method may be used to obtain a single shared element when there is specified only one for
+	 * this request.
+	 *
+	 * @return Single shared element or {@code null} if there are no shared elements specified.
+	 * @see #sharedElements()
+	 * @see #sharedElement(View, String)
+	 */
+	@Nullable
+	public Pair<View, String> singleSharedElement() {
+		return mSharedElements != null && !mSharedElements.isEmpty() ? mSharedElements.get(0) : null;
 	}
 
 	/**

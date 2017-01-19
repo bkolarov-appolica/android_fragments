@@ -24,18 +24,18 @@ as usually.
 
 **[Core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)**
 
-    compile 'universum.studios.android:fragments-core:1.0.1@aar'
+    compile 'universum.studios.android:fragments-core:1.1.0@aar'
 
 **[Base](https://github.com/universum-studios/android_fragments/tree/master/library/src/base)**
 
-    compile 'universum.studios.android:fragments-base:1.0.1@aar'
+    compile 'universum.studios.android:fragments-base:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)
 
 **[Common](https://github.com/universum-studios/android_fragments/tree/master/library/src/common)**
 
-    compile 'universum.studios.android:fragments-common:1.0.1@aar'
+    compile 'universum.studios.android:fragments-common:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
@@ -43,7 +43,7 @@ _depends on:_
 
 **[Web](https://github.com/universum-studios/android_fragments/tree/master/library/src/web)**
 
-    compile 'universum.studios.android:fragments-web:1.0.1@aar'
+    compile 'universum.studios.android:fragments-web:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
@@ -52,21 +52,21 @@ _depends on:_
 
 **[Manage](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage)**
 
-    compile 'universum.studios.android:fragments-manage:1.0.1@aar'
+    compile 'universum.studios.android:fragments-manage:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)
 
 **[Manage-Core](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/core)**
 
-    compile 'universum.studios.android:fragments-manage-core:1.0.1@aar'
+    compile 'universum.studios.android:fragments-manage-core:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main)
 
 **[Manage-Base](https://github.com/universum-studios/android_fragments/tree/master/library/src/manage/base)**
 
-    compile 'universum.studios.android:fragments-manage-base:1.0.1@aar'
+    compile 'universum.studios.android:fragments-manage-base:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
@@ -74,7 +74,7 @@ _depends on:_
 
 **[Transition](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition)**
 
-    compile 'universum.studios.android:fragments-transition:1.0.1@aar'
+    compile 'universum.studios.android:fragments-transition:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
@@ -82,7 +82,7 @@ _depends on:_
 
 **[Transition-Core](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/core)**
 
-    compile 'universum.studios.android:fragments-transition-core:1.0.1@aar'
+    compile 'universum.studios.android:fragments-transition-core:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
@@ -90,7 +90,7 @@ _depends on:_
 
 **[Transition-Common](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/common)**
 
-    compile 'universum.studios.android:fragments-transition-common:1.0.1@aar'
+    compile 'universum.studios.android:fragments-transition-common:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),
@@ -99,7 +99,7 @@ _depends on:_
 
 **[Transition-Extra](https://github.com/universum-studios/android_fragments/tree/master/library/src/transition/extra)**
 
-    compile 'universum.studios.android:fragments-transition-extra:1.0.1@aar'
+    compile 'universum.studios.android:fragments-transition-extra:1.1.0@aar'
 
 _depends on:_
 [fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library/src/main),

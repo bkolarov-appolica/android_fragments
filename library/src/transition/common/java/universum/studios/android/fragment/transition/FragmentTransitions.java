@@ -26,6 +26,7 @@ import universum.studios.android.fragment.manage.FragmentTransition;
  * <ul>
  * <li>{@link #NONE}</li>
  * <li>{@link #CROSS_FADE}</li>
+ * <li>{@link #CROSS_FADE_AND_HOLD}</li>
  * <li>{@link #SLIDE_TO_RIGHT}</li>
  * <li>{@link #SLIDE_TO_LEFT}</li>
  * <li>{@link #SLIDE_TO_BOTTOM}</li>
@@ -64,6 +65,31 @@ public final class FragmentTransitions {
 			// Outgoing back-stack animation.
 			R.animator.fragment_fade_out_back,
 			"CROSS_FADE"
+	);
+
+	/**
+	 * Like {@link #CROSS_FADE} but this will hold an outgoing fragment still and only a new incoming
+	 * fragment will be animated. When playing back-stack animations the back-stacked fragment will
+	 * be still and the current outgoing will be animated.
+	 *
+	 * <h3>Powered by animations:</h3>
+	 * <ul>
+	 * <li><b>Incoming:</b> {@link R.animator#fragment_fade_in}</li>
+	 * <li><b>Outgoing:</b> {@link R.animator#fragment_hold}</li>
+	 * <li><b>Incoming (back-stack):</b> {@link R.animator#fragment_hold_back}</li>
+	 * <li><b>Outgoing (back-stack):</b> {@link R.animator#fragment_fade_out_back}</li>
+	 * </ul>
+	 */
+	public static final FragmentTransition CROSS_FADE_AND_HOLD = new BasicFragmentTransition(
+			// Incoming animation.
+			R.animator.fragment_fade_in,
+			// Outgoing animation.
+			R.animator.fragment_hold,
+			// Incoming back-stack animation.
+			R.animator.fragment_hold_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_fade_out_back,
+			"CROSS_FADE_AND_HOLD"
 	);
 
 	/**
