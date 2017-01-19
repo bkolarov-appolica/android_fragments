@@ -61,13 +61,13 @@ public final class WelcomeActivity extends SamplesActivity implements FragmentRe
 	public Fragment interceptFragmentRequest(@NonNull FragmentRequest request) {
 		switch (request.fragmentId()) {
 			case WelcomeFragments.SIGN_IN:
-				request.transition(FragmentTransitions.SLIDE_TO_LEFT).addToBackStack(true);
+				request.transition(FragmentTransitions.CROSS_FADE_AND_HOLD).addToBackStack(true);
 				break;
 			case WelcomeFragments.SIGN_UP:
-				request.transition(FragmentTransitions.SLIDE_TO_RIGHT).addToBackStack(true);
+				request.transition(FragmentTransitions.CROSS_FADE).addToBackStack(true);
 				break;
 			case WelcomeFragments.LOST_PASSWORD:
-				request.transition(FragmentTransitions.SLIDE_TO_TOP).addToBackStack(true);
+				request.transition(FragmentTransitions.CROSS_FADE).addToBackStack(true);
 				break;
 		}
 		return null;

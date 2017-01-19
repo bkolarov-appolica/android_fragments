@@ -19,7 +19,6 @@
 package universum.studios.android.support.fragment.transition;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
 
@@ -31,7 +30,7 @@ import universum.studios.android.support.fragment.manage.FragmentTransition;
  *
  * @author Martin Albedinsky
  */
-public class BasicFragmentTransition implements FragmentTransition, Parcelable {
+public class BasicFragmentTransition implements FragmentTransition {
 
 	/**
 	 * Interface ===================================================================================
@@ -104,15 +103,16 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	 */
 
 	/**
-	 * Same as {@link #BasicFragmentTransition(int, int, int, int)} with back-stack animations set to
-	 * {@code 0}.
+	 * Same as {@link #BasicFragmentTransition(int, int, int, int)} with back-stack animations set
+	 * to {@link #NO_ANIMATION}.
 	 */
 	public BasicFragmentTransition(@AnimRes int inAnim, @AnimRes int outAnim) {
 		this(inAnim, outAnim, NO_ANIMATION, NO_ANIMATION);
 	}
 
 	/**
-	 * Same as {@link #BasicFragmentTransition(int, int, int, int, String)} with empty name.
+	 * Same as {@link #BasicFragmentTransition(int, int, int, int, String)} with name specified
+	 * as {@code "UNKNOWN"}.
 	 */
 	public BasicFragmentTransition(@AnimRes int inAnim, @AnimRes int outAnim, @AnimRes int inBackAnim, @AnimRes int outBackAnim) {
 		this(inAnim, outAnim, inBackAnim, outBackAnim, "");
@@ -128,7 +128,7 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	 *                    the back stack.
 	 * @param outBackAnim A resource id of the animation for an outgoing fragment to be destroyed and
 	 *                    replaced by the incoming one.
-	 * @param name        The name for the new transition.
+	 * @param name        Name for the new transition.
 	 */
 	public BasicFragmentTransition(@AnimRes int inAnim, @AnimRes int outAnim, @AnimRes int inBackAnim, @AnimRes int outBackAnim, @NonNull String name) {
 		this.mInAnimRes = inAnim;
@@ -142,7 +142,7 @@ public class BasicFragmentTransition implements FragmentTransition, Parcelable {
 	 * Called form {@link #CREATOR} to create an instance of FragmentTransition form the given parcel
 	 * <var>source</var>.
 	 *
-	 * @param source Parcel with data for a new instance.
+	 * @param source Parcel with data for the new instance.
 	 */
 	protected BasicFragmentTransition(@NonNull Parcel source) {
 		this.mInAnimRes = source.readInt();

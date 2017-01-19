@@ -18,6 +18,7 @@
  */
 package universum.studios.android.support.fragment.manage;
 
+import android.os.Parcelable;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
@@ -25,12 +26,12 @@ import android.support.v4.app.FragmentTransaction;
 /**
  * FragmentTransition provides a foursome of animation resources that are meant for {@link FragmentTransaction}.
  * <p>
- * Implementations of FragmentTransition class may be supplied to {@link FragmentRequest}
- * to animate changes between desired fragments.
+ * Implementations of FragmentTransition class may be supplied to {@link FragmentRequest} to animate
+ * changes between desired fragments.
  *
  * @author Martin Albedinsky
  */
-public interface FragmentTransition {
+public interface FragmentTransition extends Parcelable {
 
 	/**
 	 * Constants ===================================================================================
@@ -55,7 +56,7 @@ public interface FragmentTransition {
 	int getIncomingAnimation();
 
 	/**
-	 * Returns the animation resource for an old outgoing fragment.
+	 * Returns the animation resource for the current outgoing fragment.
 	 *
 	 * @return Animation resource or {@link #NO_ANIMATION} if no animation should be played for
 	 * outgoing fragment.
@@ -74,7 +75,7 @@ public interface FragmentTransition {
 	int getIncomingBackStackAnimation();
 
 	/**
-	 * Returns the animation resource for a current outgoing fragment when it is being popped from
+	 * Returns the animation resource for the current outgoing fragment when it is being popped from
 	 * the back stack.
 	 *
 	 * @return Animation resource or {@link #NO_ANIMATION} if no animation should be played for
