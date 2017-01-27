@@ -4,6 +4,17 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Fragments.iml" filepath="$PROJECT_DIR$/Fragments.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-base/library-base.iml" filepath="$PROJECT_DIR$/library-base/library-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-common/library-common.iml" filepath="$PROJECT_DIR$/library-common/library-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-core/library-core.iml" filepath="$PROJECT_DIR$/library-core/library-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-manage-base/library-manage-base.iml" filepath="$PROJECT_DIR$/library-manage-base/library-manage-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-manage-core/library-manage-core.iml" filepath="$PROJECT_DIR$/library-manage-core/library-manage-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-manage_group/library-manage_group.iml" filepath="$PROJECT_DIR$/library-manage_group/library-manage_group.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-transition-common/library-transition-common.iml" filepath="$PROJECT_DIR$/library-transition-common/library-transition-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-transition-core/library-transition-core.iml" filepath="$PROJECT_DIR$/library-transition-core/library-transition-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-transition-extra/library-transition-extra.iml" filepath="$PROJECT_DIR$/library-transition-extra/library-transition-extra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-transition_group/library-transition_group.iml" filepath="$PROJECT_DIR$/library-transition_group/library-transition_group.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library-web/library-web.iml" filepath="$PROJECT_DIR$/library-web/library-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/samples/samples.iml" filepath="$PROJECT_DIR$/samples/samples.iml" />
     </modules>
   </component>
