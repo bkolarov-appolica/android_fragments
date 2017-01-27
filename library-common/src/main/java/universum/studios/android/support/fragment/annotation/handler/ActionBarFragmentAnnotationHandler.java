@@ -18,10 +18,10 @@
  */
 package universum.studios.android.support.fragment.annotation.handler;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
-import android.view.ActionMode;
+import android.support.v7.view.ActionMode;
 import android.view.Menu;
 
 import universum.studios.android.support.fragment.ActionBarDelegate;
