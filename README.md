@@ -1,4 +1,4 @@
-Android Fragments (support)
+Fragments (support)
 ===============
 
 ## Download ##

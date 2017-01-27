@@ -27,6 +27,7 @@ android {
 
     defaultConfig {
         minSdkVersion project.property('library.minSdkVersion')
+        consumerProguardFiles 'proguard-rules.pro'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,10 +35,34 @@ android {
         release {
             minifyEnabled false
         }
+        modules {
+            minifyEnabled false
+        }
         debug {
             minifyEnabled false
             testCoverageEnabled true
         }
+    }
+
+    sourceSets {
+        release.java.srcDirs = [
+                '../library-core/src/main/java',
+                '../library-base/src/main/java',
+                '../library-common/src/main/java',
+                '../library-web/src/main/java',
+                '../library-manage-core/src/main/java',
+                '../library-manage-base/src/main/java',
+                '../library-transition-core/src/main/java',
+                '../library-transition-common/src/main/java',
+                '../library-transition-extra/src/main/java'
+        ]
+        debug.java.srcDirs = release.java.srcDirs
+        release.res.srcDirs = [
+                '../library-transition-core/src/main/res',
+                '../library-transition-common/src/main/res',
+                '../library-transition-extra/src/main/res'
+        ]
+        debug.res.srcDirs = release.res.srcDirs
     }
 
     compileOptions {
@@ -58,7 +83,8 @@ dependencies {
     /*
      * RELEASE DEPENDENCIES ------------------------------------------------------------------------
      */
-    compile 'com.android.support:support-v4:' + supportVersion
+    compile 'com.android.support:support-annotations:' + supportVersion
+    compile 'com.android.support:appcompat-v7:' + supportVersion
     compile 'com.android.support:support-vector-drawable:' + supportVersion
 
     /*
@@ -82,14 +108,5 @@ dependencies {
     }
 }
 
-// Apply MODULE specific build script.
-if (Boolean.valueOf((String) project.property('library.module.build'))) {
-    // Apply separate module configuration.
-    apply from: 'gradle/module-' + project.property('library.module.name') + '.gradle'
-} else {
-    // Apply all modules configuration.
-    apply from: 'gradle/module-all.gradle'
-}
-
-// Apply MAVEN script.
-apply from: 'maven.gradle'
+// Apply PUBLISH script.
+apply from: '../publish/publish.gradle'

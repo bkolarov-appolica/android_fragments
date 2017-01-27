@@ -9,6 +9,17 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/library-base" />
+            <option value="$PROJECT_DIR$/library-common" />
+            <option value="$PROJECT_DIR$/library-core" />
+            <option value="$PROJECT_DIR$/library-manage-base" />
+            <option value="$PROJECT_DIR$/library-manage-core" />
+            <option value="$PROJECT_DIR$/library-manage_group" />
+            <option value="$PROJECT_DIR$/library-transition-common" />
+            <option value="$PROJECT_DIR$/library-transition-core" />
+            <option value="$PROJECT_DIR$/library-transition-extra" />
+            <option value="$PROJECT_DIR$/library-transition_group" />
+            <option value="$PROJECT_DIR$/library-web" />
             <option value="$PROJECT_DIR$/samples" />
           </set>
         </option>
