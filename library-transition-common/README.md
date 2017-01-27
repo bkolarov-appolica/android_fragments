@@ -1,13 +1,13 @@
-Fragments-Transition-Common
+Fragments-Transition-Common (support)
 ===============
 
 ## Download ##
 
 ### Gradle ###
 
-    compile 'universum.studios.android:fragments-transition-common:1.1.0@aar'
+    compile 'universum.studios.android.support:support-fragments-transition-common:1.1.0@aar'
 
 _depends on:_
-[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library-core),
-[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core),
-[fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/master/library-transition-core)
+[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-core),
+[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core),
+[support-fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-core)

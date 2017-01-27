@@ -1,8 +1,8 @@
-Fragments-Core
+Fragments-Core (support)
 ===============
 
 ## Download ##
 
 ### Gradle ###
 
-    compile 'universum.studios.android:fragments-core:1.1.0@aar'
+    compile 'universum.studios.android.support:support-fragments-core:1.1.0@aar'

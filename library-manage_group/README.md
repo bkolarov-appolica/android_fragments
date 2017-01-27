@@ -1,11 +1,11 @@
-@Fragments-Manage
+@Fragments-Manage (support)
 ===============
 
 ## Download ##
 
 ### Gradle ###
 
-    compile 'universum.studios.android:fragments-manage:1.1.0@aar'
+    compile 'universum.studios.android.support:support-fragments-manage:1.1.0@aar'
 
 _depends on:_
-[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library-core)
+[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-core)

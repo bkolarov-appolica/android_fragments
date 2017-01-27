@@ -18,10 +18,10 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.app.Fragment;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
@@ -31,7 +31,6 @@ import universum.studios.android.support.fragment.annotation.FactoryFragments;
 import universum.studios.android.support.fragment.annotation.FragmentAnnotations;
 import universum.studios.android.support.fragment.annotation.handler.BaseManagementAnnotationHandlers;
 import universum.studios.android.support.fragment.annotation.handler.FragmentFactoryAnnotationHandler;
-import universum.studios.android.support.fragment.manage.FragmentFactory;
 
 /**
  * A {@link FragmentFactory} base implementation that may be used for fragment factories used

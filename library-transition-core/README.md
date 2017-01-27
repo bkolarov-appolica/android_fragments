@@ -1,12 +1,12 @@
-Fragments-Transition-Core
+Fragments-Transition-Core (support)
 ===============
 
 ## Download ##
 
 ### Gradle ###
 
-    compile 'universum.studios.android:fragments-transition-core:1.1.0@aar'
+    compile 'universum.studios.android.support:support-fragments-transition-core:1.1.0@aar'
 
 _depends on:_
-[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library-core),
-[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core)
+[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-core),
+[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core)

@@ -18,7 +18,7 @@
  */
 package universum.studios.android.support.fragment.annotation;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

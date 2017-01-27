@@ -20,6 +20,7 @@ package universum.studios.android.support.fragment;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -158,7 +159,7 @@ import android.view.ActionMode;
 		 */
 		@Override
 		public void invalidateOptionsMenu() {
-			mActivity.invalidateOptionsMenu();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) mActivity.invalidateOptionsMenu();
 		}
 
 		/**
@@ -166,7 +167,8 @@ import android.view.ActionMode;
 		@Nullable
 		@Override
 		public ActionBar getActionBar() {
-			return mActivity.getActionBar();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) return mActivity.getActionBar();
+			else return null;
 		}
 
 		/**
@@ -174,6 +176,7 @@ import android.view.ActionMode;
 		@Nullable
 		@Override
 		public android.support.v7.app.ActionBar getSupportActionBar() {
+			// Ignored for the support package.
 			return null;
 		}
 
@@ -182,7 +185,8 @@ import android.view.ActionMode;
 		@Nullable
 		@Override
 		public ActionMode startActionMode(@NonNull ActionMode.Callback callback) {
-			return mActivity.startActionMode(callback);
+			// Ignored for the support package.
+			return null;
 		}
 	}
 

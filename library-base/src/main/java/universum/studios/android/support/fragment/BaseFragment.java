@@ -19,17 +19,16 @@
 package universum.studios.android.support.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.transition.Transition;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -420,7 +419,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
-	public void setEnterTransition(Transition transition) {
+	public void setEnterTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setEnterTransition(transition);
 	}
 
@@ -429,7 +428,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
-	public void setExitTransition(Transition transition) {
+	public void setExitTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setExitTransition(transition);
 	}
 
@@ -438,7 +437,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
-	public void setReenterTransition(Transition transition) {
+	public void setReenterTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setReenterTransition(transition);
 	}
 
@@ -447,7 +446,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
-	public void setReturnTransition(Transition transition) {
+	public void setReturnTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setReturnTransition(transition);
 	}
 
@@ -456,7 +455,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
-	public void setSharedElementEnterTransition(Transition transition) {
+	public void setSharedElementEnterTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setSharedElementEnterTransition(transition);
 	}
 
@@ -465,7 +464,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
 	 */
 	@Override
-	public void setSharedElementReturnTransition(Transition transition) {
+	public void setSharedElementReturnTransition(Object transition) {
 		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setSharedElementReturnTransition(transition);
 	}
 

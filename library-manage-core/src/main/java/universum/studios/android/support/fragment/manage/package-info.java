@@ -17,7 +17,7 @@
  * =================================================================================================
  */
 /**
- * Provides classes that may be used to simplify management of {@link android.app.Fragment Fragments}
+ * Provides classes that may be used to simplify management of {@link android.support.v4.app.Fragment Fragments}
  * in an Android application, mainly theirs showing/changing/hiding.
  *
  * @author Martin Albedinsky

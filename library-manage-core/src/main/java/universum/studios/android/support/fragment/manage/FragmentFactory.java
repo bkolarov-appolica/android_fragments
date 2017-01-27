@@ -18,7 +18,7 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 
 /**

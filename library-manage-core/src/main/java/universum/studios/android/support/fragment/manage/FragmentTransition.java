@@ -18,7 +18,7 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Parcelable;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
