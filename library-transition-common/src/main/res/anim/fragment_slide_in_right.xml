@@ -19,6 +19,9 @@
  * =================================================================================================
  */
 -->
-<manifest package="universum.studios.android.support.fragment.core">
-	<application/>
-</manifest>
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+           android:interpolator="@anim/fragment_interpolator"
+           android:zAdjustment="top"
+           android:duration="@integer/fragment_config_anim_slide_horizontal_in_duration"
+           android:fromXDelta="-100%p"
+           android:toXDelta="0%p"/>

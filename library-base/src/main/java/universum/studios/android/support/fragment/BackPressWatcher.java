@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /*
  * =================================================================================================
  *                             Copyright (C) 2016 Universum Studios
  * =================================================================================================
  *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
- * *************************************************************************************************
+ * -------------------------------------------------------------------------------------------------
  * You may use this file only in compliance with the License. More details and copy of this License
  * you may obtain at
  *
@@ -18,7 +16,20 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
--->
-<manifest package="universum.studios.android.support.fragment.core">
-	<application/>
-</manifest>
+package universum.studios.android.support.fragment;
+
+/**
+ * The BackPressWatcher interface specifies one callback that may be used to dispatch a back button
+ * press event to a watcher that implements this interface.
+ *
+ * @author Martin Albedinsky
+ */
+public interface BackPressWatcher {
+
+	/**
+	 * Called to dispatch a back press event to this watcher instance.
+	 *
+	 * @return {@code True} if this watcher processed the back press event, {@code false} otherwise.
+	 */
+	boolean dispatchBackPress();
+}

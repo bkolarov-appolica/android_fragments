@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /*
  * =================================================================================================
  *                             Copyright (C) 2016 Universum Studios
  * =================================================================================================
  *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
- * *************************************************************************************************
+ * -------------------------------------------------------------------------------------------------
  * You may use this file only in compliance with the License. More details and copy of this License
  * you may obtain at
  *
@@ -18,7 +16,33 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
--->
-<manifest package="universum.studios.android.support.fragment.core">
-	<application/>
-</manifest>
+package universum.studios.android.support.fragment.annotation;
+
+import android.support.annotation.MenuRes;
+import android.view.ActionMode;
+import android.view.Menu;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Defines an annotation for determining how an {@link ActionMode} should be set.
+ *
+ * @author Martin Albedinsky
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ActionModeOptions {
+
+	/**
+	 * A resource id of the desired xml menu for an ActionMode.
+	 * <p>
+	 * Default value: <b>0</b>
+	 *
+	 * @see ActionMode.Callback#onCreateActionMode(ActionMode, Menu)
+	 */
+	@MenuRes
+	int menu() default 0;
+}

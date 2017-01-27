@@ -19,6 +19,8 @@
  * =================================================================================================
  */
 -->
-<manifest package="universum.studios.android.support.fragment.core">
-	<application/>
-</manifest>
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+       android:duration="@integer/fragment_config_anim_alpha_in_duration"
+       android:fromAlpha="0.0"
+       android:toAlpha="1.0"
+       android:zAdjustment="top"/>

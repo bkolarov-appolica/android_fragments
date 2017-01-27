@@ -19,6 +19,7 @@
  * =================================================================================================
  */
 -->
-<manifest package="universum.studios.android.support.fragment.core">
-	<application/>
-</manifest>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+     android:interpolator="@anim/fragment_interpolator"
+     android:zAdjustment="top">
+</set>
