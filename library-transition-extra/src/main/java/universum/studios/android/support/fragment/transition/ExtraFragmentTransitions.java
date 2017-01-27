@@ -18,8 +18,8 @@
  */
 package universum.studios.android.support.fragment.transition;
 
-import universum.studios.android.support.fragment.R;
 import universum.studios.android.support.fragment.manage.FragmentTransition;
+import universum.studios.android.support.fragment.R;
 
 /**
  * Factory providing <b>extra</b> {@link FragmentTransition FragmentTransitions}.
