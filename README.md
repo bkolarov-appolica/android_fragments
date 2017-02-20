@@ -3,6 +3,7 @@ Fragments
 
 [![Build Status](https://travis-ci.org/universum-studios/android_fragments.svg?branch=master)](https://travis-ci.org/universum-studios/android_fragments)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/08a4a09365f543cca7b7201f5beb56a3)](https://www.codacy.com/app/universum-studios/android_fragments?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/android_fragments&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/08a4a09365f543cca7b7201f5beb56a3)](https://www.codacy.com/app/universum-studios/android_fragments?utm_source=github.com&utm_medium=referral&utm_content=universum-studios/android_fragments&utm_campaign=Badge_Coverage)
 
 ## Download ##
 [![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android%3Afragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android%3Afragments/_latestVersion)
@@ -15,7 +16,7 @@ Download the latest **[release](https://github.com/universum-studios/android_fra
 
 ## Compatibility ##
 
-Available from the **Android [API Level 14](http://developer.android.com/about/versions/android-4.0.html "See API highlights")**.
+Supported down to the **Android [API Level 14](http://developer.android.com/about/versions/android-4.0.html "See API highlights")**.
 
 ### Dependencies ###
 
