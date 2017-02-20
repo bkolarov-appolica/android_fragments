@@ -1,11 +1,11 @@
 Fragments (support)
 ===============
 
-[![Build Status](https://travis-ci.org/universum-studios/android_fragments.svg?branch=master)](https://travis-ci.org/universum-studios/android_fragments)
+[![Build Status](https://travis-ci.org/universum-studios/android_fragments.svg?branch=support-master)](https://travis-ci.org/universum-studios/android_fragments)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/08a4a09365f543cca7b7201f5beb56a3)](https://www.codacy.com/app/universum-studios/android_fragments?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/android_fragments&amp;utm_campaign=Badge_Grade)
 
 ## Download ##
-[![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android%3Afragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android%3Afragments/_latestVersion)
+[![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android.support%3Asupport-fragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android.support%3Asupport-fragments/_latestVersion)
 
 Download the latest **[release](https://github.com/universum-studios/android_fragments/releases "Latest Releases page")** or **add as dependency** in your project via:
 

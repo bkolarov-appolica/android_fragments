@@ -2,7 +2,7 @@ Fragments-Manage-Base (support)
 ===============
 
 ## Download ##
-[![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android%3Afragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android%3Afragments/_latestVersion)
+[![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android.support%3Asupport-fragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android.support%3Asupport-fragments/_latestVersion)
 
 ### Gradle ###
 
