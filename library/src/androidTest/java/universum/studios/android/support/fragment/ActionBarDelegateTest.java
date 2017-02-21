@@ -28,7 +28,6 @@ import org.junit.runner.RunWith;
 import universum.studios.android.support.fragment.inner.TestActivity;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -49,6 +48,6 @@ public final class ActionBarDelegateTest {
 	@Test
 	public void testCreate() {
 		final ActionBarDelegate delegate = ActionBarDelegate.create(ACTIVITY_RULE.getActivity());
-		assertThat(delegate, is(not(nullValue())));
+		assertThat(delegate, is(nullValue()));
 	}
 }
