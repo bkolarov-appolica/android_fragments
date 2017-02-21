@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.fragment.inner;
+package universum.studios.android.support.fragment.inner;
 
 import android.app.Activity;
 
