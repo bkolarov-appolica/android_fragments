@@ -18,7 +18,7 @@
  */
 package universum.studios.android.fragment.transition;
 
-import universum.studios.android.fragment.R;
+import universum.studios.android.fragment.transition.common.R;
 import universum.studios.android.fragment.manage.FragmentTransition;
 
 /**
