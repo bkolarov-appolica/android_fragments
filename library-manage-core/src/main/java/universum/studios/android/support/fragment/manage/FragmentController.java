@@ -102,7 +102,7 @@ public class FragmentController {
 	 * Flag indicating whether we can attach transitions to a fragment instance at the current Android
 	 * API level or not.
 	 */
-	private static final boolean CAN_ATTACH_TRANSITIONS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+	private static final boolean CAN_ATTACH_TRANSITIONS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT;
 
 	/**
 	 * Interface ===================================================================================

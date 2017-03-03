@@ -99,10 +99,13 @@ import universum.studios.android.support.fragment.util.FragmentUtils;
 		if (activity instanceof AppCompatActivity) {
 			final android.support.v7.app.ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
 			return actionBar == null ? null : create(activity, actionBar);
-		} else {
+		} else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
 			final ActionBar actionBar = activity.getActionBar();
-			return actionBar == null ? null : create(activity, actionBar);
+			return actionBar != null ? create(activity, actionBar) : null;
 		}
+		throw new IllegalStateException(
+				"Cannot wrap ActionBar of " + activity + " at the current API level(" + Build.VERSION.SDK_INT + ")."
+		);
 	}
 
 	/**
