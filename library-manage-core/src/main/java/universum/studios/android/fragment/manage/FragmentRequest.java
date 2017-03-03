@@ -102,33 +102,6 @@ public final class FragmentRequest {
 	public static final int NO_STYLE = -1;
 
 	/**
-	 * Defines an annotation for determining available transaction types for {@link #transaction(int)}
-	 * method.
-	 *
-	 * <h3>Available types:</h3>
-	 * <ul>
-	 * <li>{@link #REPLACE}</li>
-	 * <li>{@link #ADD}</li>
-	 * <li>{@link #REMOVE}</li>
-	 * <li>{@link #SHOW}</li>
-	 * <li>{@link #HIDE}</li>
-	 * <li>{@link #ATTACH}</li>
-	 * <li>{@link #DETACH}</li>
-	 * </ul>
-	 *
-	 * @see #transaction(int)
-	 */
-	@IntDef({
-			REPLACE,
-			ADD, REMOVE,
-			SHOW, HIDE,
-			ATTACH, DETACH
-	})
-	@Retention(RetentionPolicy.SOURCE)
-	public @interface Transaction {
-	}
-
-	/**
 	 * Fragment transaction type used to indicate that the associated fragment transaction should be
 	 * committed using <b>replace</b> operation.
 	 *
@@ -185,16 +158,30 @@ public final class FragmentRequest {
 	public static final int DETACH = 0x06;
 
 	/**
-	 * Defines an annotation for determining available boolean flags for FragmentRequest.
+	 * Defines an annotation for determining available transaction types for {@link #transaction(int)}
+	 * method.
+	 *
+	 * <h3>Available types:</h3>
+	 * <ul>
+	 * <li>{@link #REPLACE}</li>
+	 * <li>{@link #ADD}</li>
+	 * <li>{@link #REMOVE}</li>
+	 * <li>{@link #SHOW}</li>
+	 * <li>{@link #HIDE}</li>
+	 * <li>{@link #ATTACH}</li>
+	 * <li>{@link #DETACH}</li>
+	 * </ul>
+	 *
+	 * @see #transaction(int)
 	 */
-	@IntDef(flag = true, value = {
-			REPLACE_SAME,
-			ADD_TO_BACK_STACK,
-			ALLOW_STATE_LOSS,
-			IMMEDIATE
+	@IntDef({
+			REPLACE,
+			ADD, REMOVE,
+			SHOW, HIDE,
+			ATTACH, DETACH
 	})
 	@Retention(RetentionPolicy.SOURCE)
-	private @interface Flag {
+	public @interface Transaction {
 	}
 
 	/**
@@ -227,18 +214,16 @@ public final class FragmentRequest {
 	static final int IMMEDIATE = 0x00000001 << 3;
 
 	/**
-	 * Defines an annotation for determining available transition flags for FragmentRequest.
+	 * Defines an annotation for determining available boolean flags for FragmentRequest.
 	 */
 	@IntDef(flag = true, value = {
-			TRANSITION_ENTER,
-			TRANSITION_EXIT,
-			TRANSITION_REENTER,
-			TRANSITION_RETURN,
-			TRANSITION_SHARED_ELEMENT_ENTER,
-			TRANSITION_SHARED_ELEMENT_RETURN
+			REPLACE_SAME,
+			ADD_TO_BACK_STACK,
+			ALLOW_STATE_LOSS,
+			IMMEDIATE
 	})
 	@Retention(RetentionPolicy.SOURCE)
-	private @interface TransitionFlag {
+	private @interface Flag {
 	}
 
 	/**
@@ -272,17 +257,27 @@ public final class FragmentRequest {
 	static final int TRANSITION_SHARED_ELEMENT_RETURN = 0x00000001 << 5;
 
 	/**
+	 * Defines an annotation for determining available transition flags for FragmentRequest.
+	 */
+	@IntDef(flag = true, value = {
+			TRANSITION_ENTER,
+			TRANSITION_EXIT,
+			TRANSITION_REENTER,
+			TRANSITION_RETURN,
+			TRANSITION_SHARED_ELEMENT_ENTER,
+			TRANSITION_SHARED_ELEMENT_RETURN
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface TransitionFlag {
+	}
+
+	/**
 	 * Static members ==============================================================================
 	 */
 
 	/**
-	 * Members =================================================================================
+	 * Members =====================================================================================
 	 */
-
-	/**
-	 * Fragment instance associated with this request.
-	 */
-	final Fragment mFragment;
 
 	/**
 	 * Controller that has been used to create this request and also is responsible for execution
@@ -293,9 +288,14 @@ public final class FragmentRequest {
 	private final FragmentController mController;
 
 	/**
+	 * Fragment instance associated with this request.
+	 */
+	Fragment mFragment;
+
+	/**
 	 * Id of the associated fragment.
 	 */
-	private int mFragmentId = NO_ID;
+	int mFragmentId = NO_ID;
 
 	/**
 	 * Id of the outgoing fragment that will be replaced by the associated fragment.
@@ -431,15 +431,25 @@ public final class FragmentRequest {
 	 */
 
 	/**
-	 * Creates a new instance of FragmentRequest for the given <var>fragment</var>.
+	 * Creates a new instance of FragmentRequest for the given <var>controller</var>.
 	 *
-	 * @param fragment   The fragment to associate with the new request.
 	 * @param controller Fragment controller that creates the new request and will be also responsible
 	 *                   for its execution.
 	 */
-	FragmentRequest(Fragment fragment, FragmentController controller) {
-		this.mFragment = fragment;
+	FragmentRequest(FragmentController controller) {
+		this(controller, null);
+	}
+
+	/**
+	 * Creates a new instance of FragmentRequest for the given <var>fragment</var>.
+	 *
+	 * @param controller Fragment controller that creates the new request and will be also responsible
+	 *                   for its execution.
+	 * @param fragment   The fragment to associate with the new request.
+	 */
+	FragmentRequest(FragmentController controller, Fragment fragment) {
 		this.mController = controller;
+		this.mFragment = fragment;
 	}
 
 	/**
@@ -472,9 +482,9 @@ public final class FragmentRequest {
 		builder.append(hasFlag(REPLACE_SAME));
 		builder.append(", addToBackStack: ");
 		builder.append(hasFlag(ADD_TO_BACK_STACK));
-		builder.append(", executeAllowingStateLoss: ");
+		builder.append(", allowStateLoss: ");
 		builder.append(hasFlag(ALLOW_STATE_LOSS));
-		builder.append(", executeImmediate: ");
+		builder.append(", immediate: ");
 		builder.append(hasFlag(IMMEDIATE));
 		builder.append(", executed: ");
 		builder.append(mExecuted);
@@ -583,7 +593,7 @@ public final class FragmentRequest {
 	 * @see #arguments(Bundle)
 	 */
 	@Nullable
-	public final Bundle arguments() {
+	public Bundle arguments() {
 		return mArguments;
 	}
 
@@ -622,7 +632,7 @@ public final class FragmentRequest {
 	 * @see #tag()
 	 * @see Fragment#getTag()
 	 */
-	public final FragmentRequest tag(@Nullable String fragmentTag) {
+	public FragmentRequest tag(@Nullable String fragmentTag) {
 		this.mTag = fragmentTag;
 		return this;
 	}
@@ -636,7 +646,7 @@ public final class FragmentRequest {
 	 * @see #tag(String)
 	 */
 	@Nullable
-	public final String tag() {
+	public String tag() {
 		return mTag;
 	}
 
@@ -676,7 +686,7 @@ public final class FragmentRequest {
 	 * @see FragmentTransaction#setCustomAnimations(int, int, int, int)
 	 * @see #transition()
 	 */
-	public final FragmentRequest transition(@Nullable FragmentTransition transition) {
+	public FragmentRequest transition(@Nullable FragmentTransition transition) {
 		this.mTransition = transition;
 		return this;
 	}
@@ -690,7 +700,7 @@ public final class FragmentRequest {
 	 * and outgoing fragment.
 	 */
 	@Nullable
-	public final FragmentTransition transition() {
+	public FragmentTransition transition() {
 		return mTransition;
 	}
 
@@ -703,7 +713,7 @@ public final class FragmentRequest {
 	 * @see FragmentTransaction#setTransitionStyle(int)
 	 * @see #transitionStyle()
 	 */
-	public final FragmentRequest transitionStyle(@StyleRes int transitionStyle) {
+	public FragmentRequest transitionStyle(@StyleRes int transitionStyle) {
 		this.mTransitionStyle = transitionStyle;
 		return this;
 	}
@@ -716,7 +726,7 @@ public final class FragmentRequest {
 	 * @return Transition style resource or {@link #NO_STYLE} if no style has been specified.
 	 */
 	@StyleRes
-	public final int transitionStyle() {
+	public int transitionStyle() {
 		return mTransitionStyle;
 	}
 
@@ -837,7 +847,7 @@ public final class FragmentRequest {
 	 * @see Fragment#setAllowEnterTransitionOverlap(boolean)
 	 * @see #allowEnterTransitionOverlap()
 	 */
-	public final FragmentRequest allowEnterTransitionOverlap(boolean allowOverlap) {
+	public FragmentRequest allowEnterTransitionOverlap(boolean allowOverlap) {
 		this.mAllowEnterTransitionOverlap = allowOverlap;
 		return this;
 	}
@@ -851,7 +861,7 @@ public final class FragmentRequest {
 	 * or {@code null} if this option has not been specified yet.
 	 * @see #allowEnterTransitionOverlap(boolean)
 	 */
-	public final Boolean allowEnterTransitionOverlap() {
+	public Boolean allowEnterTransitionOverlap() {
 		return mAllowEnterTransitionOverlap;
 	}
 
@@ -864,7 +874,7 @@ public final class FragmentRequest {
 	 * @see Fragment#setAllowReturnTransitionOverlap(boolean)
 	 * @see #allowReturnTransitionOverlap()
 	 */
-	public final FragmentRequest allowReturnTransitionOverlap(boolean allowOverlap) {
+	public FragmentRequest allowReturnTransitionOverlap(boolean allowOverlap) {
 		this.mAllowReturnTransitionOverlap = allowOverlap;
 		return this;
 	}
@@ -878,7 +888,7 @@ public final class FragmentRequest {
 	 * or {@code null} if this option has not been specified yet.
 	 * @see #allowReturnTransitionOverlap(boolean)
 	 */
-	public final boolean allowReturnTransitionOverlap() {
+	public boolean allowReturnTransitionOverlap() {
 		return mAllowReturnTransitionOverlap != null && mAllowReturnTransitionOverlap;
 	}
 
@@ -909,7 +919,7 @@ public final class FragmentRequest {
 	 * @see #sharedElements(Pair[])
 	 * @see FragmentTransaction#addSharedElement(View, String)
 	 */
-	public final FragmentRequest sharedElement(@NonNull View element, @NonNull String elementName) {
+	public FragmentRequest sharedElement(@NonNull View element, @NonNull String elementName) {
 		if (mSharedElements == null) {
 			this.mSharedElements = new ArrayList<>(1);
 		}
@@ -925,7 +935,7 @@ public final class FragmentRequest {
 	 * @see #sharedElements(Pair[])
 	 */
 	@Nullable
-	public final List<Pair<View, String>> sharedElements() {
+	public List<Pair<View, String>> sharedElements() {
 		return mSharedElements;
 	}
 
@@ -1021,7 +1031,7 @@ public final class FragmentRequest {
 	 * @return This request to allow methods chaining.
 	 * @see #replaceSame()
 	 */
-	public final FragmentRequest replaceSame(boolean replace) {
+	public FragmentRequest replaceSame(boolean replace) {
 		return setHasFlag(REPLACE_SAME, replace);
 	}
 
@@ -1035,7 +1045,7 @@ public final class FragmentRequest {
 	 * otherwise.
 	 * @see #replaceSame(boolean)
 	 */
-	public final boolean replaceSame() {
+	public boolean replaceSame() {
 		return hasFlag(REPLACE_SAME);
 	}
 
@@ -1048,7 +1058,7 @@ public final class FragmentRequest {
 	 * @see FragmentTransaction#addToBackStack(String)
 	 * @see #addToBackStack()
 	 */
-	public final FragmentRequest addToBackStack(boolean add) {
+	public FragmentRequest addToBackStack(boolean add) {
 		return setHasFlag(ADD_TO_BACK_STACK, add);
 	}
 
@@ -1060,23 +1070,41 @@ public final class FragmentRequest {
 	 * @return {@code True} if to add the associated fragment into back stack, {@code false} otherwise.
 	 * @see #addToBackStack(boolean)
 	 */
-	public final boolean addToBackStack() {
+	public boolean addToBackStack() {
 		return hasFlag(ADD_TO_BACK_STACK);
+	}
+
+	/**
+	 * <b>This method will be removed in the next release.</b>
+	 *
+	 * @deprecated Use {@link #allowStateLoss(boolean)} instead.
+	 */
+	@Deprecated
+	public FragmentRequest executeAllowingStateLoss(boolean allowing) {
+		return allowStateLoss(allowing);
 	}
 
 	/**
 	 * Sets a boolean flag indicating whether {@link FragmentTransaction} for the associated fragment
 	 * may be committed allowing state loss or not.
 	 *
-	 * @param allowing {@code True} to allow state loss when committing transaction, {@code false}
-	 *                 otherwise.
+	 * @param allow {@code True} to allow state loss when committing transaction, {@code false} otherwise.
 	 * @return This request to allow methods chaining.
 	 * @see FragmentTransaction#commitAllowingStateLoss()
-	 * @see #executeAllowingStateLoss()
+	 * @see #allowStateLoss()
 	 */
-	// todo: deprecate and add allowStateLoss(boolean)
-	public final FragmentRequest executeAllowingStateLoss(boolean allowing) {
-		return setHasFlag(ALLOW_STATE_LOSS, allowing);
+	public FragmentRequest allowStateLoss(boolean allow) {
+		return setHasFlag(ALLOW_STATE_LOSS, allow);
+	}
+
+	/**
+	 * <b>This method will be removed in the next release.</b>
+	 *
+	 * @deprecated Use {@link #allowStateLoss()} instead.
+	 */
+	@Deprecated
+	public boolean executeAllowingStateLoss() {
+		return allowStateLoss();
 	}
 
 	/**
@@ -1085,11 +1113,20 @@ public final class FragmentRequest {
 	 * Default value: <b>{@code false}</b>
 	 *
 	 * @return {@code True} if transaction may be committed allowing state loss, {@code false} otherwise.
-	 * @see #executeAllowingStateLoss(boolean)
+	 * @see #allowStateLoss(boolean)
 	 */
-	// todo: deprecate and add allowStateLoss()
-	public final boolean executeAllowingStateLoss() {
+	public boolean allowStateLoss() {
 		return hasFlag(ALLOW_STATE_LOSS);
+	}
+
+	/**
+	 * <b>This method will be removed in the next release.</b>
+	 *
+	 * @deprecated Use {@link #immediate(boolean)} instead.
+	 */
+	@Deprecated
+	public FragmentRequest executeImmediate(boolean immediate) {
+		return immediate(immediate);
 	}
 
 	/**
@@ -1100,11 +1137,20 @@ public final class FragmentRequest {
 	 *                  (asynchronously).
 	 * @return This request to allow methods chaining.
 	 * @see FragmentManager#executePendingTransactions()
-	 * @see #executeImmediate()
+	 * @see #immediate()
 	 */
-	// todo: deprecate and add immediate(boolean)
-	public FragmentRequest executeImmediate(boolean immediate) {
+	public FragmentRequest immediate(boolean immediate) {
 		return setHasFlag(IMMEDIATE, immediate);
+	}
+
+	/**
+	 * <b>This method will be removed in the next release.</b>
+	 *
+	 * @deprecated Use {@link #immediate()} instead.
+	 */
+	@Deprecated
+	public boolean executeImmediate() {
+		return immediate();
 	}
 
 	/**
@@ -1114,10 +1160,9 @@ public final class FragmentRequest {
 	 *
 	 * @return {@code True} if fragment transaction should be executed immediately (synchronously),
 	 * {@code false} otherwise (asynchronously).
-	 * @see #executeImmediate(boolean)
+	 * @see #immediate(boolean)
 	 */
-	// todo: deprecate and add immediate()
-	public boolean executeImmediate() {
+	public boolean immediate() {
 		return hasFlag(IMMEDIATE);
 	}
 
@@ -1152,16 +1197,15 @@ public final class FragmentRequest {
 	 * <b>Note</b>, that each request may be executed only once and any subsequent calls to this
 	 * method will throw an exception.
 	 *
-	 * @return The fragment associated with this request. This may be either fragment already associated
-	 * with this request or fragment that is already displayed with the same TAG and should not be
-	 * replaced by a new one.
+	 * @return The fragment that has been associated with this request either during its initialization
+	 * or as result of execution process. May be {@code null} if the execution has failed.
 	 * @throws IllegalStateException    If this request has been already executed.
 	 * @throws IllegalArgumentException If current configuration of this request does not meet the
 	 *                                  requirements. For example, request with transaction type of
 	 *                                  {@link #REPLACE} or {@link #ADD} cannot be executed without
 	 *                                  view container id specified.
 	 */
-	@NonNull
+	@Nullable
 	public Fragment execute() {
 		this.assertNotExecuted();
 		switch (mTransaction) {
@@ -1175,7 +1219,8 @@ public final class FragmentRequest {
 			case HIDE:
 			case ATTACH:
 			case DETACH:
-			default: return mController.executeRequest(this);
+			default:
+				return mController.executeRequest(this);
 		}
 	}
 

@@ -455,38 +455,22 @@ public class FragmentController {
 	}
 
 	/**
-	 * Same as {@link #newRequest(Fragment)} where instance of the desired fragment will be requested
-	 * from the attached factory.
+	 * Creates a new instance of FragmentRequest for the given <var>fragmentId</var>. The new request
+	 * will have the given fragment id attached along with this controller which will be responsible
+	 * for execution of the new request when its {@link FragmentRequest#execute()} is called.
 	 * <p>
-	 * <b>Note</b>, that this method assumes that there is factory attached and that factory provides
-	 * fragment that is associated with the specified <var>factoryFragmentId</var> otherwise an
-	 * exception is thrown.
+	 * <b>Note</b>, that execution of the created request assumes that there is factory attached and
+	 * that factory provides fragment that is associated with the specified <var>fragmentId</var>
+	 * otherwise an exception will be thrown.
 	 *
-	 * @param factoryFragmentId Id of the desired factory fragment for which to crate the new request.
-	 * @return New fragment request with tag provided by the factory via {@link FragmentFactory#createFragmentTag(int)}
-	 * for the specified fragment id.
-	 * @throws NullPointerException     If there is no factory attached.
-	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
-	 *                                  specified id.
+	 * @param fragmentId Id of the desired factory fragment for which to crate the new request.
+	 * @return New fragment request with the specified fragmentId id attached. Also
+	 * specified id.
 	 */
 	@NonNull
-	public final FragmentRequest newRequest(int factoryFragmentId) {
+	public final FragmentRequest newRequest(int fragmentId) {
 		this.assertNotDestroyed("NEW REQUEST");
-		this.assertHasFactory();
-		if (!mFactory.isFragmentProvided(factoryFragmentId)) {
-			throw new IllegalArgumentException(
-					"Cannot create new request. Current factory(" + mFactory.getClass() + ") " +
-							"does not provide fragment for the requested id(" + factoryFragmentId + ")!");
-		}
-		// fixme: if the request is intended to hide an existing fragment then this implementation is just wrong
-		final Fragment fragment = mFactory.createFragment(factoryFragmentId);
-		if (fragment == null) {
-			throw new NullPointerException(
-					"Cannot create new request. Current factory(" + mFactory.getClass() + ") is cheating. " +
-							"FragmentFactory.isFragmentProvided() returned true, but FragmentFactory.createFragment(...) returned null!"
-			);
-		}
-		return newRequest(fragment).tag(mFactory.createFragmentTag(factoryFragmentId)).fragmentId(factoryFragmentId);
+		return new FragmentRequest(this).fragmentId(fragmentId).viewContainerId(mViewContainerId);
 	}
 
 	/**
@@ -507,7 +491,7 @@ public class FragmentController {
 	@NonNull
 	public final FragmentRequest newRequest(@NonNull Fragment fragment) {
 		this.assertNotDestroyed("NEW REQUEST");
-		return new FragmentRequest(fragment, this).tag(FRAGMENT_TAG).viewContainerId(mViewContainerId);
+		return new FragmentRequest(this, fragment).tag(FRAGMENT_TAG).viewContainerId(mViewContainerId);
 	}
 
 	/**
@@ -519,12 +503,54 @@ public class FragmentController {
 	 * <b>Note</b>, that this method does not check if the request has been already executed or not.
 	 *
 	 * @param request The fragment request to be executed.
-	 * @return The fragment associated with the request.
+	 * @return The fragment that has been associated with the request either during its initialization
+	 * or as result of this execution. May be {@code null} if the execution has failed.
+	 * @throws IllegalArgumentException If there is no factory attached.
+	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
+	 *                                  fragment id specified for the request.
 	 * @see FragmentRequestInterceptor#interceptFragmentRequest(FragmentRequest)
 	 */
+	@Nullable
 	final Fragment executeRequest(FragmentRequest request) {
 		this.assertNotDestroyed("EXECUTE REQUEST");
-		Fragment fragment = mRequestInterceptor != null ? mRequestInterceptor.interceptFragmentRequest(request) : null;
+		Fragment fragment = request.mFragment;
+		if (fragment == null) {
+			this.assertHasFactory();
+			final int fragmentId = request.mFragmentId;
+			if (!mFactory.isFragmentProvided(fragmentId)) {
+				throw new IllegalArgumentException(
+						"Cannot execute request for factory fragment. Current factory(" + mFactory.getClass() + ") " +
+								"does not provide fragment for the requested id(" + fragmentId + ")!");
+			}
+			switch (request.mTransaction) {
+				case FragmentRequest.REMOVE:
+				case FragmentRequest.SHOW:
+				case FragmentRequest.HIDE:
+				case FragmentRequest.ATTACH:
+				case FragmentRequest.DETACH:
+					fragment = findFragmentByFactoryId(fragmentId);
+					break;
+				case FragmentRequest.REPLACE:
+				case FragmentRequest.ADD:
+				default:
+					fragment = mFactory.createFragment(fragmentId);
+					if (fragment == null) {
+						throw new IllegalArgumentException(
+								"Cannot execute request for factory fragment. Current factory(" + mFactory.getClass() + ") is cheating. " +
+										"FragmentFactory.isFragmentProvided(...) returned true, but FragmentFactory.createFragment(...) returned null!"
+						);
+					}
+					break;
+			}
+			if (fragment == null) {
+				return null;
+			}
+			request.mFragment = fragment;
+			if (request.mTag == null) {
+				request.tag(mFactory.createFragmentTag(fragmentId));
+			}
+		}
+		fragment = mRequestInterceptor != null ? mRequestInterceptor.interceptFragmentRequest(request) : null;
 		if (fragment == null) {
 			fragment = onExecuteRequest(request);
 		}
@@ -548,7 +574,7 @@ public class FragmentController {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mManager.isDestroyed()) {
 			throw new IllegalStateException("Cannot execute fragment request in context of activity that has been already destroyed!");
 		}
-		if (!request.hasFlag(FragmentRequest.REPLACE_SAME)) {
+		if (request.mTransaction == FragmentRequest.REPLACE && !request.hasFlag(FragmentRequest.REPLACE_SAME)) {
 			// Do not replace same fragment if there is already displayed fragment with the same tag.
 			final Fragment existingFragment = mManager.findFragmentByTag(request.mTag);
 			if (existingFragment != null) {
@@ -856,7 +882,8 @@ public class FragmentController {
 	 *                  into exception if it will be thrown.
 	 */
 	private void assertNotDestroyed(String forAction) {
-		if (mDestroyed) throw new IllegalStateException("Cannot perform " + forAction + " action. Controller is already destroyed!");
+		if (mDestroyed)
+			throw new IllegalStateException("Cannot perform " + forAction + " action. Controller is already destroyed!");
 	}
 
 	/**
