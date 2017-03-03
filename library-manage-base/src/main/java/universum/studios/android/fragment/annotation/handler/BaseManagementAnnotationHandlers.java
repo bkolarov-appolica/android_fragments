@@ -35,7 +35,7 @@ import universum.studios.android.fragment.manage.FragmentItem;
 
 /**
  * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
- * <b>web</b> associated fragments and classes.
+ * <b>base management</b> associated fragments and classes.
  *
  * @author Martin Albedinsky
  */
@@ -48,6 +48,7 @@ public final class BaseManagementAnnotationHandlers extends AnnotationHandlers {
 	/**
 	 */
 	private BaseManagementAnnotationHandlers() {
+		super();
 		// Creation of instances of this class is not publicly allowed.
 	}
 
@@ -91,7 +92,7 @@ public final class BaseManagementAnnotationHandlers extends AnnotationHandlers {
 			if (fragments != null) {
 				final int[] ids = fragments.value();
 				if (ids.length > 0) {
-					for (int id : ids) {
+					for (final int id : ids) {
 						items.put(id, new FragmentItem(
 								id,
 								Fragment.class,

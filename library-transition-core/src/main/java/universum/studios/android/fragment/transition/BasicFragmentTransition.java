@@ -33,10 +33,6 @@ import universum.studios.android.fragment.manage.FragmentTransition;
 public class BasicFragmentTransition implements FragmentTransition {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -44,6 +40,10 @@ public class BasicFragmentTransition implements FragmentTransition {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "BasicFragmentTransition";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
