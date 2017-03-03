@@ -19,7 +19,6 @@
 package universum.studios.android.fragment.annotation;
 
 import android.support.annotation.MenuRes;
-import android.view.Menu;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -40,7 +39,7 @@ public @interface ActionModeOptions {
 	 * <p>
 	 * Default value: <b>0</b>
 	 *
-	 * @see android.view.ActionMode.Callback#onCreateActionMode(android.view.ActionMode, Menu)
+	 * @see android.view.ActionMode.Callback#onCreateActionMode(android.view.ActionMode, android.view.Menu)
 	 */
 	@MenuRes
 	int menu() default 0;
