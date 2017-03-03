@@ -19,7 +19,6 @@
 package universum.studios.android.support.fragment;
 
 import android.app.ActionBar;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -81,10 +80,6 @@ import universum.studios.android.support.fragment.annotation.handler.ActionBarFr
 public class ActionBarFragment extends BaseFragment {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -92,6 +87,10 @@ public class ActionBarFragment extends BaseFragment {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "ActionBarFragment";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
@@ -181,6 +180,7 @@ public class ActionBarFragment extends BaseFragment {
 					super.onCreateOptionsMenu(menu, inflater);
 					break;
 				case MenuOptions.DEFAULT:
+				default:
 					super.onCreateOptionsMenu(menu, inflater);
 					inflater.inflate(menuResource, menu);
 					break;
@@ -220,7 +220,7 @@ public class ActionBarFragment extends BaseFragment {
 	@NonNull
 	protected ActionBarDelegate getActionBarDelegate() {
 		if (mActionBarDelegate == null) {
-			throw new NullPointerException("The parent activity does not have ActionBar presented!");
+			throw new IllegalStateException("The parent activity does not have ActionBar presented!");
 		}
 		return mActionBarDelegate;
 	}
@@ -228,13 +228,13 @@ public class ActionBarFragment extends BaseFragment {
 	/**
 	 * Returns the instance of ActionBar that can be accessed by this fragment via its parent Activity.
 	 * <p>
-	 * <b>Note</b>, that ActionBar can be accessed only for duration of {@link #onAttach(Context)}
+	 * <b>Note</b>, that ActionBar can be accessed only for duration of {@link #onAttach(android.content.Context)}
 	 * and {@link #onDetach()}, otherwise an exception will be thrown.
 	 *
 	 * @return Instance of ActionBar obtained from the parent activity or {@code null} if the parent
 	 * activity does not have ActionBar available.
 	 * @throws IllegalStateException If this fragment is not attached to its parent activity
-	 *                                         yet or it has been already detached.
+	 *                               yet or it has been already detached.
 	 * @see #isActionBarAvailable()
 	 */
 	@Nullable
@@ -255,7 +255,7 @@ public class ActionBarFragment extends BaseFragment {
 	 * @return Instance of support ActionBar obtained from the parent activity or {@code null} if
 	 * the parent activity does not have ActionBar available or the activity is not an AppCompatActivity.
 	 * @throws IllegalStateException If this fragment is not attached to its parent activity
-	 *                                         yet or it has been already detached.
+	 *                               yet or it has been already detached.
 	 */
 	@Nullable
 	protected android.support.v7.app.ActionBar getSupportActionBar() {

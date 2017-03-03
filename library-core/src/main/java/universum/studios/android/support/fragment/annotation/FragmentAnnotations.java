@@ -34,6 +34,15 @@ import universum.studios.android.support.fragment.FragmentsConfig;
 public final class FragmentAnnotations {
 
 	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = "FragmentAnnotations";
+
+	/**
 	 * Interface ===================================================================================
 	 */
 
@@ -53,15 +62,6 @@ public final class FragmentAnnotations {
 		 */
 		void onProcessField(@NonNull Field field, @NonNull String name);
 	}
-
-	/**
-	 * Constants ===================================================================================
-	 */
-
-	/**
-	 * Log TAG.
-	 */
-	// private static final String TAG = "FragmentAnnotations";
 
 	/**
 	 * Static members ==============================================================================
@@ -142,7 +142,7 @@ public final class FragmentAnnotations {
 	public static void iterateFields(@NonNull FieldProcessor processor, @NonNull Class<?> ofClass, @Nullable Class<?> maxSuperClass) {
 		final Field[] fields = ofClass.getDeclaredFields();
 		if (fields.length > 0) {
-			for (Field field : fields) {
+			for (final Field field : fields) {
 				processor.onProcessField(field, field.getName());
 			}
 		}

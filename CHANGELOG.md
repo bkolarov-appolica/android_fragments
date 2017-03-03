@@ -1,6 +1,14 @@
 Change-Log
 ===============
 
+### Release 1.1.1 ###
+> 03.03.2017
+
+- Deprecated some not properly named methods of `FragmentRequest` and replaced with better named ones.
+- Updated implementation of `FragmentController.newRequest(int)` and of `FragmentController.executeRequest(...)`.
+  See **[#3 Issue](https://github.com/universum-studios/android_fragments/issues/3)** for more info.
+- Code quality improvements.
+
 ### Release 1.1.0 ###
 > 19.01.2017
 

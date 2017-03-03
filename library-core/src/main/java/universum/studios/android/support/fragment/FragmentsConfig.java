@@ -58,4 +58,10 @@ public final class FragmentsConfig {
 	 * of the Android or not.
 	 */
 	public static final boolean TRANSITIONS_SUPPORTED = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+	/**
+	 */
+	private FragmentsConfig() {
+		// Creation of instances of this class is not publicly allowed.
+	}
 }

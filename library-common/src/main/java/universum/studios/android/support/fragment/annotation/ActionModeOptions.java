@@ -19,8 +19,6 @@
 package universum.studios.android.support.fragment.annotation;
 
 import android.support.annotation.MenuRes;
-import android.support.v7.view.ActionMode;
-import android.view.Menu;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines an annotation for determining how an {@link ActionMode} should be set.
+ * Defines an annotation for determining how an {@link android.view.ActionMode} should be set.
  *
  * @author Martin Albedinsky
  */
@@ -41,7 +39,7 @@ public @interface ActionModeOptions {
 	 * <p>
 	 * Default value: <b>0</b>
 	 *
-	 * @see ActionMode.Callback#onCreateActionMode(ActionMode, Menu)
+	 * @see android.support.v7.view.ActionMode.Callback#onCreateActionMode(android.support.v7.view.ActionMode, android.view.Menu)
 	 */
 	@MenuRes
 	int menu() default 0;

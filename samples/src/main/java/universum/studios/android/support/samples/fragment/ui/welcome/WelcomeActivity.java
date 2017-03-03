@@ -50,9 +50,7 @@ public final class WelcomeActivity extends SamplesActivity implements FragmentRe
 		this.fragmentController.setViewContainerId(R.id.container);
 		this.fragmentController.setFactory(new WelcomeFragments());
 		if (savedInstanceState == null) {
-			fragmentController.newRequest(WelcomeFragments.WELCOME)
-					.executeImmediate(true)
-					.execute();
+			fragmentController.newRequest(WelcomeFragments.WELCOME).immediate(true).execute();
 		}
 	}
 

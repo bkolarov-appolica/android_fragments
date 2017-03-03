@@ -18,7 +18,6 @@
  */
 package universum.studios.android.support.fragment.manage;
 
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -39,7 +38,7 @@ import universum.studios.android.support.fragment.annotation.handler.FragmentFac
  * <h3>Accepted annotations</h3>
  * <ul>
  * <li>
- * {@link universum.studios.android.support.fragment.annotation.FactoryFragments @FactoryFragments} <b>[class - inherited]</b>
+ * {@link FactoryFragments @FactoryFragments} <b>[class - inherited]</b>
  * <p>
  * If this annotation is presented, all ids of fragments specified via this annotation will be
  * attached to an instance of annotated BaseFragmentFactory subclass, so {@link #isFragmentProvided(int)}
@@ -49,12 +48,12 @@ import universum.studios.android.support.fragment.annotation.handler.FragmentFac
  * via {@link #createFragmentTag(int)} with the corresponding fragment id.
  * </li>
  * <li>
- * {@link universum.studios.android.support.fragment.annotation.FactoryFragment @FactoryFragment} <b>[member - inherited]</b>
+ * {@link FactoryFragment @FactoryFragment} <b>[member - inherited]</b>
  * <p>
- * This annotation provides same result as {@link universum.studios.android.support.fragment.annotation.FactoryFragments @FactoryFragments}
- * annotation, but this annotation is meant to be used to mark directly constant fields that specify
- * fragment ids and also provides more configuration options like the type of fragment that should
- * be instantiated for the specified id.
+ * This annotation provides same result as {@link FactoryFragments @FactoryFragments} annotation,
+ * but this annotation is meant to be used to mark directly constant fields that specify fragment
+ * ids and also provides more configuration options like the type of fragment that should be
+ * instantiated for the specified id.
  * <p>
  * <b>Note</b>, that tagged name for fragment with the specified id will be automatically created
  * using its id but may be also specified via {@link FactoryFragment#taggedName()} attribute.
@@ -66,10 +65,6 @@ import universum.studios.android.support.fragment.annotation.handler.FragmentFac
 public abstract class BaseFragmentFactory implements FragmentFactory {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -77,6 +72,10 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "BaseFragmentFactory";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
@@ -107,7 +106,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 * Flag indicating whether an instance of fragment for {@link #mLastCheckedFragmentId} is
 	 * provided by this factory or not.
 	 */
-	private boolean mFragmentProvided = false;
+	private boolean mFragmentProvided;
 
 	/**
 	 * Constructors ================================================================================
@@ -121,7 +120,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 */
 	public BaseFragmentFactory() {
 		this.mAnnotationHandler = onCreateAnnotationHandler();
-		this.mItems = mAnnotationHandler != null ? mAnnotationHandler.getFragmentItems() : null;
+		this.mItems = mAnnotationHandler == null ? null : mAnnotationHandler.getFragmentItems();
 	}
 
 	/**
@@ -194,7 +193,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 * {@code false} otherwise.
 	 */
 	protected boolean providesFragment(int fragmentId) {
-		return (mItems != null) && mItems.indexOfKey(fragmentId) >= 0;
+		return mItems != null && mItems.indexOfKey(fragmentId) >= 0;
 	}
 
 	/**
@@ -216,7 +215,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	protected Fragment onCreateFragment(int fragmentId) {
 		final Fragment fragment = mItems.get(fragmentId).newFragmentInstance(null);
 		if (fragment == null) {
-			throw new NullPointerException("Failed to instantiate fragment for the requested id(" + fragmentId + ")!");
+			throw new IllegalArgumentException("Failed to instantiate fragment for the requested id(" + fragmentId + ")!");
 		}
 		return fragment;
 	}
@@ -225,7 +224,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 */
 	@Nullable
 	@Override
-	public String createFragmentTag(@IntRange(from = 0) int fragmentId) {
+	public String createFragmentTag(int fragmentId) {
 		return isFragmentProvided(fragmentId) ? onCreateFragmentTag(fragmentId) : null;
 	}
 
@@ -239,7 +238,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 * with the fragment id as <var>fragmentName</var>.
 	 */
 	@Nullable
-	protected String onCreateFragmentTag(@IntRange(from = 0) int fragmentId) {
+	protected String onCreateFragmentTag(int fragmentId) {
 		return mItems.indexOfKey(fragmentId) >= 0 ? mItems.get(fragmentId).tag : createFragmentTag(getClass(), Integer.toString(fragmentId));
 	}
 

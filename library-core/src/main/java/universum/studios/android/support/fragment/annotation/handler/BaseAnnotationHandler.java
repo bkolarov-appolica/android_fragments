@@ -33,10 +33,6 @@ import universum.studios.android.support.fragment.annotation.FragmentAnnotations
 abstract class BaseAnnotationHandler implements AnnotationHandler {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -44,6 +40,10 @@ abstract class BaseAnnotationHandler implements AnnotationHandler {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "BaseAnnotationHandler";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
