@@ -34,10 +34,6 @@ import universum.studios.android.fragment.FragmentsConfig;
 public class AnnotationHandlers {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -45,6 +41,10 @@ public class AnnotationHandlers {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "AnnotationHandlers";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================

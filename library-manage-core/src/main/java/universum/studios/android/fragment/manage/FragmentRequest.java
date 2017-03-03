@@ -79,10 +79,6 @@ import java.util.List;
 public final class FragmentRequest {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -272,6 +268,10 @@ public final class FragmentRequest {
 	}
 
 	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
 	 * Static members ==============================================================================
 	 */
 
@@ -424,7 +424,7 @@ public final class FragmentRequest {
 	 * Boolean flag indicating whether this request has been already executed via {@link #execute()}
 	 * or not.
 	 */
-	private boolean mExecuted = false;
+	private boolean mExecuted;
 
 	/**
 	 * Constructors ============================================================================
@@ -475,7 +475,7 @@ public final class FragmentRequest {
 		builder.append(", viewContainerId: ");
 		builder.append(mViewContainerId);
 		builder.append(", transition: ");
-		builder.append(mTransition != null ? mTransition.getName() : "null");
+		builder.append(mTransition == null ? "null" : mTransition.getName());
 		builder.append(", transitionStyle: ");
 		builder.append(mTransitionStyle);
 		builder.append(", replaceSame: ");
@@ -1220,7 +1220,9 @@ public final class FragmentRequest {
 			case ATTACH:
 			case DETACH:
 			default:
-				return mController.executeRequest(this);
+				final Fragment fragment = mController.executeRequest(this);
+				this.mExecuted = true;
+				return fragment;
 		}
 	}
 

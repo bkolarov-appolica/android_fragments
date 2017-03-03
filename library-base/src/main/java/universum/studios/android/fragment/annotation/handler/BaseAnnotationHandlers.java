@@ -43,6 +43,7 @@ public final class BaseAnnotationHandlers extends AnnotationHandlers {
 	/**
 	 */
 	private BaseAnnotationHandlers() {
+		super();
 		// Creation of instances of this class is not publicly allowed.
 	}
 

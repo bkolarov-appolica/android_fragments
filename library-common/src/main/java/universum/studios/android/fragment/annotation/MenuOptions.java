@@ -40,14 +40,6 @@ public @interface MenuOptions {
 	 */
 
 	/**
-	 * Defines an annotation for determining set of allowed flags for {@link #flags()} attribute.
-	 */
-	@Retention(RetentionPolicy.SOURCE)
-	@IntDef({DEFAULT, IGNORE_SUPER, BEFORE_SUPER})
-	@interface Flags {
-	}
-
-	/**
 	 * Fag indicating that a default menu set up should be used.
 	 */
 	int DEFAULT = 0x00000000;
@@ -61,6 +53,14 @@ public @interface MenuOptions {
 	 * Flag indicating that a menu should be created before a super's one.
 	 */
 	int BEFORE_SUPER = 0x00000001 << 1;
+
+	/**
+	 * Defines an annotation for determining set of allowed flags for {@link #flags()} attribute.
+	 */
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({DEFAULT, IGNORE_SUPER, BEFORE_SUPER})
+	@interface Flags {
+	}
 
 	/**
 	 * Methods =====================================================================================
