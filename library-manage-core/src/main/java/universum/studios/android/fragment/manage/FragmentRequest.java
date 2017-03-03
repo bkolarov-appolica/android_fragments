@@ -951,7 +951,7 @@ public final class FragmentRequest {
 	 */
 	@Nullable
 	public Pair<View, String> singleSharedElement() {
-		return mSharedElements != null && !mSharedElements.isEmpty() ? mSharedElements.get(0) : null;
+		return mSharedElements == null || mSharedElements.isEmpty() ? null : mSharedElements.get(0);
 	}
 
 	/**

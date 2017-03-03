@@ -127,7 +127,7 @@ public final class BaseAnnotationHandlers extends AnnotationHandlers {
 		@Override
 		@LayoutRes
 		public int getContentViewResource(@LayoutRes int defaultViewResource) {
-			return contentViewResource != NO_RES ? contentViewResource : defaultViewResource;
+			return contentViewResource == NO_RES ? defaultViewResource : contentViewResource;
 		}
 
 		/**
@@ -136,7 +136,7 @@ public final class BaseAnnotationHandlers extends AnnotationHandlers {
 		@ColorRes
 		@DrawableRes
 		public int getContentViewBackgroundResId(int defaultResId) {
-			return contentViewBackgroundResId != NO_RES ? contentViewBackgroundResId : defaultResId;
+			return contentViewBackgroundResId == NO_RES ? defaultResId : contentViewBackgroundResId;
 		}
 	}
 }

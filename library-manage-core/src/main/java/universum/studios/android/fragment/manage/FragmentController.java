@@ -349,7 +349,7 @@ public class FragmentController {
 	 * an exception is thrown.
 	 */
 	private void assertHasFactory() {
-		if (mFactory == null) throw new NullPointerException("No factory attached!");
+		if (mFactory == null) throw new IllegalStateException("No factory attached!");
 	}
 
 	/**
@@ -505,7 +505,7 @@ public class FragmentController {
 	 * @param request The fragment request to be executed.
 	 * @return The fragment that has been associated with the request either during its initialization
 	 * or as result of this execution. May be {@code null} if the execution has failed.
-	 * @throws IllegalArgumentException If there is no factory attached.
+	 * @throws IllegalStateException    If there is no factory attached.
 	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
 	 *                                  fragment id specified for the request.
 	 * @see FragmentRequestInterceptor#interceptFragmentRequest(FragmentRequest)
@@ -692,6 +692,8 @@ public class FragmentController {
 			case FragmentRequest.DETACH:
 				transaction.detach(fragment);
 				break;
+			default:
+				throw new IllegalArgumentException("Unsupported transaction type(" + request.mTransaction + ") specified for the fragment request!");
 		}
 		// Attach transitions with shared elements, if specified and supported.
 		if (CAN_ATTACH_TRANSITIONS) {
@@ -772,7 +774,7 @@ public class FragmentController {
 	 *
 	 * @param factoryFragmentId Id of the desired factory fragment to find.
 	 * @return The requested fragment if found, {@code null} otherwise.
-	 * @throws NullPointerException     If there is no factory attached.
+	 * @throws IllegalStateException    If there is no factory attached.
 	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
 	 *                                  specified id.
 	 */
