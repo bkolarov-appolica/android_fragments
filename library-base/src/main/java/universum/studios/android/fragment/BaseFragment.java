@@ -84,10 +84,6 @@ import universum.studios.android.fragment.util.FragmentUtils;
 public abstract class BaseFragment extends Fragment implements BackPressWatcher, ViewClickWatcher {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -95,23 +91,6 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * Log TAG.
 	 */
 	private static final String TAG = "BaseFragment";
-
-	/**
-	 * Defines an annotation for determining set of available lifecycle flags.
-	 */
-	@IntDef(flag = true, value = {
-			LIFECYCLE_ATTACHED,
-			LIFECYCLE_CREATED,
-			LIFECYCLE_STARTED,
-			LIFECYCLE_RESUMED,
-			LIFECYCLE_PAUSED,
-			LIFECYCLE_STOPPED,
-			LIFECYCLE_DESTROYED,
-			LIFECYCLE_DETACHED
-	})
-	@Retention(RetentionPolicy.SOURCE)
-	private @interface LifecycleFlag {
-	}
 
 	/**
 	 * Lifecycle flag used to indicate that fragment is <b>attached</b> to the parent context.
@@ -154,6 +133,27 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	private static final int LIFECYCLE_DETACHED = 0x00000001 << 7;
 
 	/**
+	 * Defines an annotation for determining set of available lifecycle flags.
+	 */
+	@IntDef(flag = true, value = {
+			LIFECYCLE_ATTACHED,
+			LIFECYCLE_CREATED,
+			LIFECYCLE_STARTED,
+			LIFECYCLE_RESUMED,
+			LIFECYCLE_PAUSED,
+			LIFECYCLE_STOPPED,
+			LIFECYCLE_DESTROYED,
+			LIFECYCLE_DETACHED
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface LifecycleFlag {
+	}
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
 	 * Static members ==============================================================================
 	 */
 
@@ -189,6 +189,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * this class will be processed/obtained here so they can be later used.
 	 */
 	public BaseFragment() {
+		super();
 		this.mAnnotationHandler = onCreateAnnotationHandler();
 	}
 
@@ -206,12 +207,15 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * error occurs.
 	 */
 	@Nullable
+	@SuppressWarnings("TryWithIdenticalCatches")
 	public static <F extends Fragment> F newInstanceWithArguments(@NonNull Class<F> classOfFragment, @Nullable Bundle args) {
 		try {
 			final F fragment = classOfFragment.newInstance();
 			fragment.setArguments(args);
 			return fragment;
-		} catch (Exception e) {
+		} catch (java.lang.InstantiationException e) {
+			Log.e(TAG, "Failed to instantiate instance of " + classOfFragment + " with arguments!", e);
+		} catch (IllegalAccessException e) {
 			Log.e(TAG, "Failed to instantiate instance of " + classOfFragment + " with arguments!", e);
 		}
 		return null;
@@ -503,6 +507,7 @@ public abstract class BaseFragment extends Fragment implements BackPressWatcher,
 	 * @param view The clicked view dispatched to this fragment.
 	 */
 	protected void onViewClick(@NonNull View view) {
+		// Inheritance hierarchies may handle here click event for the passed view.
 	}
 
 	/**

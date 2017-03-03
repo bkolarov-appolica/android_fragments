@@ -81,6 +81,31 @@ import universum.studios.android.fragment.FragmentsConfig;
 public class FragmentController {
 
 	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	private static final String TAG = "FragmentController";
+
+	/**
+	 * Default TAG used for fragments.
+	 */
+	public static final String FRAGMENT_TAG = FragmentsConfig.class.getPackage().getName() + ".TAG.Fragment";
+
+	/**
+	 * Constant used to determine that no view container id is specified.
+	 */
+	public static final int NO_CONTAINER_ID = -1;
+
+	/**
+	 * Flag indicating whether we can attach transitions to a fragment instance at the current Android
+	 * API level or not.
+	 */
+	private static final boolean CAN_ATTACH_TRANSITIONS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+	/**
 	 * Interface ===================================================================================
 	 */
 
@@ -119,31 +144,6 @@ public class FragmentController {
 		 */
 		void onFragmentsBackStackChanged(@NonNull FragmentManager.BackStackEntry backStackEntry, boolean added);
 	}
-
-	/**
-	 * Constants ===================================================================================
-	 */
-
-	/**
-	 * Log TAG.
-	 */
-	private static final String TAG = "FragmentController";
-
-	/**
-	 * Default TAG used for fragments.
-	 */
-	public static final String FRAGMENT_TAG = FragmentsConfig.class.getPackage().getName() + ".TAG.Fragment";
-
-	/**
-	 * Constant used to determine that no view container id is specified.
-	 */
-	public static final int NO_CONTAINER_ID = -1;
-
-	/**
-	 * Flag indicating whether we can attach transitions to a fragment instance at the current Android
-	 * API level or not.
-	 */
-	private static final boolean CAN_ATTACH_TRANSITIONS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT;
 
 	/**
 	 * Static members ==============================================================================
@@ -410,7 +410,7 @@ public class FragmentController {
 	 */
 	private void notifyRequestExecuted(FragmentRequest request) {
 		if (mRequestListeners != null && !mRequestListeners.isEmpty()) {
-			for (OnRequestListener listener : mRequestListeners) {
+			for (final OnRequestListener listener : mRequestListeners) {
 				listener.onRequestExecuted(request);
 			}
 		}
@@ -448,7 +448,7 @@ public class FragmentController {
 	 */
 	private void notifyBackStackEntryChange(FragmentManager.BackStackEntry changedEntry, boolean added) {
 		if (mBackStackChangeListeners != null && !mBackStackChangeListeners.isEmpty()) {
-			for (OnBackStackChangeListener listener : mBackStackChangeListeners) {
+			for (final OnBackStackChangeListener listener : mBackStackChangeListeners) {
 				listener.onFragmentsBackStackChanged(changedEntry, added);
 			}
 		}
@@ -550,7 +550,7 @@ public class FragmentController {
 				request.tag(mFactory.createFragmentTag(fragmentId));
 			}
 		}
-		fragment = mRequestInterceptor != null ? mRequestInterceptor.interceptFragmentRequest(request) : null;
+		fragment = mRequestInterceptor == null ? null : mRequestInterceptor.interceptFragmentRequest(request);
 		if (fragment == null) {
 			fragment = onExecuteRequest(request);
 		}
@@ -587,10 +587,8 @@ public class FragmentController {
 		// Crate transaction for the fragment request.
 		final Fragment fragment = request.mFragment;
 		final FragmentTransaction transaction = createTransaction(request);
-		if (request.hasFlag(FragmentRequest.ADD_TO_BACK_STACK)) {
-			if (FragmentsConfig.DEBUG_LOG_ENABLED) {
-				Log.d(TAG, "Fragment(" + fragment + ") will be added to back-stack under the tag(" + fragment.getTag() + ").");
-			}
+		if (request.hasFlag(FragmentRequest.ADD_TO_BACK_STACK) && FragmentsConfig.DEBUG_LOG_ENABLED) {
+			Log.d(TAG, "Fragment(" + fragment + ") will be added to back-stack under the tag(" + fragment.getTag() + ").");
 		}
 		// Commit the transaction either normally or allowing state loss.
 		if (request.hasFlag(FragmentRequest.ALLOW_STATE_LOSS)) {
@@ -700,7 +698,7 @@ public class FragmentController {
 			this.attachTransitionsToFragment(request, fragment);
 			if (request.mSharedElements != null && !request.mSharedElements.isEmpty()) {
 				final List<Pair<View, String>> elements = request.mSharedElements;
-				for (Pair<View, String> pair : elements) {
+				for (final Pair<View, String> pair : elements) {
 					transaction.addSharedElement(pair.first, pair.second);
 				}
 			}

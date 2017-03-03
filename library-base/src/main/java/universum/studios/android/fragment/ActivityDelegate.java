@@ -34,10 +34,6 @@ import android.view.ActionMode;
 @SuppressWarnings("WeakerAccess") public abstract class ActivityDelegate {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -47,14 +43,8 @@ import android.view.ActionMode;
 	// private static final String TAG = "ActivityDelegate";
 
 	/**
-	 * Flag indicating whether the output trough log-cat is enabled or not.
+	 * Interface ===================================================================================
 	 */
-	// private final boolean LOG_ENABLED = true;
-
-	/**
-	 * Flag indicating whether the debug output trough log-cat is enabled or not.
-	 */
-	// private final boolean DEBUG_ENABLED = true;
 
 	/**
 	 * Static members ==============================================================================

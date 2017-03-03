@@ -91,35 +91,6 @@ import universum.studios.android.fragment.annotation.handler.WebFragmentAnnotati
 public class WebFragment extends ActionBarFragment {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
-	 * Simple listener for {@link WebFragment} with callbacks fired whenever loading process of a
-	 * specific <b>web url</b> was started/finished.
-	 *
-	 * @author Martin Albedinsky
-	 */
-	public interface OnWebContentLoadingListener {
-
-		/**
-		 * Invoked whenever loading process of the specified <var>webUrl</var> within an instance of
-		 * {@link WebFragment} for which is this callback registered just started.
-		 *
-		 * @param webUrl The web url that is currently being loaded into web view.
-		 */
-		void onLoadingStarted(@NonNull String webUrl);
-
-		/**
-		 * Invoked whenever loading process of the specified <var>webUrl</var> within an instance of
-		 * {@link WebFragment} for which is this callback registered just finished.
-		 *
-		 * @param webUrl The web url that was currently loaded into web view.
-		 */
-		void onLoadingFinished(@NonNull String webUrl);
-	}
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -131,12 +102,12 @@ public class WebFragment extends ActionBarFragment {
 	/**
 	 * Bundle key for the web view content.
 	 */
-	private static final String BUNDLE_WEB_VIEW_CONTENT = "universum.studios.android.fragment.WebFragment.BUNDLE.Content";
+	private static final String BUNDLE_WEB_VIEW_CONTENT = WebFragment.class.getName() + ".BUNDLE.Content";
 
 	/**
 	 * Bundle key for the private flags.
 	 */
-	private static final String BUNDLE_PRIVATE_FLAGS = "universum.studios.android.fragment.WebFragment.BUNDLE.PrivateFlags";
+	private static final String BUNDLE_PRIVATE_FLAGS = WebFragment.class.getName() + ".BUNDLE.PrivateFlags";
 
 	/**
 	 * Source code copied from Android SDK [START] =================================================
@@ -201,15 +172,6 @@ public class WebFragment extends ActionBarFragment {
 	 */
 
 	/**
-	 * Defines an annotation for determining set of allowed content type flags for
-	 * {@link #onLoadContent(String, int)} method.
-	 */
-	@Retention(RetentionPolicy.SOURCE)
-	@IntDef({CONTENT_EMPTY, CONTENT_URL, CONTENT_HTML, CONTENT_FILE})
-	public @interface ContentType {
-	}
-
-	/**
 	 * Flag indicating no content to load.
 	 */
 	protected static final int CONTENT_EMPTY = 0x00;
@@ -228,6 +190,15 @@ public class WebFragment extends ActionBarFragment {
 	 * Flag indicating that {@link #mContent} should be loaded as FILE.
 	 */
 	protected static final int CONTENT_FILE = 0x03;
+
+	/**
+	 * Defines an annotation for determining set of allowed content type flags for
+	 * {@link #onLoadContent(String, int)} method.
+	 */
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({CONTENT_EMPTY, CONTENT_URL, CONTENT_HTML, CONTENT_FILE})
+	public @interface ContentType {
+	}
 
 	/**
 	 * Content data encoding.
@@ -258,6 +229,35 @@ public class WebFragment extends ActionBarFragment {
 	 * The maximum length of the substring of the current content to log with log cat output.
 	 */
 	private static final int LOG_CONTENT_MAX_LENGTH = 256;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Simple listener for {@link WebFragment} with callbacks fired whenever loading process of a
+	 * specific <b>web url</b> was started/finished.
+	 *
+	 * @author Martin Albedinsky
+	 */
+	public interface OnWebContentLoadingListener {
+
+		/**
+		 * Invoked whenever loading process of the specified <var>webUrl</var> within an instance of
+		 * {@link WebFragment} for which is this callback registered just started.
+		 *
+		 * @param webUrl The web url that is currently being loaded into web view.
+		 */
+		void onLoadingStarted(@NonNull String webUrl);
+
+		/**
+		 * Invoked whenever loading process of the specified <var>webUrl</var> within an instance of
+		 * {@link WebFragment} for which is this callback registered just finished.
+		 *
+		 * @param webUrl The web url that was currently loaded into web view.
+		 */
+		void onLoadingFinished(@NonNull String webUrl);
+	}
 
 	/**
 	 * Static members ==============================================================================
@@ -343,18 +343,18 @@ public class WebFragment extends ActionBarFragment {
 
 	/**
 	 */
+	@Override
+	WebFragmentAnnotationHandler onCreateAnnotationHandler() {
+		return WebAnnotationHandlers.obtainWebFragmentHandler(getClass());
+	}
+
+	/**
+	 */
 	@NonNull
 	@Override
 	protected WebFragmentAnnotationHandler getAnnotationHandler() {
 		FragmentAnnotations.checkIfEnabledOrThrow();
 		return (WebFragmentAnnotationHandler) mAnnotationHandler;
-	}
-
-	/**
-	 */
-	@Override
-	WebFragmentAnnotationHandler onCreateAnnotationHandler() {
-		return WebAnnotationHandlers.obtainWebFragmentHandler(getClass());
 	}
 
 	/**
@@ -389,10 +389,10 @@ public class WebFragment extends ActionBarFragment {
 		if (mAnnotationHandler != null) {
 			final WebFragmentAnnotationHandler annotationHandler = (WebFragmentAnnotationHandler) mAnnotationHandler;
 			final int contentResId = annotationHandler.getWebContentResId(-1);
-			if (contentResId != -1) {
-				this.mContent = getString(contentResId);
-			} else {
+			if (contentResId == -1) {
 				this.mContent = annotationHandler.getWebContent(null);
+			} else {
+				this.mContent = getString(contentResId);
 			}
 			this.updatePrivateFlags(PFLAG_CONTENT_CHANGED, true);
 		}
@@ -510,7 +510,6 @@ public class WebFragment extends ActionBarFragment {
 			this.mContent = savedInstanceState.getString(BUNDLE_WEB_VIEW_CONTENT);
 			this.updatePrivateFlags(PFLAG_CONTENT_CHANGED, true);
 		}
-
 		if (mWebView != null) {
 			mWebView.getSettings().setJavaScriptEnabled(hasPrivateFlag(PFLAG_JAVA_SCRIPT_ENABLED));
 		}
@@ -571,7 +570,10 @@ public class WebFragment extends ActionBarFragment {
 	@ContentType
 	private int resolveContentType() {
 		if (hasPrivateFlag(PFLAG_CONTENT_CHANGED)) {
-			if (!TextUtils.isEmpty(mContent)) {
+			if (TextUtils.isEmpty(mContent)) {
+				this.mContentType = CONTENT_EMPTY;
+
+			} else {
 				if (WEB_URL_MATCHER.reset(mContent).matches()) {
 					this.mContentType = CONTENT_URL;
 				} else if (FILE_URL_MATCHER.reset(mContent).matches()) {
@@ -579,8 +581,6 @@ public class WebFragment extends ActionBarFragment {
 				} else {
 					this.mContentType = CONTENT_HTML;
 				}
-			} else {
-				this.mContentType = CONTENT_EMPTY;
 			}
 		}
 		return mContentType;
@@ -614,6 +614,7 @@ public class WebFragment extends ActionBarFragment {
 					mWebView.loadUrl(content);
 					break;
 				case CONTENT_HTML:
+				default:
 					mWebView.loadDataWithBaseURL("", content, DATA_MIME_TYPE, DATA_ENCODING, "");
 					break;
 			}

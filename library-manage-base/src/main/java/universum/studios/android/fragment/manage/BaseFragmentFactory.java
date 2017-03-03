@@ -65,10 +65,6 @@ import universum.studios.android.fragment.annotation.handler.FragmentFactoryAnno
 public abstract class BaseFragmentFactory implements FragmentFactory {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -76,6 +72,10 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "BaseFragmentFactory";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
@@ -120,7 +120,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 */
 	public BaseFragmentFactory() {
 		this.mAnnotationHandler = onCreateAnnotationHandler();
-		this.mItems = mAnnotationHandler != null ? mAnnotationHandler.getFragmentItems() : null;
+		this.mItems = mAnnotationHandler == null ? null : mAnnotationHandler.getFragmentItems();
 	}
 
 	/**
@@ -193,7 +193,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	 * {@code false} otherwise.
 	 */
 	protected boolean providesFragment(int fragmentId) {
-		return (mItems != null) && mItems.indexOfKey(fragmentId) >= 0;
+		return mItems != null && mItems.indexOfKey(fragmentId) >= 0;
 	}
 
 	/**

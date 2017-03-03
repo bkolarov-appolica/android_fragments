@@ -41,6 +41,7 @@ public final class WebAnnotationHandlers extends AnnotationHandlers {
 	/**
 	 */
 	private WebAnnotationHandlers() {
+		super();
 		// Creation of instances of this class is not publicly allowed.
 	}
 
@@ -88,8 +89,8 @@ public final class WebAnnotationHandlers extends AnnotationHandlers {
 		public WebFragmentHandler(@NonNull Class<?> annotatedClass) {
 			super(annotatedClass, WebFragment.class);
 			final WebContent webContent = findAnnotation(WebContent.class);
-			this.webContentResId = webContent != null ? webContent.valueRes() : NO_RES;
-			this.webContent = webContent != null ? webContent.value() : null;
+			this.webContentResId = webContent == null ? NO_RES : webContent.valueRes();
+			this.webContent = webContent == null ? null : webContent.value();
 		}
 
 		/**
@@ -97,7 +98,7 @@ public final class WebAnnotationHandlers extends AnnotationHandlers {
 		@Override
 		@StringRes
 		public int getWebContentResId(@StringRes int defaultResId) {
-			return webContentResId != NO_RES ? webContentResId : defaultResId;
+			return webContentResId == NO_RES ? defaultResId : webContentResId;
 		}
 
 		/**
@@ -105,7 +106,7 @@ public final class WebAnnotationHandlers extends AnnotationHandlers {
 		@Nullable
 		@Override
 		public String getWebContent(@Nullable String defaultContent) {
-			return !TextUtils.isEmpty(webContent) ? webContent : defaultContent;
+			return TextUtils.isEmpty(webContent) ? defaultContent : webContent;
 		}
 	}
 }
