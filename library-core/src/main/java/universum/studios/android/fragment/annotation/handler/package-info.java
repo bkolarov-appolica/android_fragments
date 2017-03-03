@@ -16,31 +16,10 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.support.fragment.annotation;
-
-import android.support.annotation.MenuRes;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Defines an annotation for determining how an {@link android.view.ActionMode} should be set.
+ * Provides group of annotation handler implementations used across the Fragments library for annotations
+ * processing and handling.
  *
  * @author Martin Albedinsky
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ActionModeOptions {
-
-	/**
-	 * A resource id of the desired xml menu for an ActionMode.
-	 * <p>
-	 * Default value: <b>0</b>
-	 *
-	 * @see android.support.v7.view.ActionMode.Callback#onCreateActionMode(android.support.v7.view.ActionMode, android.view.Menu)
-	 */
-	@MenuRes
-	int menu() default 0;
-}
+package universum.studios.android.fragment.annotation.handler;

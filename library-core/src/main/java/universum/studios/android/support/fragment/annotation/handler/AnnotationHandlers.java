@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import universum.studios.android.support.fragment.FragmentsConfig;
 
@@ -31,11 +32,7 @@ import universum.studios.android.support.fragment.FragmentsConfig;
  *
  * @author Martin Albedinsky
  */
-public class AnnotationHandlers {
-
-	/**
-	 * Interface ===================================================================================
-	 */
+public abstract class AnnotationHandlers {
 
 	/**
 	 * Constants ===================================================================================
@@ -45,6 +42,10 @@ public class AnnotationHandlers {
 	 * Log TAG.
 	 */
 	// private static final String TAG = "AnnotationHandlers";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
@@ -64,7 +65,7 @@ public class AnnotationHandlers {
 	 * Map with annotation handlers where each handler is mapped to a particular class for which
 	 * has been that handler instantiated.
 	 */
-	private static HashMap<Class<?>, Object> sHandlers;
+	private static Map<Class<?>, Object> sHandlers;
 
 	/**
 	 * Members =====================================================================================

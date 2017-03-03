@@ -43,10 +43,6 @@ import universum.studios.android.support.fragment.FragmentsConfig;
 public final class FragmentUtils {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -60,6 +56,10 @@ public final class FragmentUtils {
 	 * {@link Build.VERSION_CODES#LOLLIPOP} Android version.
 	 */
 	private static final boolean ACCESS_LOLLIPOP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================

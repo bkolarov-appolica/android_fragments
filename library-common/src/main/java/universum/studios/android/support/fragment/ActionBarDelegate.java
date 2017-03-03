@@ -40,10 +40,6 @@ import universum.studios.android.support.fragment.util.FragmentUtils;
 @SuppressWarnings("WeakerAccess") public abstract class ActionBarDelegate {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -51,6 +47,10 @@ import universum.studios.android.support.fragment.util.FragmentUtils;
 	 * Log TAG.
 	 */
 	// private static final String TAG = "ActionBarDelegate";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
@@ -98,14 +98,11 @@ import universum.studios.android.support.fragment.util.FragmentUtils;
 	public static ActionBarDelegate create(@NonNull Activity activity) {
 		if (activity instanceof AppCompatActivity) {
 			final android.support.v7.app.ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
-			return actionBar != null ? create(activity, actionBar) : null;
-		} else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+			return actionBar == null ? null : create(activity, actionBar);
+		} else {
 			final ActionBar actionBar = activity.getActionBar();
-			return actionBar != null ? create(activity, actionBar) : null;
+			return actionBar == null ? null : create(activity, actionBar);
 		}
-		throw new IllegalStateException(
-				"Cannot wrap ActionBar of " + activity + " at the current API level(" + Build.VERSION.SDK_INT + ")."
-		);
 	}
 
 	/**

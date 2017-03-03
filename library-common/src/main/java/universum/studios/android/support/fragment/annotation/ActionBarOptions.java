@@ -43,14 +43,6 @@ public @interface ActionBarOptions {
 	 */
 
 	/**
-	 * Defines an annotation for determining set of allowed flags for {@link #homeAsUp()} attribute.
-	 */
-	@Retention(RetentionPolicy.SOURCE)
-	@IntDef({UNCHANGED, HOME_AS_UP_ENABLED, HOME_AS_UP_DISABLED})
-	@interface HomeAsUp {
-	}
-
-	/**
 	 * Flag for all options from this annotation that can be used to identify that current value for
 	 * such option should be left <b>unchanged</b>.
 	 */
@@ -72,6 +64,14 @@ public @interface ActionBarOptions {
 	 * Flag indicating that an ActionBar's home as up icon should be disabled (invisible).
 	 */
 	int HOME_AS_UP_DISABLED = 0x02;
+
+	/**
+	 * Defines an annotation for determining set of allowed flags for {@link #homeAsUp()} attribute.
+	 */
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({UNCHANGED, HOME_AS_UP_ENABLED, HOME_AS_UP_DISABLED})
+	@interface HomeAsUp {
+	}
 
 	/**
 	 * Methods =====================================================================================

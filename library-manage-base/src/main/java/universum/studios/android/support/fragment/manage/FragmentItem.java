@@ -18,6 +18,7 @@
  */
 package universum.studios.android.support.fragment.manage;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,10 +36,6 @@ import universum.studios.android.support.fragment.annotation.FactoryFragment;
 public final class FragmentItem {
 
 	/**
-	 * Interface ===================================================================================
-	 */
-
-	/**
 	 * Constants ===================================================================================
 	 */
 
@@ -46,6 +43,10 @@ public final class FragmentItem {
 	 * Log TAG.
 	 */
 	private static final String TAG = "FragmentItem";
+
+	/**
+	 * Interface ===================================================================================
+	 */
 
 	/**
 	 * Static members ==============================================================================
@@ -107,6 +108,7 @@ public final class FragmentItem {
 	 * or some instantiation error occurs.
 	 */
 	@Nullable
+	@SuppressWarnings("TryWithIdenticalCatches")
 	public Fragment newFragmentInstance(@Nullable Bundle arguments) {
 		if (type.equals(Fragment.class)) {
 			return null;
@@ -117,7 +119,14 @@ public final class FragmentItem {
 				fragment.setArguments(arguments);
 			}
 			return fragment;
-		} catch (Exception e) {
+		} catch (InstantiationException e) {
+			Log.e(
+					TAG,
+					"Failed to instantiate a new fragment instance class of(" + type + "). " +
+							"Make sure that this fragment class is accessible and has public empty constructor.",
+					e
+			);
+		} catch (IllegalAccessException e) {
 			Log.e(
 					TAG,
 					"Failed to instantiate a new fragment instance class of(" + type + "). " +
