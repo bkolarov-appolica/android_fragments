@@ -48,6 +48,7 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 	/**
 	 */
 	private ActionBarAnnotationHandlers() {
+		super();
 		// Creation of instances of this class is not publicly allowed.
 	}
 
@@ -193,6 +194,9 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 					actionBarDelegate.setDisplayHomeAsUpEnabled(true);
 					this.hasOptionsMenu = true;
 					break;
+				default:
+					// Do not "touch" ActionBar's enabled state.
+					break;
 			}
 			if (homeAsUpVectorIndicator != ActionBarOptions.UNCHANGED) {
 				switch (homeAsUpVectorIndicator) {
@@ -201,6 +205,7 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 						break;
 					default:
 						actionBarDelegate.setHomeAsUpVectorIndicator(homeAsUpVectorIndicator);
+						break;
 				}
 			} else if (homeAsUpIndicator != ActionBarOptions.UNCHANGED) {
 				switch (homeAsUpIndicator) {
@@ -209,6 +214,7 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 						break;
 					default:
 						actionBarDelegate.setHomeAsUpIndicator(homeAsUpIndicator);
+						break;
 				}
 			}
 			switch (icon) {
@@ -219,6 +225,7 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 					break;
 				default:
 					actionBarDelegate.setIcon(icon);
+					break;
 			}
 			switch (title) {
 				case ActionBarOptions.UNCHANGED:
@@ -228,6 +235,7 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 					break;
 				default:
 					actionBarDelegate.setTitle(title);
+					break;
 			}
 		}
 
@@ -250,25 +258,25 @@ public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
 		@MenuRes
 		@Override
 		public int getOptionsMenuFlags(@MenuRes int defaultFlags) {
-			return optionsMenuFlags != -1 ? optionsMenuFlags : defaultFlags;
+			return optionsMenuFlags == -1 ? defaultFlags : optionsMenuFlags;
 		}
 
 		/**
 		 */
 		@Override
 		public int getOptionsMenuResource(int defaultResource) {
-			return optionsMenuResource != NO_RES ? optionsMenuResource : defaultResource;
+			return optionsMenuResource == NO_RES ? defaultResource : optionsMenuResource;
 		}
 
 		/**
 		 */
 		@Override
 		public boolean handleCreateActionMode(@NonNull ActionMode actionMode, @NonNull Menu menu) {
-			if (actionModeMenuResource != NO_RES) {
-				actionMode.getMenuInflater().inflate(actionModeMenuResource, menu);
-				return true;
+			if (actionModeMenuResource == NO_RES) {
+				return false;
 			}
-			return false;
+			actionMode.getMenuInflater().inflate(actionModeMenuResource, menu);
+			return true;
 		}
 	}
 }
