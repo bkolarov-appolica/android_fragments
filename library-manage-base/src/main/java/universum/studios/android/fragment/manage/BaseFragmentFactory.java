@@ -215,7 +215,7 @@ public abstract class BaseFragmentFactory implements FragmentFactory {
 	protected Fragment onCreateFragment(int fragmentId) {
 		final Fragment fragment = mItems.get(fragmentId).newFragmentInstance(null);
 		if (fragment == null) {
-			throw new NullPointerException("Failed to instantiate fragment for the requested id(" + fragmentId + ")!");
+			throw new IllegalArgumentException("Failed to instantiate fragment for the requested id(" + fragmentId + ")!");
 		}
 		return fragment;
 	}

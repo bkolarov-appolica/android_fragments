@@ -636,14 +636,14 @@ public class WebFragment extends ActionBarFragment {
 	/**
 	 */
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
+	public void onSaveInstanceState(Bundle state) {
+		super.onSaveInstanceState(state);
 		// Save web view state.
 		if (mWebView != null) {
-			mWebView.saveState(outState);
+			mWebView.saveState(state);
 		}
-		outState.putInt(BUNDLE_PRIVATE_FLAGS, mPrivateFlags);
-		outState.putString(BUNDLE_WEB_VIEW_CONTENT, mContent);
+		state.putInt(BUNDLE_PRIVATE_FLAGS, mPrivateFlags);
+		state.putString(BUNDLE_WEB_VIEW_CONTENT, mContent);
 	}
 
 	/**
