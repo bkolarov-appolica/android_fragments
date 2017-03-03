@@ -129,32 +129,32 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Fragment transaction type used to indicate that the associated fragment should be committed
-	 * using <b>replace</b> operation.
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using <b>replace</b> operation.
 	 *
 	 * @see FragmentTransaction#replace(int, Fragment, String)
 	 */
 	public static final int REPLACE = 0x00;
 
 	/**
-	 * Fragment transaction type used to indicate that the associated fragment should be committed
-	 * using <b>add</b> operation.
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using <b>add</b> operation.
 	 *
 	 * @see FragmentTransaction#add(int, Fragment, String)
 	 */
 	public static final int ADD = 0x01;
 
 	/**
-	 * Fragment transaction type used to indicate that the associated fragment should be committed
-	 * using <b>remove</b> operation.
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using <b>remove</b> operation.
 	 *
 	 * @see FragmentTransaction#remove(Fragment)
 	 */
 	public static final int REMOVE = 0x02;
 
 	/**
-	 * Fragment transaction type used to indicate that the associated fragment should be committed
-	 * using <b>show</b> operation.
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using <b>show</b> operation.
 	 *
 	 * @see FragmentTransaction#show(Fragment)
 	 */
@@ -169,16 +169,16 @@ public final class FragmentRequest {
 	public static final int HIDE = 0x04;
 
 	/**
-	 * Fragment transaction type used to indicate that the associated fragment should be committed
-	 * using <b>attach</b> operation.
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using <b>attach</b> operation.
 	 *
 	 * @see FragmentTransaction#attach(Fragment)
 	 */
 	public static final int ATTACH = 0x05;
 
 	/**
-	 * Fragment transaction type used to indicate that the associated fragment should be committed
-	 * using <b>detach</b> operation.
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using <b>detach</b> operation.
 	 *
 	 * @see FragmentTransaction#detach(Fragment)
 	 */
@@ -190,15 +190,15 @@ public final class FragmentRequest {
 	@IntDef(flag = true, value = {
 			REPLACE_SAME,
 			ADD_TO_BACK_STACK,
-			EXECUTE_ALLOWING_STATE_LOSS,
-			EXECUTE_IMMEDIATE
+			ALLOW_STATE_LOSS,
+			IMMEDIATE
 	})
 	@Retention(RetentionPolicy.SOURCE)
 	private @interface Flag {
 	}
 
 	/**
-	 * Flag indicating that a same fragment (currently showing) can be replaced by the associated fragment.
+	 * Flag indicating that a same fragment (currently displayed) can be replaced by the associated fragment.
 	 *
 	 * @see FragmentTransaction#replace(int, Fragment, String)
 	 */
@@ -217,14 +217,14 @@ public final class FragmentRequest {
 	 *
 	 * @see FragmentTransaction#commitAllowingStateLoss()
 	 */
-	static final int EXECUTE_ALLOWING_STATE_LOSS = 0x00000001 << 4;
+	static final int ALLOW_STATE_LOSS = 0x00000001 << 2;
 
 	/**
 	 * Flag indicating that the associated {@link FragmentTransaction} should be executed immediately.
 	 *
 	 * @see FragmentManager#executePendingTransactions()
 	 */
-	static final int EXECUTE_IMMEDIATE = 0x00000001 << 5;
+	static final int IMMEDIATE = 0x00000001 << 3;
 
 	/**
 	 * Defines an annotation for determining available transition flags for FragmentRequest.
@@ -314,6 +314,7 @@ public final class FragmentRequest {
 	 *
 	 * @see Transaction @Transaction
 	 */
+	@Transaction
 	int mTransaction = REPLACE;
 
 	/**
@@ -387,6 +388,7 @@ public final class FragmentRequest {
 	 *
 	 * @see TransitionFlag @TransitionFlag
 	 */
+	@TransitionFlag
 	private int mSpecifiedTransitions;
 
 	/**
@@ -415,6 +417,7 @@ public final class FragmentRequest {
 	 *
 	 * @see Flag @Flag
 	 */
+	@Flag
 	private int mFlags;
 
 	/**
@@ -431,7 +434,7 @@ public final class FragmentRequest {
 	 * Creates a new instance of FragmentRequest for the given <var>fragment</var>.
 	 *
 	 * @param fragment   The fragment to associate with the new request.
-	 * @param controller Fragment controller that creates the new request and is also responsible
+	 * @param controller Fragment controller that creates the new request and will be also responsible
 	 *                   for its execution.
 	 */
 	FragmentRequest(Fragment fragment, FragmentController controller) {
@@ -470,9 +473,9 @@ public final class FragmentRequest {
 		builder.append(", addToBackStack: ");
 		builder.append(hasFlag(ADD_TO_BACK_STACK));
 		builder.append(", executeAllowingStateLoss: ");
-		builder.append(hasFlag(EXECUTE_ALLOWING_STATE_LOSS));
+		builder.append(hasFlag(ALLOW_STATE_LOSS));
 		builder.append(", executeImmediate: ");
-		builder.append(hasFlag(EXECUTE_IMMEDIATE));
+		builder.append(hasFlag(IMMEDIATE));
 		builder.append(", executed: ");
 		builder.append(mExecuted);
 		return builder.append("}").toString();
@@ -1010,11 +1013,11 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Sets a boolean flag indicating whether the already showing fragment with the same TAG as
+	 * Sets a boolean flag indicating whether the already displayed fragment with the same TAG as that
 	 * specified for this request may be replaced by the associated fragment or not.
 	 *
 	 * @param replace {@code True} to replace an existing fragment with the same TAG as specified
-	 *                via {@link #tag(String)} with associated one, {@code false} otherwise.
+	 *                via {@link #tag(String)} with the associated one, {@code false} otherwise.
 	 * @return This request to allow methods chaining.
 	 * @see #replaceSame()
 	 */
@@ -1023,12 +1026,12 @@ public final class FragmentRequest {
 	}
 
 	/**
-	 * Return boolean flag indicating whether already showing fragment with the same TAG may be replaced
-	 * by a new one.
+	 * Returns boolean flag indicating whether already displayed fragment with the same TAG may be
+	 * replaced by a new one.
 	 * <p>
 	 * Default value: <b>{@code false}</b>
 	 *
-	 * @return {@code True} if already showing fragment with the same tag may be replaced, {@code false}
+	 * @return {@code True} if already displayed fragment with the same TAG may be replaced, {@code false}
 	 * otherwise.
 	 * @see #replaceSame(boolean)
 	 */
@@ -1069,9 +1072,11 @@ public final class FragmentRequest {
 	 *                 otherwise.
 	 * @return This request to allow methods chaining.
 	 * @see FragmentTransaction#commitAllowingStateLoss()
+	 * @see #executeAllowingStateLoss()
 	 */
+	// todo: deprecate and add allowStateLoss(boolean)
 	public final FragmentRequest executeAllowingStateLoss(boolean allowing) {
-		return setHasFlag(EXECUTE_ALLOWING_STATE_LOSS, allowing);
+		return setHasFlag(ALLOW_STATE_LOSS, allowing);
 	}
 
 	/**
@@ -1082,8 +1087,9 @@ public final class FragmentRequest {
 	 * @return {@code True} if transaction may be committed allowing state loss, {@code false} otherwise.
 	 * @see #executeAllowingStateLoss(boolean)
 	 */
+	// todo: deprecate and add allowStateLoss()
 	public final boolean executeAllowingStateLoss() {
-		return hasFlag(EXECUTE_ALLOWING_STATE_LOSS);
+		return hasFlag(ALLOW_STATE_LOSS);
 	}
 
 	/**
@@ -1096,8 +1102,9 @@ public final class FragmentRequest {
 	 * @see FragmentManager#executePendingTransactions()
 	 * @see #executeImmediate()
 	 */
+	// todo: deprecate and add immediate(boolean)
 	public FragmentRequest executeImmediate(boolean immediate) {
-		return setHasFlag(EXECUTE_IMMEDIATE, immediate);
+		return setHasFlag(IMMEDIATE, immediate);
 	}
 
 	/**
@@ -1109,8 +1116,9 @@ public final class FragmentRequest {
 	 * {@code false} otherwise (asynchronously).
 	 * @see #executeImmediate(boolean)
 	 */
+	// todo: deprecate and add immediate()
 	public boolean executeImmediate() {
-		return hasFlag(EXECUTE_IMMEDIATE);
+		return hasFlag(IMMEDIATE);
 	}
 
 	/**
@@ -1145,7 +1153,7 @@ public final class FragmentRequest {
 	 * method will throw an exception.
 	 *
 	 * @return The fragment associated with this request. This may be either fragment already associated
-	 * with this request or fragment that is already showing with the same TAG and should not be
+	 * with this request or fragment that is already displayed with the same TAG and should not be
 	 * replaced by a new one.
 	 * @throws IllegalStateException    If this request has been already executed.
 	 * @throws IllegalArgumentException If current configuration of this request does not meet the
@@ -1162,9 +1170,13 @@ public final class FragmentRequest {
 				if (mViewContainerId == FragmentController.NO_CONTAINER_ID) {
 					throw new IllegalArgumentException("Cannot execute request for REPLACE|ADD transaction. No view container id specified!");
 				}
-				break;
+			case REMOVE:
+			case SHOW:
+			case HIDE:
+			case ATTACH:
+			case DETACH:
+			default: return mController.executeRequest(this);
 		}
-		return mController.executeRequest(this);
 	}
 
 	/**

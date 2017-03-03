@@ -46,7 +46,7 @@ import universum.studios.android.fragment.FragmentsConfig;
  * controller is responsible for execution of fragment request when {@link FragmentRequest#execute()}
  * is called.
  *
- * <h3>Fragment factory</h3>
+ * <h3>Factory</h3>
  * The best advantage of the FragmentController and globally of this library may be accomplished by
  * using of {@link FragmentFactory} attached to the desired fragment controller. Basically in an
  * Android application you will use directly instances of the FragmentController to replace|add|hide...
@@ -59,11 +59,11 @@ import universum.studios.android.fragment.FragmentsConfig;
  * <p>
  * The desired factory for FragmentController may be specified via {@link #setFactory(FragmentFactory)}.
  * Fragment requests for fragments provided by the attached factory may be than created via {@link #newRequest(int)}.
- * <b>Note, that it is required that factory is attached to the controller before calling this method,
+ * <b>Note, that it is required that factory is attached to the controller before call to this method,
  * otherwise an exception will be thrown.</b>
  * <p>
  * Fragments that are provided by factory attached to the fragment controller may be found via
- * {@link #findFragmentByFactoryId(int)} (when already showing) by theirs corresponding id defined
+ * {@link #findFragmentByFactoryId(int)} (when already displayed) by theirs corresponding id defined
  * in the related factory.
  *
  * <h3>Callbacks</h3>
@@ -132,7 +132,7 @@ public class FragmentController {
 	/**
 	 * Default TAG used for fragments.
 	 */
-	public static final String FRAGMENT_TAG = "universum.studios.android.fragment.TAG.Fragment";
+	public static final String FRAGMENT_TAG = FragmentsConfig.class.getPackage().getName() + ".TAG.Fragment";
 
 	/**
 	 * Constant used to determine that no view container id is specified.
@@ -169,7 +169,7 @@ public class FragmentController {
 	private int mViewContainerId = NO_CONTAINER_ID;
 
 	/**
-	 * Fragment factory that provides fragment instances for this controller.
+	 * Factory that provides fragment instances for this controller.
 	 */
 	private FragmentFactory mFactory;
 
@@ -334,18 +334,6 @@ public class FragmentController {
 	}
 
 	/**
-	 * Returns the current fragment factory attached to this controller.
-	 *
-	 * @return This controller's factory or {@code null} if there is no factory attached yet.
-	 * @see #setFactory(FragmentFactory)
-	 * @see #hasFactory()
-	 */
-	@Nullable
-	public FragmentFactory getFactory() {
-		return mFactory;
-	}
-
-	/**
 	 * Checks whether this controller has fragment factory attached or not.
 	 *
 	 * @return {@code True} if factory is attached, {@code false} otherwise.
@@ -365,6 +353,18 @@ public class FragmentController {
 	}
 
 	/**
+	 * Returns the current fragment factory attached to this controller.
+	 *
+	 * @return This controller's factory or {@code null} if there is no factory attached yet.
+	 * @see #setFactory(FragmentFactory)
+	 * @see #hasFactory()
+	 */
+	@Nullable
+	public FragmentFactory getFactory() {
+		return mFactory;
+	}
+
+	/**
 	 * Sets an interceptor that may be used to intercept an execution of a {@link FragmentRequest}
 	 * created via {@link #newRequest(Fragment)} when execution of that request has been requested
 	 * via {@link FragmentRequest#execute()}.
@@ -381,8 +381,8 @@ public class FragmentController {
 	 * <p>
 	 * Fragment request created via {@link #newRequest(Fragment)} is executed whenever its
 	 * {@link FragmentRequest#execute()} is called and the associated controller does not have
-	 * {@link FragmentRequestInterceptor} attached or the attached interceptor did not intercept the
-	 * request execution.
+	 * {@link FragmentRequestInterceptor} attached or the attached interceptor did not intercept
+	 * execution of that particular request.
 	 *
 	 * @param listener The desired listener callback to be registered.
 	 * @see #unregisterOnRequestListener(OnRequestListener)
@@ -462,7 +462,7 @@ public class FragmentController {
 	 * fragment that is associated with the specified <var>factoryFragmentId</var> otherwise an
 	 * exception is thrown.
 	 *
-	 * @param factoryFragmentId Id of the desired factory fragment for which to crate new request.
+	 * @param factoryFragmentId Id of the desired factory fragment for which to crate the new request.
 	 * @return New fragment request with tag provided by the factory via {@link FragmentFactory#createFragmentTag(int)}
 	 * for the specified fragment id.
 	 * @throws NullPointerException     If there is no factory attached.
@@ -478,6 +478,7 @@ public class FragmentController {
 					"Cannot create new request. Current factory(" + mFactory.getClass() + ") " +
 							"does not provide fragment for the requested id(" + factoryFragmentId + ")!");
 		}
+		// fixme: if the request is intended to hide an existing fragment then this implementation is just wrong
 		final Fragment fragment = mFactory.createFragment(factoryFragmentId);
 		if (fragment == null) {
 			throw new NullPointerException(
@@ -497,7 +498,7 @@ public class FragmentController {
 	 * and also view container id via {@link FragmentRequest#viewContainerId(int)} specified for this
 	 * controller via {@link #setViewContainerId(int)}.
 	 *
-	 * @param fragment The fragment for which to create a new request.
+	 * @param fragment The fragment for which to create the new request.
 	 * @return New fragment request with default {@link #FRAGMENT_TAG} and container id specified for
 	 * this controller via {@link #setViewContainerId(int)}.
 	 * @see FragmentRequest#tag(String)
@@ -542,15 +543,19 @@ public class FragmentController {
 	 * @return The fragment associated with the request.
 	 */
 	@NonNull
+	@SuppressWarnings("ConstantConditions")
 	protected Fragment onExecuteRequest(@NonNull FragmentRequest request) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mManager.isDestroyed()) {
+			throw new IllegalStateException("Cannot execute fragment request in context of activity that has been already destroyed!");
+		}
 		if (!request.hasFlag(FragmentRequest.REPLACE_SAME)) {
-			// Do not replace same fragment if there is already showing fragment with the same tag.
-			final Fragment showingFragment = mManager.findFragmentByTag(request.mTag);
-			if (showingFragment != null) {
+			// Do not replace same fragment if there is already displayed fragment with the same tag.
+			final Fragment existingFragment = mManager.findFragmentByTag(request.mTag);
+			if (existingFragment != null) {
 				if (FragmentsConfig.LOG_ENABLED) {
-					Log.v(TAG, "Fragment with tag(" + request.mTag + ") is already showing or it is in the back-stack.");
+					Log.v(TAG, "Fragment with tag(" + request.mTag + ") is already displayed or it is in the back-stack.");
 				}
-				return showingFragment;
+				return existingFragment;
 			}
 		}
 		// Crate transaction for the fragment request.
@@ -562,12 +567,12 @@ public class FragmentController {
 			}
 		}
 		// Commit the transaction either normally or allowing state loss.
-		if (request.hasFlag(FragmentRequest.EXECUTE_ALLOWING_STATE_LOSS)) {
+		if (request.hasFlag(FragmentRequest.ALLOW_STATE_LOSS)) {
 			transaction.commitAllowingStateLoss();
 		} else {
 			transaction.commit();
 		}
-		if (request.hasFlag(FragmentRequest.EXECUTE_IMMEDIATE)) {
+		if (request.hasFlag(FragmentRequest.IMMEDIATE)) {
 			mManager.executePendingTransactions();
 		}
 		return fragment;
@@ -719,7 +724,7 @@ public class FragmentController {
 	 * Finds a fragment that is currently visible in the layout container with id specified via
 	 * {@link #setViewContainerId(int)}.
 	 *
-	 * @return Currently visible fragment or {@code null} if there is no fragment showing in the
+	 * @return Currently visible fragment or {@code null} if there is no fragment displayed in the
 	 * fragment layout container.
 	 * @throws UnsupportedOperationException If there is no fragment container id specified.
 	 * @see FragmentManager#findFragmentById(int)
@@ -829,7 +834,7 @@ public class FragmentController {
 	 * listener from the attached {@link FragmentManager}.
 	 * <p>
 	 * Fragment controller should be destroyed whenever it is used in application component that has
-	 * 'shorter' lifecycle (fragment) as its parent application component (activity).
+	 * 'shorter' lifecycle (like fragment) as its parent application component (activity).
 	 * <p>
 	 * <b>Note</b>, that already destroyed controller should not be used further as such usage will
 	 * result in an exception to be thrown.
@@ -851,8 +856,7 @@ public class FragmentController {
 	 *                  into exception if it will be thrown.
 	 */
 	private void assertNotDestroyed(String forAction) {
-		if (mDestroyed)
-			throw new IllegalStateException("Cannot perform " + forAction + " action. Controller is already destroyed!");
+		if (mDestroyed) throw new IllegalStateException("Cannot perform " + forAction + " action. Controller is already destroyed!");
 	}
 
 	/**

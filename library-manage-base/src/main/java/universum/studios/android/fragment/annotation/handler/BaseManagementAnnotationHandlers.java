@@ -35,7 +35,7 @@ import universum.studios.android.fragment.manage.FragmentItem;
 
 /**
  * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
- * <b>web</b> associated fragments and classes.
+ * <b>base management</b> associated fragments and classes.
  *
  * @author Martin Albedinsky
  */
