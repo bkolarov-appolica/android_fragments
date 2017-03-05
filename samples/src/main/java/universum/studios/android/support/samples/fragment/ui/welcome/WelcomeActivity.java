@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import universum.studios.android.samples.ui.SamplesActivity;
+import universum.studios.android.support.samples.ui.SamplesActivity;
 import universum.studios.android.support.fragment.ViewClickWatcher;
 import universum.studios.android.support.fragment.manage.FragmentController;
 import universum.studios.android.support.fragment.manage.FragmentRequest;
