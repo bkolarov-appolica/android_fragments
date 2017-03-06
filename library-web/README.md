@@ -19,4 +19,4 @@ _depends on:_
 
 Below are listed some of **primary components** that are available in this module:
 
-- [WebFragment](https://github.com/universum-studios/android_fragments/tree/master/library-web/src/main/java/universum/studios/android/fragment/WebFragment.java)
+- [WebFragment](https://github.com/universum-studios/android_fragments/tree/support-master/library-web/src/main/java/universum/studios/android/fragment/WebFragment.java)

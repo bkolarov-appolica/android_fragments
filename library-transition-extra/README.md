@@ -18,4 +18,4 @@ _depends on:_
 
 ## Components ##
 
-- [ExtraFragmentTransitions](https://github.com/universum-studios/android_fragments/tree/master/library-transition-extra/src/main/java/universum/studios/android/fragment/transition/ExtraFragmentTransitions.java)
+- [ExtraFragmentTransitions](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-extra/src/main/java/universum/studios/android/fragment/transition/ExtraFragmentTransitions.java)

@@ -18,4 +18,4 @@ _depends on:_
 
 Below are listed some of **primary components** that are available in this module:
 
-- [BaseFragmentFactory](https://github.com/universum-studios/android_fragments/tree/master/library-manage-base/src/main/java/universum/studios/android/fragment/manage/BaseFragmentFactory.java)
+- [BaseFragmentFactory](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-base/src/main/java/universum/studios/android/fragment/manage/BaseFragmentFactory.java)

@@ -17,6 +17,6 @@ _depends on:_
 
 Below are listed some of **primary components** that are available in this module:
 
-- [FragmentController](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core/src/main/java/universum/studios/android/fragment/manage/FragmentController.java)
-- [FragmentRequest](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core/src/main/java/universum/studios/android/fragment/manage/FragmentRequest.java)
-- [FragmentFactory](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core/src/main/java/universum/studios/android/fragment/manage/FragmentFactory.java)
+- [FragmentController](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core/src/main/java/universum/studios/android/fragment/manage/FragmentController.java)
+- [FragmentRequest](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core/src/main/java/universum/studios/android/fragment/manage/FragmentRequest.java)
+- [FragmentFactory](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core/src/main/java/universum/studios/android/fragment/manage/FragmentFactory.java)

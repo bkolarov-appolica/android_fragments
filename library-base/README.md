@@ -17,6 +17,6 @@ _depends on:_
 
 Below are listed some of **primary components** that are available in this module:
 
-- [BaseFragment](https://github.com/universum-studios/android_fragments/tree/master/library-base/src/main/java/universum/studios/android/fragment/BaseFragment.java)
-- [BackPressWatcher](https://github.com/universum-studios/android_fragments/tree/master/library-base/src/main/java/universum/studios/android/fragment/BackPressWatcher.java)
-- [ViewClickWatcher](https://github.com/universum-studios/android_fragments/tree/master/library-base/src/main/java/universum/studios/android/fragment/BackPressWatcher.java)
+- [BaseFragment](https://github.com/universum-studios/android_fragments/tree/support-master/library-base/src/main/java/universum/studios/android/fragment/BaseFragment.java)
+- [BackPressWatcher](https://github.com/universum-studios/android_fragments/tree/support-master/library-base/src/main/java/universum/studios/android/fragment/BackPressWatcher.java)
+- [ViewClickWatcher](https://github.com/universum-studios/android_fragments/tree/support-master/library-base/src/main/java/universum/studios/android/fragment/BackPressWatcher.java)
