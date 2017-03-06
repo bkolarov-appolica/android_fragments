@@ -20,7 +20,7 @@ Download the latest **[release](https://github.com/universum-studios/android_fra
 
 ## Modules ##
 
-This library may be also used via **separate modules**. For more information please see **[Modules](https://github.com/universum-studios/android_fragments/MODULES.md)**.
+This library may be also used via **separate modules**. For more information please see **[Modules](https://github.com/universum-studios/android_fragments/blob/master/MODULES.md)**.
 
 ## Compatibility ##
 
