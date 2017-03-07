@@ -4,6 +4,7 @@ Fragments
 [![Build Status](https://travis-ci.org/universum-studios/android_fragments.svg?branch=master)](https://travis-ci.org/universum-studios/android_fragments)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/08a4a09365f543cca7b7201f5beb56a3)](https://www.codacy.com/app/universum-studios/android_fragments?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/android_fragments&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/08a4a09365f543cca7b7201f5beb56a3)](https://www.codacy.com/app/universum-studios/android_fragments?utm_source=github.com&utm_medium=referral&utm_content=universum-studios/android_fragments&utm_campaign=Badge_Coverage)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Fragments-green.svg?style=flat)](https://android-arsenal.com/details/1/5408)
 
 Simplified management of fragments for the Android platform.
 
