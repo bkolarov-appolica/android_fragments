@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ActionBarAnnotationHandlers.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.annotation.handler</a> &gt; <span class="el_source">ActionBarAnnotationHandlers.java</span></div><h1>ActionBarAnnotationHandlers.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.annotation.handler;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.MenuRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.ActionMode;
+import android.view.Menu;
+
+import universum.studios.android.fragment.ActionBarDelegate;
+import universum.studios.android.fragment.ActionBarFragment;
+import universum.studios.android.fragment.annotation.ActionBarOptions;
+import universum.studios.android.fragment.annotation.ActionModeOptions;
+import universum.studios.android.fragment.annotation.MenuOptions;
+
+/**
+ * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
+ * &lt;b&gt;ActionBar&lt;/b&gt; associated fragments and classes.
+ *
+ * @author Martin Albedinsky
+ */
+@SuppressWarnings(&quot;unused&quot;)
+public final class ActionBarAnnotationHandlers extends AnnotationHandlers {
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 */
+	private ActionBarAnnotationHandlers() {
+<span class="nc" id="L51">		super();</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L53">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Obtains a {@link ActionBarFragmentAnnotationHandler} implementation for the given &lt;var&gt;classOfFragment&lt;/var&gt;.
+	 *
+	 * @see AnnotationHandlers#obtainHandler(Class, Class)
+	 */
+	@Nullable
+	public static ActionBarFragmentAnnotationHandler obtainActionBarFragmentHandler(@NonNull Class&lt;?&gt; classOfFragment) {
+<span class="nc" id="L66">		return obtainHandler(ActionBarFragmentHandler.class, classOfFragment);</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * An {@link ActionBarFragmentAnnotationHandler} implementation for {@link ActionBarFragment} class.
+	 */
+	@SuppressWarnings(&quot;WeakerAccess&quot;) static class ActionBarFragmentHandler extends BaseAnnotationHandlers.FragmentHandler implements ActionBarFragmentAnnotationHandler {
+
+		/**
+		 * Action bar's home as up flag obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ActionBarOptions @ActionBarOptions} annotation.
+		 */
+<span class="nc" id="L83">		private int homeAsUp = ActionBarOptions.UNCHANGED;</span>
+
+		/**
+		 * Vector drawable resource id of a home as up indicator obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ActionBarOptions @ActionBarOptions} annotation.
+		 */
+<span class="nc" id="L90">		private int homeAsUpVectorIndicator = ActionBarOptions.UNCHANGED;</span>
+
+		/**
+		 * Drawable resource id of a home as up indicator obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ActionBarOptions @ActionBarOptions} annotation.
+		 */
+<span class="nc" id="L97">		private int homeAsUpIndicator = ActionBarOptions.UNCHANGED;</span>
+
+		/**
+		 * Drawable resource id of an action bar's icon obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ActionBarOptions @ActionBarOptions} annotation.
+		 */
+<span class="nc" id="L104">		private int icon = ActionBarOptions.UNCHANGED;</span>
+
+		/**
+		 * Text resource id of an action bar's title obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ActionBarOptions @ActionBarOptions} annotation.
+		 */
+<span class="nc" id="L111">		private int title = ActionBarOptions.UNCHANGED;</span>
+
+		/**
+		 * Boolean flag indicating whether there were {@link MenuOptions @MenuOptions} annotation
+		 * presented for the annotated class or {@link ActionBarOptions @ActionBarOptions} with
+		 * home as up indicator enabled.
+		 */
+		private boolean hasOptionsMenu;
+
+		/**
+		 * Boolean flag indicating whether to clear options menu for the related fragment or not.
+		 * &lt;p&gt;
+		 * Obtained via {@link MenuOptions @MenuOptions} annotation.
+		 */
+		private boolean clearOptionsMenu;
+
+		/**
+		 * Menu resource id for a menu of the related fragment obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link MenuOptions @MenuOptions} annotation.
+		 */
+<span class="nc" id="L132">		private int optionsMenuResource = NO_RES;</span>
+
+		/**
+		 * Flags for the options menu of the related fragment obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link MenuOptions @MenuOptions} annotation.
+		 */
+<span class="nc" id="L139">		private int optionsMenuFlags = -1;</span>
+
+		/**
+		 * Menu resource id for an action mode of the related fragment obtained from the annotated
+		 * class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ActionModeOptions @ActionModeOptions} annotation.
+		 */
+<span class="nc" id="L147">		private int actionModeMenuResource = NO_RES;</span>
+
+		/**
+		 * Same as {@link #ActionBarFragmentHandler(Class, Class)} with {@link ActionBarFragment}
+		 * as &lt;var&gt;maxSuperClass&lt;/var&gt;.
+		 */
+		public ActionBarFragmentHandler(@NonNull Class&lt;?&gt; annotatedClass) {
+<span class="nc" id="L154">			this(annotatedClass, ActionBarFragment.class);</span>
+<span class="nc" id="L155">		}</span>
+
+		/**
+		 * Creates a new instance of ActionBarFragmentHandler for the specified &lt;var&gt;annotatedClass&lt;/var&gt;.
+		 *
+		 * @see BaseAnnotationHandler#BaseAnnotationHandler(Class, Class)
+		 */
+		ActionBarFragmentHandler(Class&lt;?&gt; annotatedClass, Class&lt;?&gt; maxSuperClass) {
+<span class="nc" id="L163">			super(annotatedClass, maxSuperClass);</span>
+<span class="nc" id="L164">			final ActionBarOptions actionBarOptions = findAnnotationRecursive(ActionBarOptions.class);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">			if (actionBarOptions != null) {</span>
+<span class="nc" id="L166">				this.homeAsUp = actionBarOptions.homeAsUp();</span>
+<span class="nc" id="L167">				this.homeAsUpVectorIndicator = actionBarOptions.homeAsUpVectorIndicator();</span>
+<span class="nc" id="L168">				this.homeAsUpIndicator = actionBarOptions.homeAsUpIndicator();</span>
+<span class="nc" id="L169">				this.icon = actionBarOptions.icon();</span>
+<span class="nc" id="L170">				this.title = actionBarOptions.title();</span>
+			}
+<span class="nc" id="L172">			final MenuOptions menuOptions = findAnnotationRecursive(MenuOptions.class);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">			if (menuOptions != null) {</span>
+<span class="nc" id="L174">				this.hasOptionsMenu = true;</span>
+<span class="nc" id="L175">				this.clearOptionsMenu = menuOptions.clear();</span>
+<span class="nc" id="L176">				this.optionsMenuFlags = menuOptions.flags();</span>
+<span class="nc" id="L177">				this.optionsMenuResource = menuOptions.value();</span>
+			}
+<span class="nc" id="L179">			final ActionModeOptions actionModeOptions = findAnnotationRecursive(ActionModeOptions.class);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">			if (actionModeOptions != null) {</span>
+<span class="nc" id="L181">				this.actionModeMenuResource = actionModeOptions.menu();</span>
+			}
+<span class="nc" id="L183">		}</span>
+
+		/**
+		 */
+		@Override
+		public void configureActionBar(@NonNull ActionBarDelegate actionBarDelegate) {
+<span class="nc bnc" id="L189" title="All 3 branches missed.">			switch (homeAsUp) {</span>
+				case ActionBarOptions.HOME_AS_UP_DISABLED:
+<span class="nc" id="L191">					actionBarDelegate.setDisplayHomeAsUpEnabled(false);</span>
+<span class="nc" id="L192">					break;</span>
+				case ActionBarOptions.HOME_AS_UP_ENABLED:
+<span class="nc" id="L194">					actionBarDelegate.setDisplayHomeAsUpEnabled(true);</span>
+<span class="nc" id="L195">					this.hasOptionsMenu = true;</span>
+<span class="nc" id="L196">					break;</span>
+				default:
+					// Do not &quot;touch&quot; ActionBar's enabled state.
+					break;
+			}
+<span class="nc bnc" id="L201" title="All 2 branches missed.">			if (homeAsUpVectorIndicator != ActionBarOptions.UNCHANGED) {</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">				switch (homeAsUpVectorIndicator) {</span>
+					case ActionBarOptions.NONE:
+<span class="nc" id="L204">						actionBarDelegate.setHomeAsUpIndicator(new ColorDrawable(Color.TRANSPARENT));</span>
+<span class="nc" id="L205">						break;</span>
+					default:
+<span class="nc" id="L207">						actionBarDelegate.setHomeAsUpVectorIndicator(homeAsUpVectorIndicator);</span>
+<span class="nc" id="L208">						break;</span>
+				}
+<span class="nc bnc" id="L210" title="All 2 branches missed.">			} else if (homeAsUpIndicator != ActionBarOptions.UNCHANGED) {</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">				switch (homeAsUpIndicator) {</span>
+					case ActionBarOptions.NONE:
+<span class="nc" id="L213">						actionBarDelegate.setHomeAsUpIndicator(new ColorDrawable(Color.TRANSPARENT));</span>
+<span class="nc" id="L214">						break;</span>
+					default:
+<span class="nc" id="L216">						actionBarDelegate.setHomeAsUpIndicator(homeAsUpIndicator);</span>
+						break;
+				}
+			}
+<span class="nc bnc" id="L220" title="All 3 branches missed.">			switch (icon) {</span>
+				case ActionBarOptions.UNCHANGED:
+<span class="nc" id="L222">					break;</span>
+				case ActionBarOptions.NONE:
+<span class="nc" id="L224">					actionBarDelegate.setIcon(new ColorDrawable(Color.TRANSPARENT));</span>
+<span class="nc" id="L225">					break;</span>
+				default:
+<span class="nc" id="L227">					actionBarDelegate.setIcon(icon);</span>
+					break;
+			}
+<span class="nc bnc" id="L230" title="All 3 branches missed.">			switch (title) {</span>
+				case ActionBarOptions.UNCHANGED:
+<span class="nc" id="L232">					break;</span>
+				case ActionBarOptions.NONE:
+<span class="nc" id="L234">					actionBarDelegate.setTitle(&quot;&quot;);</span>
+<span class="nc" id="L235">					break;</span>
+				default:
+<span class="nc" id="L237">					actionBarDelegate.setTitle(title);</span>
+					break;
+			}
+<span class="nc" id="L240">		}</span>
+
+		/**
+		 */
+		@Override
+		public boolean hasOptionsMenu() {
+<span class="nc" id="L246">			return hasOptionsMenu;</span>
+		}
+
+		/**
+		 */
+		@Override
+		public boolean shouldClearOptionsMenu() {
+<span class="nc" id="L253">			return clearOptionsMenu;</span>
+		}
+
+		/**
+		 */
+		@MenuRes
+		@Override
+		public int getOptionsMenuFlags(@MenuRes int defaultFlags) {
+<span class="nc bnc" id="L261" title="All 2 branches missed.">			return optionsMenuFlags == -1 ? defaultFlags : optionsMenuFlags;</span>
+		}
+
+		/**
+		 */
+		@Override
+		public int getOptionsMenuResource(int defaultResource) {
+<span class="nc bnc" id="L268" title="All 2 branches missed.">			return optionsMenuResource == NO_RES ? defaultResource : optionsMenuResource;</span>
+		}
+
+		/**
+		 */
+		@Override
+		public boolean handleCreateActionMode(@NonNull ActionMode actionMode, @NonNull Menu menu) {
+<span class="nc bnc" id="L275" title="All 2 branches missed.">			if (actionModeMenuResource == NO_RES) {</span>
+<span class="nc" id="L276">				return false;</span>
+			}
+<span class="nc" id="L278">			actionMode.getMenuInflater().inflate(actionModeMenuResource, menu);</span>
+<span class="nc" id="L279">			return true;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

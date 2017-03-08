@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ActionBarFragment.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment</a> &gt; <span class="el_source">ActionBarFragment.java</span></div><h1>ActionBarFragment.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment;
+
+import android.app.ActionBar;
+import android.os.Bundle;
+import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
+import universum.studios.android.fragment.annotation.ActionBarOptions;
+import universum.studios.android.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.fragment.annotation.MenuOptions;
+import universum.studios.android.fragment.annotation.handler.ActionBarAnnotationHandlers;
+import universum.studios.android.fragment.annotation.handler.ActionBarFragmentAnnotationHandler;
+
+/**
+ * A {@link BaseFragment} implementation that provides API allowing to access an instance of
+ * {@link ActionBar} directly from an implementation of this class. ActionBar is accessed through
+ * the parent activity to which is a particular instance of ActionBarFragment attached. ActionBar may
+ * be obtained via {@link #getActionBar()} after the parent activity has been created, so fragment's
+ * {@link #onActivityCreated(Bundle)} has been called.
+ *
+ * &lt;h3&gt;Action mode&lt;/h3&gt;
+ * This fragment implementation also provides logic allowing to start an action mode via
+ * {@link #startActionMode()} or via {@link #startActionMode(ActionMode.Callback)}. Whenever a new
+ * action mode is started, {@link #onActionModeStarted(ActionMode)} is invoked. To check whether
+ * fragment is currently in action mode, call {@link #isInActionMode()}. The currently active action
+ * mode may be obtained via {@link #getActionMode()}. Finishing of the active action mode may be done
+ * via {@link #finishActionMode()} and {@link #onActionModeFinished()} will be invoked immediately.
+ *
+ * &lt;h3&gt;Accepted annotations&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;
+ * {@link universum.studios.android.fragment.annotation.ActionBarOptions @ActionBarOptions} &lt;b&gt;[class - inherited]&lt;/b&gt;
+ * &lt;p&gt;
+ * If this annotation is presented, all options specified via this annotation will be used to set
+ * up an instance of ActionBar accessible from within context of a sub-class of ActionBarFragment.
+ * Such a set up is accomplished in {@link #onViewCreated(android.view.View, Bundle)}.
+ * &lt;/li&gt;
+ * &lt;li&gt;
+ * {@link MenuOptions @MenuOptions} &lt;b&gt;[class - inherited]&lt;/b&gt;
+ * &lt;p&gt;
+ * If this annotation is presented, options menu will be requested in {@link #onCreate(Bundle)}
+ * via {@link #setHasOptionsMenu(boolean)} and menu will be created in {@link #onCreateOptionsMenu(Menu, MenuInflater)}
+ * according to the options specified via this annotation.
+ * &lt;/li&gt;
+ * &lt;li&gt;
+ * {@link universum.studios.android.fragment.annotation.ActionModeOptions @ActionModeOptions} &lt;b&gt;[class - inherited]&lt;/b&gt;
+ * &lt;p&gt;
+ * If this annotation is presented, the {@link ActionMode} started via {@link #startActionMode()}
+ * will be configured with options menu specified via this annotation using an instance of
+ * {@link ActionModeCallback}.
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @author Martin Albedinsky
+ */
+<span class="nc" id="L80">public class ActionBarFragment extends BaseFragment {</span>
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;ActionBarFragment&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Current action mode started via {@link #startActionMode(ActionMode.Callback)}. May be {@code null}
+	 * if no action mode has been started yet or has been already finished.
+	 */
+	private ActionMode mActionMode;
+
+	/**
+	 * Delegate for ActionBar obtained from the parent activity of this fragment. This delegate is
+	 * available between calls to {@link #onActivityCreated(Bundle)} and {@link #onDetach()}.
+	 */
+	private ActionBarDelegate mActionBarDelegate;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	ActionBarFragmentAnnotationHandler onCreateAnnotationHandler() {
+<span class="nc" id="L127">		return ActionBarAnnotationHandlers.obtainActionBarFragmentHandler(getClass());</span>
+	}
+
+	/**
+	 */
+	@NonNull
+	@Override
+	protected ActionBarFragmentAnnotationHandler getAnnotationHandler() {
+<span class="nc" id="L135">		FragmentAnnotations.checkIfEnabledOrThrow();</span>
+<span class="nc" id="L136">		return (ActionBarFragmentAnnotationHandler) mAnnotationHandler;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L143">		super.onCreate(savedInstanceState);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">		if (mAnnotationHandler != null) {</span>
+<span class="nc" id="L145">			final ActionBarFragmentAnnotationHandler annotationHandler = (ActionBarFragmentAnnotationHandler) mAnnotationHandler;</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">			if (annotationHandler.hasOptionsMenu()) {</span>
+<span class="nc" id="L147">				setHasOptionsMenu(true);</span>
+			}
+		}
+<span class="nc" id="L150">	}</span>
+
+	/**
+	 */
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">		if (mAnnotationHandler == null) {</span>
+<span class="nc" id="L157">			super.onCreateOptionsMenu(menu, inflater);</span>
+<span class="nc" id="L158">			return;</span>
+		}
+<span class="nc" id="L160">		final ActionBarFragmentAnnotationHandler annotationHandler = (ActionBarFragmentAnnotationHandler) mAnnotationHandler;</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">		if (!annotationHandler.hasOptionsMenu()) {</span>
+<span class="nc" id="L162">			super.onCreateOptionsMenu(menu, inflater);</span>
+<span class="nc" id="L163">			return;</span>
+		}
+<span class="nc" id="L165">		final int menuResource = annotationHandler.getOptionsMenuResource(-1);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">		if (menuResource != -1) {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">			if (annotationHandler.shouldClearOptionsMenu()) {</span>
+<span class="nc" id="L168">				menu.clear();</span>
+			}
+<span class="nc bnc" id="L170" title="All 2 branches missed.">			if (menuResource == 0) {</span>
+<span class="nc" id="L171">				super.onCreateOptionsMenu(menu, inflater);</span>
+<span class="nc" id="L172">				return;</span>
+			}
+<span class="nc bnc" id="L174" title="All 3 branches missed.">			switch (annotationHandler.getOptionsMenuFlags(0)) {</span>
+				case MenuOptions.IGNORE_SUPER:
+<span class="nc" id="L176">					inflater.inflate(menuResource, menu);</span>
+<span class="nc" id="L177">					break;</span>
+				case MenuOptions.BEFORE_SUPER:
+<span class="nc" id="L179">					inflater.inflate(menuResource, menu);</span>
+<span class="nc" id="L180">					super.onCreateOptionsMenu(menu, inflater);</span>
+<span class="nc" id="L181">					break;</span>
+				case MenuOptions.DEFAULT:
+				default:
+<span class="nc" id="L184">					super.onCreateOptionsMenu(menu, inflater);</span>
+<span class="nc" id="L185">					inflater.inflate(menuResource, menu);</span>
+					break;
+			}
+		}
+<span class="nc" id="L189">	}</span>
+
+	/**
+	 */
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+<span class="nc" id="L195">		super.onActivityCreated(savedInstanceState);</span>
+<span class="nc" id="L196">		this.mActionBarDelegate = ActionBarDelegate.create(getActivity());</span>
+<span class="nc" id="L197">		this.invalidateActionBar();</span>
+<span class="nc" id="L198">	}</span>
+
+	/**
+	 * Returns a boolean flag indicating whether the parent Activity's ActionBar is available or not.
+	 *
+	 * @return {@code True} if ActionBar obtained from the parent activity is available, {@code false}
+	 * otherwise.
+	 * @see #getActionBarDelegate()
+	 */
+	protected final boolean isActionBarAvailable() {
+<span class="nc bnc" id="L208" title="All 2 branches missed.">		return mActionBarDelegate != null;</span>
+	}
+
+	/**
+	 * Returns the delegate for the ActionBar obtained from the parent activity of this fragment.
+	 * &lt;p&gt;
+	 * This delegate is used by this fragment for configuration of the ActionBar.
+	 *
+	 * @return Delegate for ActionBar if the parent activity has ActionBar available, {@code null}
+	 * if the ActionBar is not available.
+	 * @see #isActionBarAvailable()
+	 */
+	@NonNull
+	protected ActionBarDelegate getActionBarDelegate() {
+<span class="nc bnc" id="L222" title="All 2 branches missed.">		if (mActionBarDelegate == null) {</span>
+<span class="nc" id="L223">			throw new IllegalStateException(&quot;The parent activity does not have ActionBar presented!&quot;);</span>
+		}
+<span class="nc" id="L225">		return mActionBarDelegate;</span>
+	}
+
+	/**
+	 * Returns the instance of ActionBar that can be accessed by this fragment via its parent Activity.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that ActionBar can be accessed only for duration of {@link #onAttach(android.content.Context)}
+	 * and {@link #onDetach()}, otherwise an exception will be thrown.
+	 *
+	 * @return Instance of ActionBar obtained from the parent activity or {@code null} if the parent
+	 * activity does not have ActionBar available.
+	 * @throws IllegalStateException If this fragment is not attached to its parent activity
+	 *                               yet or it has been already detached.
+	 * @see #isActionBarAvailable()
+	 */
+	@Nullable
+	protected ActionBar getActionBar() {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">		if (mActivityDelegate == null) {</span>
+<span class="nc" id="L243">			throw new IllegalStateException(</span>
+<span class="nc" id="L244">					&quot;Cannot access ActionBar. &quot; + getClass() + &quot; is not attached &quot; +</span>
+							&quot;to the parent activity yet or it has been already detached!&quot;
+			);
+		}
+<span class="nc" id="L248">		return mActivityDelegate.getActionBar();</span>
+	}
+
+	/**
+	 * Same as {@link #getActionBar()} but this returns the instance of support ActionBar that can be
+	 * accessed by this fragment only if it is presented within context of {@link AppCompatActivity}.
+	 *
+	 * @return Instance of support ActionBar obtained from the parent activity or {@code null} if
+	 * the parent activity does not have ActionBar available or the activity is not an AppCompatActivity.
+	 * @throws IllegalStateException If this fragment is not attached to its parent activity
+	 *                               yet or it has been already detached.
+	 */
+	@Nullable
+	protected android.support.v7.app.ActionBar getSupportActionBar() {
+<span class="nc bnc" id="L262" title="All 2 branches missed.">		if (mActivityDelegate == null) {</span>
+<span class="nc" id="L263">			throw new IllegalStateException(</span>
+<span class="nc" id="L264">					&quot;Cannot access support ActionBar. &quot; + getClass() + &quot; is not attached &quot; +</span>
+							&quot;to the parent activity yet or it has been already detached!&quot;
+			);
+		}
+<span class="nc" id="L268">		return mActivityDelegate.getSupportActionBar();</span>
+	}
+
+	/**
+	 * Called to invalidate {@link ActionBar} of the parent Activity according to the configuration
+	 * of this fragment.
+	 * &lt;p&gt;
+	 * Default implementation configures the ActionBar with options specified via
+	 * {@link ActionBarOptions @ActionBarOptions} annotation (if presented).
+	 * &lt;p&gt;
+	 * Inheritance hierarchies of ActionBarFragment may override this method to perform custom or
+	 * additional ActionBar's invalidation.
+	 */
+	public void invalidateActionBar() {
+<span class="nc bnc" id="L282" title="All 4 branches missed.">		if (mActionBarDelegate != null &amp;&amp; mAnnotationHandler != null) {</span>
+<span class="nc" id="L283">			final ActionBarFragmentAnnotationHandler annotationHandler = (ActionBarFragmentAnnotationHandler) mAnnotationHandler;</span>
+<span class="nc" id="L284">			annotationHandler.configureActionBar(mActionBarDelegate);</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">			if (annotationHandler.hasOptionsMenu()) {</span>
+<span class="nc" id="L286">				setHasOptionsMenu(true);</span>
+			}
+		}
+<span class="nc" id="L289">	}</span>
+
+	/**
+	 * Same as {@link #startActionMode(ActionMode.Callback)} with a new instance of
+	 * {@link ActionModeCallback} for this fragment.
+	 */
+	protected boolean startActionMode() {
+<span class="nc" id="L296">		return startActionMode(new ActionModeCallback(this));</span>
+	}
+
+	/**
+	 * Starts a new action mode for this fragment.
+	 *
+	 * @param callback The callback used to manage action mode.
+	 * @return {@code True} if action mode has been started, {@code false} if this fragment
+	 * is already in the action mode or the parent activity of this fragment is not available or some
+	 * error occurs.
+	 * @see #isInActionMode()
+	 * @see #isAttached()
+	 */
+	protected boolean startActionMode(@NonNull ActionMode.Callback callback) {
+<span class="nc bnc" id="L310" title="All 4 branches missed.">		if (!isInActionMode() &amp;&amp; mActivityDelegate != null) {</span>
+<span class="nc" id="L311">			final ActionMode actionMode = mActivityDelegate.startActionMode(callback);</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">			if (actionMode != null) {</span>
+<span class="nc" id="L313">				onActionModeStarted(actionMode);</span>
+<span class="nc" id="L314">				return true;</span>
+			}
+		}
+<span class="nc" id="L317">		return false;</span>
+	}
+
+	/**
+	 * Invoked immediately after {@link #startActionMode(ActionMode.Callback)} was called
+	 * and this fragment was not in the action mode yet.
+	 * &lt;p&gt;
+	 * &lt;em&gt;Derived classes should call through to the super class's implementation of this method.
+	 * If not, proper working of action mode cannot be ensured.&lt;/em&gt;
+	 *
+	 * @param actionMode Currently started action mode.
+	 */
+	@CallSuper
+	protected void onActionModeStarted(@NonNull ActionMode actionMode) {
+<span class="nc" id="L331">		this.mActionMode = actionMode;</span>
+<span class="nc" id="L332">	}</span>
+
+	/**
+	 * Returns a boolean flag indicating whether this fragment is in action mode or not.
+	 *
+	 * @return {@code True} if this fragment is in the action mode, {@code false} otherwise.
+	 * @see #getActionMode()
+	 * @see #startActionMode(ActionMode.Callback)
+	 */
+	protected boolean isInActionMode() {
+<span class="nc bnc" id="L342" title="All 2 branches missed.">		return mActionMode != null;</span>
+	}
+
+	/**
+	 * Returns the current action mode (if started).
+	 *
+	 * @return The current action mode, or {@code null} if this fragment is not in action mode.
+	 * @see #isInActionMode()
+	 * @see #startActionMode(ActionMode.Callback)
+	 */
+	@Nullable
+	protected ActionMode getActionMode() {
+<span class="nc" id="L354">		return mActionMode;</span>
+	}
+
+	/**
+	 * Finishes the current action mode (if started).
+	 *
+	 * @return {@code True} if action mode has been finished, {@code false} if this fragment is not
+	 * in action mode.
+	 * @see #isInActionMode()
+	 */
+	protected boolean finishActionMode() {
+<span class="nc bnc" id="L365" title="All 2 branches missed.">		if (mActionMode != null) {</span>
+<span class="nc" id="L366">			mActionMode.finish();</span>
+<span class="nc" id="L367">			return true;</span>
+		}
+<span class="nc" id="L369">		return false;</span>
+	}
+
+	/**
+	 * Invoked whenever {@link ActionModeCallback#onDestroyActionMode(ActionMode)} is
+	 * called on the current action mode callback (if instance of {@link ActionModeCallback}).
+	 * &lt;p&gt;
+	 * &lt;em&gt;Derived classes should call through to the super class's implementation of this method.
+	 * If not, proper working of action mode cannot be ensured.&lt;/em&gt;
+	 *
+	 * @see #finishActionMode()
+	 */
+	@CallSuper
+	protected void onActionModeFinished() {
+<span class="nc" id="L383">		this.mActionMode = null;</span>
+<span class="nc" id="L384">	}</span>
+
+	/**
+	 */
+	@Override
+	protected boolean onBackPress() {
+<span class="nc bnc" id="L390" title="All 4 branches missed.">		return finishActionMode() || super.onBackPress();</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * A {@link ActionMode.Callback} basic implementation for {@link ActionBarFragment} that may be
+	 * used to simplify action mode management within an implementation of such a fragment.
+	 * &lt;p&gt;
+	 * Instance of this action mode is by default instantiated by ActionBarFragment whenever
+	 * {@link #startActionMode()} is called.
+	 *
+	 * @author Martin Albedinsky
+	 */
+<span class="nc" id="L406">	public static class ActionModeCallback implements ActionMode.Callback {</span>
+
+		/**
+		 * Instance of fragment within which context was this action mode started.
+		 */
+		protected final ActionBarFragment fragment;
+
+		/**
+		 * Creates a new instance of ActionModeCallback without fragment.
+		 */
+		public ActionModeCallback() {
+<span class="nc" id="L417">			this(null);</span>
+<span class="nc" id="L418">		}</span>
+
+		/**
+		 * Creates a new instance of ActionModeCallback for the context of the given &lt;var&gt;fragment&lt;/var&gt;.
+		 *
+		 * @param fragment The instance of fragment in which is action mode started.
+		 */
+<span class="nc" id="L425">		public ActionModeCallback(@Nullable ActionBarFragment fragment) {</span>
+<span class="nc" id="L426">			this.fragment = fragment;</span>
+<span class="nc" id="L427">		}</span>
+
+		/**
+		 */
+		@Override
+		public boolean onCreateActionMode(@NonNull ActionMode actionMode, @NonNull Menu menu) {
+<span class="nc bnc" id="L433" title="All 4 branches missed.">			if (fragment == null || fragment.mAnnotationHandler == null) return false;</span>
+<span class="nc" id="L434">			final ActionBarFragmentAnnotationHandler annotationHandler = (ActionBarFragmentAnnotationHandler) fragment.mAnnotationHandler;</span>
+<span class="nc" id="L435">			return annotationHandler.handleCreateActionMode(actionMode, menu);</span>
+		}
+
+		/**
+		 */
+		@Override
+		public boolean onPrepareActionMode(@NonNull ActionMode actionMode, @NonNull Menu menu) {
+<span class="nc" id="L442">			return false;</span>
+		}
+
+		/**
+		 */
+		@Override
+		public boolean onActionItemClicked(@NonNull ActionMode actionMode, @NonNull MenuItem menuItem) {
+<span class="nc bnc" id="L449" title="All 4 branches missed.">			if (fragment != null &amp;&amp; fragment.onOptionsItemSelected(menuItem)) {</span>
+<span class="nc" id="L450">				actionMode.finish();</span>
+<span class="nc" id="L451">				return true;</span>
+			}
+<span class="nc" id="L453">			return false;</span>
+		}
+
+		/**
+		 */
+		@Override
+		public void onDestroyActionMode(@NonNull ActionMode actionMode) {
+<span class="nc bnc" id="L460" title="All 2 branches missed.">			if (fragment != null) fragment.onActionModeFinished();</span>
+<span class="nc" id="L461">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

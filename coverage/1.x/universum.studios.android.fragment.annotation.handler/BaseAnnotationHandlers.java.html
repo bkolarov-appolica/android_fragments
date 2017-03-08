@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BaseAnnotationHandlers.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.annotation.handler</a> &gt; <span class="el_source">BaseAnnotationHandlers.java</span></div><h1>BaseAnnotationHandlers.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.annotation.handler;
+
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import universum.studios.android.fragment.BaseFragment;
+import universum.studios.android.fragment.annotation.ContentView;
+
+/**
+ * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
+ * classes from the fragments base package.
+ *
+ * @author Martin Albedinsky
+ */
+@SuppressWarnings(&quot;unused&quot;)
+public final class BaseAnnotationHandlers extends AnnotationHandlers {
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 */
+	private BaseAnnotationHandlers() {
+<span class="nc" id="L46">		super();</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L48">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Obtains a {@link FragmentAnnotationHandler} implementation for the given &lt;var&gt;classOfFragment&lt;/var&gt;.
+	 *
+	 * @see AnnotationHandlers#obtainHandler(Class, Class)
+	 */
+	@Nullable
+	public static FragmentAnnotationHandler obtainFragmentHandler(@NonNull Class&lt;?&gt; classOfFragment) {
+<span class="nc" id="L61">		return obtainHandler(FragmentHandler.class, classOfFragment);</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * A {@link FragmentAnnotationHandler} implementation for {@link BaseFragment} class.
+	 */
+	@SuppressWarnings(&quot;WeakerAccess&quot;) static class FragmentHandler extends BaseAnnotationHandler implements FragmentAnnotationHandler {
+
+		/**
+		 * Boolean flat determining whether to attach content view to the related fragment's parent
+		 * container.
+		 * &lt;p&gt;
+		 * Obtained via {@link ContentView @ContentView} annotation.
+		 */
+		private boolean attachContentViewToContainer;
+
+		/**
+		 * Layout resource of the related fragment's content view obtained from the annotated class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ContentView @ContentView} annotation.
+		 */
+<span class="nc" id="L86">		private int contentViewResource = NO_RES;</span>
+
+		/**
+		 * Background resource id of the related fragment's content view obtained from the annotated
+		 * class.
+		 * &lt;p&gt;
+		 * Obtained via {@link ContentView @ContentView} annotation.
+		 */
+<span class="nc" id="L94">		private int contentViewBackgroundResId = NO_RES;</span>
+
+		/**
+		 * Same as {@link #FragmentHandler(Class, Class)} with {@link BaseFragment} as &lt;var&gt;maxSuperClass&lt;/var&gt;.
+		 */
+		public FragmentHandler(@NonNull Class&lt;?&gt; annotatedClass) {
+<span class="nc" id="L100">			this(annotatedClass, BaseFragment.class);</span>
+<span class="nc" id="L101">		}</span>
+
+		/**
+		 * Creates a new instance of FragmentHandler for the specified &lt;var&gt;annotatedClass&lt;/var&gt;.
+		 *
+		 * @see BaseAnnotationHandler#BaseAnnotationHandler(Class, Class)
+		 */
+		FragmentHandler(Class&lt;?&gt; annotatedClass, Class&lt;?&gt; maxSuperClass) {
+<span class="nc" id="L109">			super(annotatedClass, maxSuperClass);</span>
+<span class="nc" id="L110">			final ContentView contentView = findAnnotationRecursive(ContentView.class);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">			if (contentView != null) {</span>
+<span class="nc" id="L112">				this.attachContentViewToContainer = contentView.attachToContainer();</span>
+<span class="nc" id="L113">				this.contentViewResource = contentView.value();</span>
+<span class="nc" id="L114">				this.contentViewBackgroundResId = contentView.background();</span>
+			}
+<span class="nc" id="L116">		}</span>
+
+		/**
+		 */
+		@Override
+		public boolean shouldAttachContentViewToContainer() {
+<span class="nc" id="L122">			return attachContentViewToContainer;</span>
+		}
+
+		/**
+		 */
+		@Override
+		@LayoutRes
+		public int getContentViewResource(@LayoutRes int defaultViewResource) {
+<span class="nc bnc" id="L130" title="All 2 branches missed.">			return contentViewResource == NO_RES ? defaultViewResource : contentViewResource;</span>
+		}
+
+		/**
+		 */
+		@Override
+		@ColorRes
+		@DrawableRes
+		public int getContentViewBackgroundResId(int defaultResId) {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">			return contentViewBackgroundResId == NO_RES ? defaultResId : contentViewBackgroundResId;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

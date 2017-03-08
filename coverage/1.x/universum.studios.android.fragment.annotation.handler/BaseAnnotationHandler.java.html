@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BaseAnnotationHandler.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.annotation.handler</a> &gt; <span class="el_source">BaseAnnotationHandler.java</span></div><h1>BaseAnnotationHandler.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.annotation.handler;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.lang.annotation.Annotation;
+
+import universum.studios.android.fragment.annotation.FragmentAnnotations;
+
+/**
+ * An {@link AnnotationHandler} base implementation.
+ *
+ * @author Martin Albedinsky
+ */
+abstract class BaseAnnotationHandler implements AnnotationHandler {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;BaseAnnotationHandler&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Class for which has been this handler created.
+	 */
+	final Class&lt;?&gt; mAnnotatedClass;
+
+	/**
+	 * Class that is used when obtaining annotations from {@link #mAnnotatedClass} recursively via
+	 * {@link FragmentAnnotations#obtainAnnotationFrom(Class, Class, Class)}.
+	 */
+	final Class&lt;?&gt; mMaxSuperClass;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of BaseAnnotationHandler for the specified &lt;var&gt;annotatedClass&lt;/var&gt;.
+	 *
+	 * @param annotatedClass The class of which annotations processing should the new handler handle.
+	 * @param maxSuperClass  Max super class of the annotated class up to which to search for annotations
+	 *                       recursively when searching for requested annotation via {@link #findAnnotationRecursive(Class)}.
+	 */
+<span class="nc" id="L78">	BaseAnnotationHandler(@NonNull Class&lt;?&gt; annotatedClass, @Nullable Class&lt;?&gt; maxSuperClass) {</span>
+<span class="nc" id="L79">		this.mAnnotatedClass = annotatedClass;</span>
+<span class="nc" id="L80">		this.mMaxSuperClass = maxSuperClass;</span>
+<span class="nc" id="L81">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@NonNull
+	@Override
+	public final Class&lt;?&gt; getAnnotatedClass() {
+<span class="nc" id="L92">		return mAnnotatedClass;</span>
+	}
+
+	/**
+	 * Like {@link #findAnnotationRecursive(Class)} but this method tries to find the requested
+	 * annotation only for the class attached to this handler.
+	 *
+	 * @param classOfAnnotation Class of the annotation to find.
+	 * @param &lt;A&gt;               Type of the annotation to find.
+	 * @return Found annotation or {@code null} if there is no such annotation presented.
+	 */
+	final &lt;A extends Annotation&gt; A findAnnotation(Class&lt;A&gt; classOfAnnotation) {
+<span class="nc" id="L104">		return FragmentAnnotations.obtainAnnotationFrom(classOfAnnotation, mAnnotatedClass, null);</span>
+	}
+
+	/**
+	 * Tries to find annotation with the requested &lt;var&gt;classOfAnnotation&lt;/var&gt; for the class attached
+	 * to this handler recursively using also max super class specified for this handler (if any).
+	 *
+	 * @param classOfAnnotation Class of the annotation to find.
+	 * @param &lt;A&gt;               Type of the annotation to find.
+	 * @return Found annotation or {@code null} if there is no such annotation presented.
+	 */
+	final &lt;A extends Annotation&gt; A findAnnotationRecursive(Class&lt;A&gt; classOfAnnotation) {
+<span class="nc" id="L116">		return FragmentAnnotations.obtainAnnotationFrom(classOfAnnotation, mAnnotatedClass, mMaxSuperClass);</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

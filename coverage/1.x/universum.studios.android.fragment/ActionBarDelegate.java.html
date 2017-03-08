@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ActionBarDelegate.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment</a> &gt; <span class="el_source">ActionBarDelegate.java</span></div><h1>ActionBarDelegate.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.v7.app.AppCompatActivity;
+
+import universum.studios.android.fragment.util.FragmentUtils;
+
+/**
+ * ActionBarDelegate is used to wrap an instance of {@link ActionBar} or {@link android.support.v7.app.ActionBar}
+ * in order to hide some implementation details when using ActionBar within fragments.
+ *
+ * @author Martin Albedinsky
+ */
+@SuppressWarnings(&quot;WeakerAccess&quot;) public abstract class ActionBarDelegate {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;ActionBarDelegate&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Instance of context used to access application data.
+	 */
+	protected final Context mContext;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of ActionBarDelegate with the given &lt;var&gt;context&lt;/var&gt;.
+	 *
+	 * @param context The context used to access application data.
+	 */
+<span class="fc" id="L77">	protected ActionBarDelegate(@NonNull Context context) {</span>
+<span class="fc" id="L78">		this.mContext = context;</span>
+<span class="fc" id="L79">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Wraps an ActionBar of the given &lt;var&gt;activity&lt;/var&gt; to its corresponding delegate depending
+	 * on the activity's implementation.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that this method will return {@code null} if the specified activity does not have
+	 * its ActionBar available at the time.
+	 *
+	 * @param activity The activity of which action bar to wrap.
+	 * @return Instance of ActionBarDelegate for ActionBar of the specified activity.
+	 * @see Activity#getActionBar()
+	 * @see AppCompatActivity#getSupportActionBar()
+	 */
+	@Nullable
+	public static ActionBarDelegate create(@NonNull Activity activity) {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">		if (activity instanceof AppCompatActivity) {</span>
+<span class="nc" id="L100">			final android.support.v7.app.ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">			return actionBar == null ? null : create(activity, actionBar);</span>
+		} else {
+<span class="fc" id="L103">			final ActionBar actionBar = activity.getActionBar();</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">			return actionBar == null ? null : create(activity, actionBar);</span>
+		}
+	}
+
+	/**
+	 * Wraps the given &lt;var&gt;actionBar&lt;/var&gt; into its corresponding delegate.
+	 *
+	 * @param context   Context used to access application data.
+	 * @param actionBar The desired action bar to wrap. May be {@code null} to create mock delegate.
+	 * @return New instance of ActionBarDelegate with the given action bar.
+	 */
+	@NonNull
+	public static ActionBarDelegate create(@NonNull Context context, @Nullable ActionBar actionBar) {
+<span class="fc" id="L117">		return new Impl(context, actionBar);</span>
+	}
+
+	/**
+	 * Wraps the given support &lt;var&gt;actionBar&lt;/var&gt; into its corresponding delegate.
+	 *
+	 * @param context   Context used to access application data.
+	 * @param actionBar The desired action bar to wrap. May be {@code null} to create mock delegate.
+	 * @return New instance of ActionBarDelegate with the given action bar.
+	 */
+	@NonNull
+	public static ActionBarDelegate create(@NonNull Context context, @Nullable android.support.v7.app.ActionBar actionBar) {
+<span class="nc" id="L129">		return new SupportImpl(context, actionBar);</span>
+	}
+
+	/**
+	 * Delegates to {@link ActionBar#setDisplayHomeAsUpEnabled(boolean)}.
+	 */
+	public abstract void setDisplayHomeAsUpEnabled(boolean enabled);
+
+	/**
+	 * Delegates to {@link ActionBar#setHomeAsUpIndicator(int)}.
+	 */
+	public abstract void setHomeAsUpIndicator(@DrawableRes int resId);
+
+	/**
+	 * Delegates to {@link ActionBar#setHomeAsUpIndicator(int)} for vector drawable indicator.
+	 */
+	public abstract void setHomeAsUpVectorIndicator(@DrawableRes int resId);
+
+	/**
+	 * Delegates to {@link ActionBar#setHomeAsUpIndicator(Drawable)}.
+	 */
+	public abstract void setHomeAsUpIndicator(@Nullable Drawable indicator);
+
+	/**
+	 * Delegates to {@link ActionBar#setIcon(int)}.
+	 */
+	public abstract void setIcon(@DrawableRes int resId);
+
+	/**
+	 * Delegates to {@link ActionBar#setIcon(Drawable)}.
+	 */
+	public abstract void setIcon(@Nullable Drawable icon);
+
+	/**
+	 * Delegates to {@link ActionBar#setTitle(int)}.
+	 */
+	public abstract void setTitle(@StringRes int resId);
+
+	/**
+	 * Delegates to {@link ActionBar#setTitle(CharSequence)}.
+	 */
+	public abstract void setTitle(@Nullable CharSequence title);
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * An {@link ActionBarDelegate} implementation used to wrap {@link ActionBar}.
+	 */
+	private static final class Impl extends ActionBarDelegate {
+
+		/**
+		 * Wrapped action bar instance.
+		 */
+		private final ActionBar actionBar;
+
+		/**
+		 * Creates a new instance of Impl to wrap the given &lt;var&gt;actionBar&lt;/var&gt;.
+		 *
+		 * @param context   Context used to access application data.
+		 * @param actionBar The native action bar to be wrapped.
+		 */
+		private Impl(Context context, ActionBar actionBar) {
+<span class="fc" id="L193">			super(context);</span>
+<span class="fc" id="L194">			this.actionBar = actionBar;</span>
+<span class="fc" id="L195">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setDisplayHomeAsUpEnabled(boolean enabled) {
+<span class="nc bnc" id="L201" title="All 2 branches missed.">			if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(enabled);</span>
+<span class="nc" id="L202">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setHomeAsUpIndicator(@DrawableRes int resId) {
+<span class="nc bnc" id="L208" title="All 4 branches missed.">			if (actionBar != null &amp;&amp; Build.VERSION.SDK_INT &gt; Build.VERSION_CODES.JELLY_BEAN_MR2)</span>
+<span class="nc" id="L209">				actionBar.setHomeAsUpIndicator(resId);</span>
+<span class="nc" id="L210">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setHomeAsUpVectorIndicator(@DrawableRes int resId) {
+<span class="nc" id="L216">			setHomeAsUpIndicator(FragmentUtils.getVectorDrawable(</span>
+<span class="nc" id="L217">					mContext.getResources(),</span>
+					resId,
+<span class="nc" id="L219">					mContext.getTheme()</span>
+			));
+<span class="nc" id="L221">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setHomeAsUpIndicator(@Nullable Drawable indicator) {
+<span class="nc bnc" id="L227" title="All 4 branches missed.">			if (actionBar != null &amp;&amp; Build.VERSION.SDK_INT &gt; Build.VERSION_CODES.JELLY_BEAN_MR2)</span>
+<span class="nc" id="L228">				actionBar.setHomeAsUpIndicator(indicator);</span>
+<span class="nc" id="L229">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setTitle(@StringRes int resId) {
+<span class="nc bnc" id="L235" title="All 2 branches missed.">			if (actionBar != null) actionBar.setTitle(resId);</span>
+<span class="nc" id="L236">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setTitle(@Nullable CharSequence title) {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">			if (actionBar != null) actionBar.setTitle(title);</span>
+<span class="nc" id="L243">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setIcon(@DrawableRes int resId) {
+<span class="nc bnc" id="L249" title="All 2 branches missed.">			if (actionBar != null) actionBar.setIcon(resId);</span>
+<span class="nc" id="L250">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setIcon(@Nullable Drawable icon) {
+<span class="nc bnc" id="L256" title="All 2 branches missed.">			if (actionBar != null) actionBar.setIcon(icon);</span>
+<span class="nc" id="L257">		}</span>
+	}
+
+	/**
+	 * An {@link ActionBarDelegate} implementation used to wrap {@link android.support.v7.app.ActionBar}.
+	 */
+	private static final class SupportImpl extends ActionBarDelegate {
+
+		/**
+		 * Wrapped support action bar instance.
+		 */
+		private final android.support.v7.app.ActionBar actionBar;
+
+		/**
+		 * Creates a new instance of SupportImpl to wrap the given &lt;var&gt;actionBar&lt;/var&gt;.
+		 *
+		 * @param context   Context used to access application data.
+		 * @param actionBar The support action bar to be wrapped.
+		 */
+		private SupportImpl(Context context, android.support.v7.app.ActionBar actionBar) {
+<span class="nc" id="L277">			super(context);</span>
+<span class="nc" id="L278">			this.actionBar = actionBar;</span>
+<span class="nc" id="L279">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setDisplayHomeAsUpEnabled(boolean enabled) {
+<span class="nc bnc" id="L285" title="All 2 branches missed.">			if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(enabled);</span>
+<span class="nc" id="L286">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setHomeAsUpIndicator(@DrawableRes int resId) {
+<span class="nc bnc" id="L292" title="All 2 branches missed.">			if (actionBar != null) actionBar.setHomeAsUpIndicator(resId);</span>
+<span class="nc" id="L293">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setHomeAsUpVectorIndicator(@DrawableRes int resId) {
+<span class="nc" id="L299">			setHomeAsUpIndicator(FragmentUtils.getVectorDrawable(</span>
+<span class="nc" id="L300">					mContext.getResources(),</span>
+					resId,
+<span class="nc" id="L302">					mContext.getTheme()</span>
+			));
+<span class="nc" id="L304">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setHomeAsUpIndicator(@Nullable Drawable indicator) {
+<span class="nc bnc" id="L310" title="All 2 branches missed.">			if (actionBar != null) actionBar.setHomeAsUpIndicator(indicator);</span>
+<span class="nc" id="L311">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setIcon(@DrawableRes int resId) {
+<span class="nc bnc" id="L317" title="All 2 branches missed.">			if (actionBar != null) actionBar.setIcon(resId);</span>
+<span class="nc" id="L318">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setIcon(@Nullable Drawable icon) {
+<span class="nc bnc" id="L324" title="All 2 branches missed.">			if (actionBar != null) actionBar.setIcon(icon);</span>
+<span class="nc" id="L325">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setTitle(@StringRes int resId) {
+<span class="nc bnc" id="L331" title="All 2 branches missed.">			if (actionBar != null) actionBar.setTitle(resId);</span>
+<span class="nc" id="L332">		}</span>
+
+		/**
+		 */
+		@Override
+		public void setTitle(@Nullable CharSequence title) {
+<span class="nc bnc" id="L338" title="All 2 branches missed.">			if (actionBar != null) actionBar.setTitle(title);</span>
+<span class="nc" id="L339">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BaseFragment.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment</a> &gt; <span class="el_source">BaseFragment.java</span></div><h1>BaseFragment.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.Context;
+import android.content.Loader;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.support.annotation.IntDef;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.transition.Transition;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import universum.studios.android.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.fragment.annotation.handler.BaseAnnotationHandlers;
+import universum.studios.android.fragment.annotation.handler.FragmentAnnotationHandler;
+import universum.studios.android.fragment.util.FragmentUtils;
+
+/**
+ * A {@link Fragment} implementation designed to provide extended API and logic that is useful almost
+ * every time you need to implement your desired fragment.
+ * &lt;p&gt;
+ * BaseFragment class provides lifecycle state check methods that may be used to check whether a
+ * particular instance of fragment is in a specific lifecycle state. All provided methods are listed
+ * below:
+ * &lt;ul&gt;
+ * &lt;li&gt;{@link #isAttached()}&lt;/li&gt;
+ * &lt;li&gt;{@link #isCreated()}&lt;/li&gt;
+ * &lt;li&gt;{@link #isStarted()}&lt;/li&gt;
+ * &lt;li&gt;{@link #isPaused()}&lt;/li&gt;
+ * &lt;li&gt;{@link #isStopped()}&lt;/li&gt;
+ * &lt;li&gt;{@link #isDestroyed()}&lt;/li&gt;
+ * &lt;/ul&gt;
+ * as addition to the Android framework's lifecycle methods:
+ * &lt;ul&gt;
+ * &lt;li&gt;{@link #isResumed()}&lt;/li&gt;
+ * &lt;li&gt;{@link #isDetached()}&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;p&gt;
+ * You can also easily dispatch view click events to your specific implementation of BaseFragment
+ * via {@link #dispatchViewClick(View)} or back press events via {@link #dispatchBackPress()}
+ * from activity's context in which such fragment presented.
+ *
+ * &lt;h3&gt;Accepted annotations&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;
+ * {@link universum.studios.android.fragment.annotation.ContentView @ContentView} &lt;b&gt;[class - inherited]&lt;/b&gt;
+ * &lt;p&gt;
+ * If this annotation is presented, the layout resource specified via this annotation will be used
+ * to inflate root view for an instance of annotated BaseFragment sub-class when
+ * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)} is called.
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @author Martin Albedinsky
+ */
+public abstract class BaseFragment extends Fragment implements BackPressWatcher, ViewClickWatcher {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	private static final String TAG = &quot;BaseFragment&quot;;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;attached&lt;/b&gt; to the parent context.
+	 */
+	private static final int LIFECYCLE_ATTACHED = 0x00000001;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;created&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_CREATED = 0x00000001 &lt;&lt; 1;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;started&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_STARTED = 0x00000001 &lt;&lt; 2;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;resumed&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_RESUMED = 0x00000001 &lt;&lt; 3;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;paused&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_PAUSED = 0x00000001 &lt;&lt; 4;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;stopped&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_STOPPED = 0x00000001 &lt;&lt; 5;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;destroyed&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_DESTROYED = 0x00000001 &lt;&lt; 6;
+
+	/**
+	 * Lifecycle flag used to indicate that fragment is &lt;b&gt;detached&lt;/b&gt;.
+	 */
+	private static final int LIFECYCLE_DETACHED = 0x00000001 &lt;&lt; 7;
+
+	/**
+	 * Defines an annotation for determining set of available lifecycle flags.
+	 */
+	@IntDef(flag = true, value = {
+			LIFECYCLE_ATTACHED,
+			LIFECYCLE_CREATED,
+			LIFECYCLE_STARTED,
+			LIFECYCLE_RESUMED,
+			LIFECYCLE_PAUSED,
+			LIFECYCLE_STOPPED,
+			LIFECYCLE_DESTROYED,
+			LIFECYCLE_DETACHED
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface LifecycleFlag {
+	}
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Handler responsible for processing of all annotations of this class and also for handling all
+	 * annotations related operations for this class.
+	 */
+	final FragmentAnnotationHandler mAnnotationHandler;
+
+	/**
+	 * Delegate for activity to which is this instance of fragment currently attached. This delegate
+	 * is available between calls to {@link #onAttach(Context)} and {@link #onDetach()}.
+	 */
+	ActivityDelegate mActivityDelegate;
+
+	/**
+	 * Stores all lifecycle related flags for this fragment.
+	 */
+	private int mLifecycleFlags;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of BaseFragment.
+	 * &lt;p&gt;
+	 * If annotations processing is enabled via {@link FragmentsConfig} all annotations supported by
+	 * this class will be processed/obtained here so they can be later used.
+	 */
+	public BaseFragment() {
+<span class="nc" id="L192">		super();</span>
+<span class="nc" id="L193">		this.mAnnotationHandler = onCreateAnnotationHandler();</span>
+<span class="nc" id="L194">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of the specified &lt;var&gt;classOfFragment&lt;/var&gt; with the given &lt;var&gt;args&lt;/var&gt;.
+	 *
+	 * @param classOfFragment Class of the desired fragment to instantiate.
+	 * @param args            Arguments to set to new instance of fragment by {@link Fragment#setArguments(Bundle)}.
+	 * @param &lt;F&gt;             Type of the desired fragment.
+	 * @return New instance of fragment with the given arguments or {@code null} if some instantiation
+	 * error occurs.
+	 */
+	@Nullable
+	@SuppressWarnings(&quot;TryWithIdenticalCatches&quot;)
+	public static &lt;F extends Fragment&gt; F newInstanceWithArguments(@NonNull Class&lt;F&gt; classOfFragment, @Nullable Bundle args) {
+		try {
+<span class="nc" id="L213">			final F fragment = classOfFragment.newInstance();</span>
+<span class="nc" id="L214">			fragment.setArguments(args);</span>
+<span class="nc" id="L215">			return fragment;</span>
+<span class="nc" id="L216">		} catch (java.lang.InstantiationException e) {</span>
+<span class="nc" id="L217">			Log.e(TAG, &quot;Failed to instantiate instance of &quot; + classOfFragment + &quot; with arguments!&quot;, e);</span>
+<span class="nc" id="L218">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L219">			Log.e(TAG, &quot;Failed to instantiate instance of &quot; + classOfFragment + &quot; with arguments!&quot;, e);</span>
+<span class="nc" id="L220">		}</span>
+<span class="nc" id="L221">		return null;</span>
+	}
+
+	/**
+	 * Invoked to create annotations handler for this instance.
+	 *
+	 * @return Annotations handler specific for this class.
+	 */
+	FragmentAnnotationHandler onCreateAnnotationHandler() {
+<span class="nc" id="L230">		return BaseAnnotationHandlers.obtainFragmentHandler(getClass());</span>
+	}
+
+	/**
+	 * Returns handler that is responsible for annotations processing of this class and also for
+	 * handling all annotations related operations for this class.
+	 *
+	 * @return Annotations handler specific for this class.
+	 * @throws IllegalStateException If annotations processing is not enabled for the Fragments library.
+	 */
+	@NonNull
+	protected FragmentAnnotationHandler getAnnotationHandler() {
+<span class="nc" id="L242">		FragmentAnnotations.checkIfEnabledOrThrow();</span>
+<span class="nc" id="L243">		return mAnnotationHandler;</span>
+	}
+
+	/**
+	 * Updates the current private flags.
+	 *
+	 * @param flag Value of the desired flag to add/remove to/from the current private flags.
+	 * @param add  Boolean flag indicating whether to add or remove the specified &lt;var&gt;flag&lt;/var&gt;.
+	 * @see #hasLifecycleFlag(int)
+	 */
+	private void updateLifecycleFlags(@LifecycleFlag int flag, boolean add) {
+<span class="nc bnc" id="L254" title="All 2 branches missed.">		if (add) this.mLifecycleFlags |= flag;</span>
+<span class="nc" id="L255">		else this.mLifecycleFlags &amp;= ~flag;</span>
+<span class="nc" id="L256">	}</span>
+
+	/**
+	 * Returns a boolean flag indicating whether the specified &lt;var&gt;flag&lt;/var&gt; is contained within
+	 * the current private flags or not.
+	 *
+	 * @param flag Value of the flag to check.
+	 * @return {@code True} if the requested flag is contained, {@code false} otherwise.
+	 * @see #updateLifecycleFlags(int, boolean)
+	 */
+	private boolean hasLifecycleFlag(@LifecycleFlag int flag) {
+<span class="nc bnc" id="L267" title="All 2 branches missed.">		return (mLifecycleFlags &amp; flag) != 0;</span>
+	}
+
+	/**
+	 */
+	@Override
+	@SuppressWarnings(&quot;deprecation&quot;)
+	public void onAttach(Activity activity) {
+<span class="nc" id="L275">		super.onAttach(activity);</span>
+<span class="nc" id="L276">		this.mActivityDelegate = ActivityDelegate.create(activity);</span>
+<span class="nc" id="L277">		this.updateLifecycleFlags(LIFECYCLE_DETACHED, false);</span>
+<span class="nc" id="L278">		this.updateLifecycleFlags(LIFECYCLE_ATTACHED, true);</span>
+<span class="nc" id="L279">	}</span>
+
+	/**
+	 * Checks whether this fragment is attached to its parent context. This is {@code true} for
+	 * duration of {@link #onAttach(Context)} and {@link #onDetach()}.
+	 * &lt;p&gt;
+	 * When this method returns {@code true} the opposite lifecycle state method {@link #isDetached()}
+	 * returns {@code false} and vise versa.
+	 *
+	 * @return {@code True} if fragment is attached, {@code false} otherwise.
+	 * @see #isDetached()
+	 */
+	public final boolean isAttached() {
+<span class="nc" id="L292">		return hasLifecycleFlag(LIFECYCLE_ATTACHED);</span>
+	}
+
+	/**
+	 * Returns the theme of the context to which is this fragment attached.
+	 *
+	 * @return Parent context's theme.
+	 * @throws IllegalStateException If this fragment is not attached to any context.
+	 */
+	@NonNull
+	protected Resources.Theme getContextTheme() {
+<span class="nc" id="L303">		final Activity activity = getActivity();</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">		if (activity == null) throw new IllegalStateException(&quot;Fragment is not attached to parent context.&quot;);</span>
+<span class="nc" id="L305">		return activity.getTheme();</span>
+	}
+
+	/**
+	 * Delegate method for {@link Activity#runOnUiThread(Runnable)} of the parent activity.
+	 *
+	 * @return {@code True} if parent activity is available and action was posted, {@code false}
+	 * otherwise.
+	 */
+	public final boolean runOnUiThread(@NonNull Runnable action) {
+<span class="nc" id="L315">		final Activity activity = getActivity();</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">		if (activity != null) {</span>
+<span class="nc" id="L317">			activity.runOnUiThread(action);</span>
+<span class="nc" id="L318">			return true;</span>
+		}
+<span class="nc" id="L320">		return false;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L327">		super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L328">		this.updateLifecycleFlags(LIFECYCLE_DESTROYED, false);</span>
+<span class="nc" id="L329">		this.updateLifecycleFlags(LIFECYCLE_CREATED, true);</span>
+<span class="nc" id="L330">	}</span>
+
+	/**
+	 * Checks whether this fragment is created. This is {@code true} for duration of {@link #onCreate(Bundle)}
+	 * and {@link #onDestroy()}.
+	 * &lt;p&gt;
+	 * When this method returns {@code true} the opposite lifecycle state method {@link #isDestroyed()}
+	 * returns {@code false} and vise versa.
+	 *
+	 * @return {@code True} if fragment is created, {@code false} otherwise.
+	 * @see #isDestroyed()
+	 */
+	public final boolean isCreated() {
+<span class="nc" id="L343">		return hasLifecycleFlag(LIFECYCLE_CREATED);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onStart() {
+<span class="nc" id="L350">		super.onStart();</span>
+<span class="nc" id="L351">		this.updateLifecycleFlags(LIFECYCLE_STOPPED, false);</span>
+<span class="nc" id="L352">		this.updateLifecycleFlags(LIFECYCLE_STARTED, true);</span>
+<span class="nc" id="L353">	}</span>
+
+	/**
+	 * Checks whether this fragment is in the started lifecycle state. This is {@code true} for
+	 * duration of {@link #onStart()} and {@link #onStop()}.
+	 * &lt;p&gt;
+	 * When this method returns {@code true} the opposite lifecycle state method {@link #isStopped()}
+	 * returns {@code false} and vise versa.
+	 *
+	 * @return {@code True} if fragment has been started, {@code false} otherwise.
+	 * @see #isStopped()
+	 */
+	public final boolean isStarted() {
+<span class="nc" id="L366">		return hasLifecycleFlag(LIFECYCLE_STARTED);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+<span class="nc bnc" id="L373" title="All 2 branches missed.">		if (mAnnotationHandler != null) {</span>
+<span class="nc" id="L374">			final int viewResource = mAnnotationHandler.getContentViewResource(-1);</span>
+<span class="nc bnc" id="L375" title="All 2 branches missed.">			if (viewResource != -1) {</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">				if (mAnnotationHandler.shouldAttachContentViewToContainer()) {</span>
+<span class="nc" id="L377">					inflater.inflate(viewResource, container, true);</span>
+<span class="nc" id="L378">					return null;</span>
+				}
+<span class="nc" id="L380">				return inflater.inflate(viewResource, container, false);</span>
+			}
+		}
+<span class="nc" id="L383">		return super.onCreateView(inflater, container, savedInstanceState);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+<span class="nc" id="L390">		super.onViewCreated(view, savedInstanceState);</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">		if (mAnnotationHandler != null) {</span>
+<span class="nc" id="L392">			final int backgroundResId = mAnnotationHandler.getContentViewBackgroundResId(-1);</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">			if (backgroundResId != -1) {</span>
+<span class="nc" id="L394">				view.setBackgroundResource(backgroundResId);</span>
+			}
+		}
+<span class="nc" id="L397">	}</span>
+
+	/**
+	 * Returns a boolean flag indicating whether the view is already created or not.
+	 *
+	 * @return {@code True} if the view of this fragment is already created, {@code false} otherwise.
+	 */
+	public final boolean isViewCreated() {
+<span class="nc bnc" id="L405" title="All 2 branches missed.">		return getView() != null;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void setAllowEnterTransitionOverlap(boolean allow) {
+<span class="nc bnc" id="L412" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setAllowEnterTransitionOverlap(allow);</span>
+<span class="nc" id="L413">	}</span>
+
+	/**
+	 */
+	@Override
+	public void setAllowReturnTransitionOverlap(boolean allow) {
+<span class="nc bnc" id="L419" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setAllowReturnTransitionOverlap(allow);</span>
+<span class="nc" id="L420">	}</span>
+
+	/**
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Override
+	public void setEnterTransition(Transition transition) {
+<span class="nc bnc" id="L428" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setEnterTransition(transition);</span>
+<span class="nc" id="L429">	}</span>
+
+	/**
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Override
+	public void setExitTransition(Transition transition) {
+<span class="nc bnc" id="L437" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setExitTransition(transition);</span>
+<span class="nc" id="L438">	}</span>
+
+	/**
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Override
+	public void setReenterTransition(Transition transition) {
+<span class="nc bnc" id="L446" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setReenterTransition(transition);</span>
+<span class="nc" id="L447">	}</span>
+
+	/**
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Override
+	public void setReturnTransition(Transition transition) {
+<span class="nc bnc" id="L455" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setReturnTransition(transition);</span>
+<span class="nc" id="L456">	}</span>
+
+	/**
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Override
+	public void setSharedElementEnterTransition(Transition transition) {
+<span class="nc bnc" id="L464" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setSharedElementEnterTransition(transition);</span>
+<span class="nc" id="L465">	}</span>
+
+	/**
+	 * @see FragmentUtils#inflateTransition(Context, int)
+	 * @see FragmentUtils#inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Override
+	public void setSharedElementReturnTransition(Transition transition) {
+<span class="nc bnc" id="L473" title="All 2 branches missed.">		if (FragmentsConfig.TRANSITIONS_SUPPORTED) super.setSharedElementReturnTransition(transition);</span>
+<span class="nc" id="L474">	}</span>
+
+	/**
+	 */
+	@Override
+	public void onResume() {
+<span class="nc" id="L480">		super.onResume();</span>
+<span class="nc" id="L481">		this.updateLifecycleFlags(LIFECYCLE_PAUSED, false);</span>
+<span class="nc" id="L482">		this.updateLifecycleFlags(LIFECYCLE_RESUMED, true);</span>
+<span class="nc" id="L483">	}</span>
+
+	/**
+	 */
+	/*@Override
+	public final boolean isResumed() {
+		return hasLifecycleFlag(LIFECYCLE_RESUMED);
+	}*/
+
+	/**
+	 * Dispatches to {@link #onViewClick(View)}.
+	 * &lt;p&gt;
+	 * By default returns {@code false} for all passed views.
+	 */
+	@Override
+	public boolean dispatchViewClick(@NonNull View view) {
+<span class="nc" id="L499">		onViewClick(view);</span>
+<span class="nc" id="L500">		return false;</span>
+	}
+
+	/**
+	 * Invoked immediately after {@link #dispatchViewClick(View)} was called to process
+	 * click event on the given &lt;var&gt;view&lt;/var&gt;.
+	 *
+	 * @param view The clicked view dispatched to this fragment.
+	 */
+	protected void onViewClick(@NonNull View view) {
+		// Inheritance hierarchies may handle here click event for the passed view.
+<span class="nc" id="L511">	}</span>
+
+	/**
+	 * Starts a loader with the specified &lt;var&gt;id&lt;/var&gt;. If there was already started loader with the
+	 * same id before, such a loader will be &lt;b&gt;re-started&lt;/b&gt;, otherwise new loader will be &lt;b&gt;initialized&lt;/b&gt;.
+	 *
+	 * @param id        Id of the desired loader to start.
+	 * @param params    Params for loader.
+	 * @param callbacks Callbacks for loader.
+	 * @return Initialized or re-started loader instance or {@code null} if the specified &lt;var&gt;callbacks&lt;/var&gt;
+	 * do not create loader for the specified &lt;var&gt;id&lt;/var&gt;.
+	 * @see #initLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #restartLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #destroyLoader(int)
+	 */
+	@Nullable
+	public &lt;D&gt; Loader&lt;D&gt; startLoader(@IntRange(from = 0) int id, @Nullable Bundle params, @NonNull LoaderManager.LoaderCallbacks&lt;D&gt; callbacks) {
+<span class="nc" id="L528">		final LoaderManager manager = getLoaderManager();</span>
+<span class="nc bnc" id="L529" title="All 2 branches missed.">		if (manager.getLoader(id) == null) return initLoader(id, params, callbacks);</span>
+<span class="nc" id="L530">		else return restartLoader(id, params, callbacks);</span>
+	}
+
+	/**
+	 * Initializes a loader with the specified &lt;var&gt;id&lt;/var&gt; for the given &lt;var&gt;callbacks&lt;/var&gt;.
+	 *
+	 * @param id        Id of the desired loader to init.
+	 * @param params    Params for loader.
+	 * @param callbacks Callbacks for loader.
+	 * @return Initialized loader instance or {@code null} if the specified &lt;var&gt;callbacks&lt;/var&gt; do
+	 * not create loader for the specified &lt;var&gt;id&lt;/var&gt;.
+	 * @see #startLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #restartLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #destroyLoader(int)
+	 * @see LoaderManager#initLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 */
+	@Nullable
+	public &lt;D&gt; Loader&lt;D&gt; initLoader(@IntRange(from = 0) int id, @Nullable Bundle params, @NonNull LoaderManager.LoaderCallbacks&lt;D&gt; callbacks) {
+<span class="nc" id="L548">		return getLoaderManager().initLoader(id, params, callbacks);</span>
+	}
+
+	/**
+	 * Re-starts a loader with the specified &lt;var&gt;id&lt;/var&gt; for the given &lt;var&gt;callbacks&lt;/var&gt;.
+	 *
+	 * @param id        Id of the desired loader to re-start.
+	 * @param params    Params for loader.
+	 * @param callbacks Callbacks for loader.
+	 * @return Re-started loader instance or {@code null} if the specified &lt;var&gt;callbacks&lt;/var&gt; do
+	 * not create loader for the specified &lt;var&gt;id&lt;/var&gt;.
+	 * @see #startLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #initLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #destroyLoader(int)
+	 * @see LoaderManager#restartLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 */
+	@Nullable
+	public &lt;D&gt; Loader&lt;D&gt; restartLoader(@IntRange(from = 0) int id, @Nullable Bundle params, @NonNull LoaderManager.LoaderCallbacks&lt;D&gt; callbacks) {
+<span class="nc" id="L566">		return getLoaderManager().restartLoader(id, params, callbacks);</span>
+	}
+
+	/**
+	 * Destroys a loader with the specified &lt;var&gt;id&lt;/var&gt;.
+	 *
+	 * @param id Id of the desired loader to destroy.
+	 * @see #initLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see #restartLoader(int, Bundle, LoaderManager.LoaderCallbacks)
+	 * @see LoaderManager#destroyLoader(int)
+	 */
+	public void destroyLoader(@IntRange(from = 0) int id) {
+<span class="nc" id="L578">		getLoaderManager().destroyLoader(id);</span>
+<span class="nc" id="L579">	}</span>
+
+	/**
+	 */
+	@Override
+	public void onPause() {
+<span class="nc" id="L585">		super.onPause();</span>
+<span class="nc" id="L586">		this.updateLifecycleFlags(LIFECYCLE_RESUMED, false);</span>
+<span class="nc" id="L587">		this.updateLifecycleFlags(LIFECYCLE_PAUSED, true);</span>
+<span class="nc" id="L588">	}</span>
+
+	/**
+	 * Checks whether this fragment is in the paused lifecycle state. This is {@code true} for
+	 * duration of {@link #onPause()} until {@link #onResume()} is called again.
+	 * &lt;p&gt;
+	 * When this method returns {@code true} the opposite lifecycle state method {@link #isResumed()}
+	 * returns {@code false} and vise versa.
+	 *
+	 * @return {@code True} if fragment has been paused, {@code false} otherwise.
+	 * @see #isResumed()
+	 */
+	public final boolean isPaused() {
+<span class="nc" id="L601">		return hasLifecycleFlag(LIFECYCLE_PAUSED);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onStop() {
+<span class="nc" id="L608">		super.onStop();</span>
+<span class="nc" id="L609">		this.updateLifecycleFlags(LIFECYCLE_STARTED, false);</span>
+<span class="nc" id="L610">		this.updateLifecycleFlags(LIFECYCLE_STOPPED, true);</span>
+<span class="nc" id="L611">	}</span>
+
+	/**
+	 * Checks whether this fragment is in the stopped lifecycle state. This is {@code true} for
+	 * duration of {@link #onStop()} until {@link #onStart()} is called again.
+	 * &lt;p&gt;
+	 * When this method returns {@code true} the opposite lifecycle state method {@link #isStarted()}
+	 * returns {@code false} and vise versa.
+	 *
+	 * @return {@code True} if fragment has been stopped, {@code false} otherwise.
+	 * @see #isStarted()
+	 */
+	public final boolean isStopped() {
+<span class="nc" id="L624">		return hasLifecycleFlag(LIFECYCLE_STOPPED);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public boolean dispatchBackPress() {
+<span class="nc" id="L631">		return onBackPress();</span>
+	}
+
+	/**
+	 * Invoked immediately after {@link #dispatchBackPress()} was called to process back press event.
+	 *
+	 * @return {@code True} if this instance of fragment has processed the back press event,
+	 * {@code false} otherwise.
+	 */
+	protected boolean onBackPress() {
+<span class="nc" id="L641">		return false;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onDestroy() {
+<span class="nc" id="L648">		super.onDestroy();</span>
+<span class="nc" id="L649">		this.updateLifecycleFlags(LIFECYCLE_CREATED, false);</span>
+<span class="nc" id="L650">		this.updateLifecycleFlags(LIFECYCLE_DESTROYED, true);</span>
+<span class="nc" id="L651">	}</span>
+
+	/**
+	 * Checks whether this fragment is destroyed. This is {@code true} whenever {@link #onDestroy()}
+	 * has been called.
+	 * &lt;p&gt;
+	 * When this method returns {@code true} the opposite lifecycle state method {@link #isCreated()}
+	 * returns {@code false} and vise versa.
+	 *
+	 * @return {@code True} if fragment is destroyed, {@code false} otherwise.
+	 * @see #isCreated()
+	 */
+	public final boolean isDestroyed() {
+<span class="nc" id="L664">		return hasLifecycleFlag(LIFECYCLE_DESTROYED);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public void onDetach() {
+<span class="nc" id="L671">		super.onDetach();</span>
+<span class="nc" id="L672">		this.updateLifecycleFlags(LIFECYCLE_ATTACHED, false);</span>
+<span class="nc" id="L673">		this.updateLifecycleFlags(LIFECYCLE_DETACHED, true);</span>
+<span class="nc" id="L674">		this.mActivityDelegate = null;</span>
+<span class="nc" id="L675">	}</span>
+
+	/**
+	 */
+	/*@Override
+	public final boolean isDetached() {
+		return hasLifecycleFlag(LIFECYCLE_DETACHED);
+	}*/
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

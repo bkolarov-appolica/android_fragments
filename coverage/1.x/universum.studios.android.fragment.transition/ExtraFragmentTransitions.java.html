@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ExtraFragmentTransitions.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.transition</a> &gt; <span class="el_source">ExtraFragmentTransitions.java</span></div><h1>ExtraFragmentTransitions.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License 
+ * you may obtain at
+ * 
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * You can redistribute, modify or publish any part of the code written within this file but as it 
+ * is described in the License, the software distributed under the License is distributed on an 
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * 
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.transition;
+
+import universum.studios.android.fragment.manage.FragmentTransition;
+import universum.studios.android.fragment.R;
+
+/**
+ * Factory providing &lt;b&gt;extra&lt;/b&gt; {@link FragmentTransition FragmentTransitions}.
+ * &lt;ul&gt;
+ * &lt;li&gt;{@link #SCALE_IN_AND_SLIDE_TO_LEFT}&lt;/li&gt;
+ * &lt;li&gt;{@link #SCALE_IN_AND_SLIDE_TO_RIGHT}&lt;/li&gt;
+ * &lt;li&gt;{@link #SCALE_IN_AND_SLIDE_TO_TOP}&lt;/li&gt;
+ * &lt;li&gt;{@link #SCALE_IN_AND_SLIDE_TO_BOTTOM}&lt;/li&gt;
+ * &lt;li&gt;{@link #SLIDE_TO_RIGHT_AND_SCALE_OUT}&lt;/li&gt;
+ * &lt;li&gt;{@link #SLIDE_TO_LEFT_AND_SCALE_OUT}&lt;/li&gt;
+ * &lt;li&gt;{@link #SLIDE_TO_BOTTOM_AND_SCALE_OUT}&lt;/li&gt;
+ * &lt;li&gt;{@link #SLIDE_TO_TOP_AND_SCALE_OUT}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @author Martin Albedinsky
+ */
+@SuppressWarnings(&quot;unused&quot;)
+public final class ExtraFragmentTransitions {
+
+	/**
+	 * Transition that may be used to scale (with fade) a new incoming fragment into the screen from
+	 * its background and an outgoing (the current one) will be slided out of the screen to the left.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_scale_in}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_slide_out_left}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_in_right_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_out_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L54">	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_LEFT = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_scale_in,
+			// Outgoing animation.
+			R.animator.fragment_slide_out_left,
+			// Incoming back-stack animation.
+			R.animator.fragment_slide_in_right_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_scale_out_back,
+			&quot;SCALE_IN_AND_SLIDE_TO_LEFT&quot;
+	);
+
+	/**
+	 * Transition that may be used to scale (with fade) a new incoming fragment into the screen from
+	 * its background and an outgoing (the current one) will be slided out of the screen to the right.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_scale_in}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_slide_out_right}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_in_left_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_out_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L78">	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_RIGHT = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_scale_in,
+			// Outgoing animation.
+			R.animator.fragment_slide_out_right,
+			// Incoming back-stack animation.
+			R.animator.fragment_slide_in_left_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_scale_out_back,
+			&quot;SCALE_IN_AND_SLIDE_TO_RIGHT&quot;
+	);
+
+	/**
+	 * Transition that may be used to scale (with fade) a new incoming fragment into the screen from
+	 * its background and an outgoing (the current one) will be slided out of the screen to the top.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_scale_in}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_slide_out_top}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_in_bottom_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_out_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L102">	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_TOP = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_scale_in,
+			// Outgoing animation.
+			R.animator.fragment_slide_out_top,
+			// Incoming back-stack animation.
+			R.animator.fragment_slide_in_bottom_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_scale_out_back,
+			&quot;SCALE_IN_AND_SLIDE_TO_TOP&quot;
+	);
+
+	/**
+	 * Transition that may be used to scale (with fade) a new incoming fragment into the screen from
+	 * its background and an outgoing (the current one) will be slided out of the screen to the bottom.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_scale_in}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_slide_out_bottom}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_in_top_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_out_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L126">	public static final FragmentTransition SCALE_IN_AND_SLIDE_TO_BOTTOM = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_scale_in,
+			// Outgoing animation.
+			R.animator.fragment_slide_out_bottom,
+			// Incoming back-stack animation.
+			R.animator.fragment_slide_in_top_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_scale_out_back,
+			&quot;SCALE_IN_AND_SLIDE_TO_BOTTOM&quot;
+	);
+
+	/**
+	 * Transition that may be used to slide a new incoming fragment into the screen from the right and
+	 * an outgoing (the current one) will be scaled out (with fade) out of the screen to its background.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_slide_in_left}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_scale_out}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_in_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_out_right_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L150">	public static final FragmentTransition SLIDE_TO_LEFT_AND_SCALE_OUT = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_slide_in_left,
+			// Outgoing animation.
+			R.animator.fragment_scale_out,
+			// Incoming back-stack animation.
+			R.animator.fragment_scale_in_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_slide_out_right_back,
+			&quot;SLIDE_TO_LEFT_AND_SCALE_OUT&quot;
+	);
+
+	/**
+	 * Transition that may be used to slide a new incoming fragment into the screen from the left and
+	 * an outgoing (the current one) will be scaled out (with fade) out of the screen to its background.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_slide_in_right}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_scale_out}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_in_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_out_left_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L174">	public static final FragmentTransition SLIDE_TO_RIGHT_AND_SCALE_OUT = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_slide_in_right,
+			// Outgoing animation.
+			R.animator.fragment_scale_out,
+			// Incoming back-stack animation.
+			R.animator.fragment_scale_in_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_slide_out_left_back,
+			&quot;SLIDE_TO_RIGHT_AND_SCALE_OUT&quot;
+	);
+
+	/**
+	 * Transition that may be used to slide a new incoming fragment into the screen from the bottom
+	 * and an outgoing (the current one) will be scaled out (with fade) out of the screen to its background.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_slide_in_top}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_scale_out}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_in_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_out_bottom_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L198">	public static final FragmentTransition SLIDE_TO_TOP_AND_SCALE_OUT = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_slide_in_top,
+			// Outgoing animation.
+			R.animator.fragment_scale_out,
+			// Incoming back-stack animation.
+			R.animator.fragment_scale_in_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_slide_out_bottom_back,
+			&quot;SLIDE_TO_TOP_AND_SCALE_OUT&quot;
+	);
+
+	/**
+	 * Transition that may be used to slide a new incoming fragment into the screen from the top and
+	 * an outgoing (the current one) will be scaled out (with fade) out of the screen to its background.
+	 *
+	 * &lt;h3&gt;Powered by animations:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming:&lt;/b&gt; {@link R.animator#fragment_slide_in_bottom}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing:&lt;/b&gt; {@link R.animator#fragment_scale_out}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Incoming (back-stack):&lt;/b&gt; {@link R.animator#fragment_scale_in_back}&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;Outgoing (back-stack):&lt;/b&gt; {@link R.animator#fragment_slide_out_top_back}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+<span class="nc" id="L222">	public static final FragmentTransition SLIDE_TO_BOTTOM_AND_SCALE_OUT = new BasicFragmentTransition(</span>
+			// Incoming animation.
+			R.animator.fragment_slide_in_bottom,
+			// Outgoing animation.
+			R.animator.fragment_scale_out,
+			// Incoming back-stack animation.
+			R.animator.fragment_scale_in_back,
+			// Outgoing back-stack animation.
+			R.animator.fragment_slide_out_top_back,
+			&quot;SLIDE_TO_BOTTOM_AND_SCALE_OUT&quot;
+	);
+
+	/**
+	 */
+<span class="nc" id="L236">	private ExtraFragmentTransitions() {</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L238">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

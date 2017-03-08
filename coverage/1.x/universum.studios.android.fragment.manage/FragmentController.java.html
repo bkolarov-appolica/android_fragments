@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FragmentController.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.manage</a> &gt; <span class="el_source">FragmentController.java</span></div><h1>FragmentController.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.manage;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.os.Build;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
+import android.transition.Transition;
+import android.util.Log;
+import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import universum.studios.android.fragment.FragmentsConfig;
+
+/**
+ * FragmentController class is designed primarily to simplify {@link Fragment Fragments} management
+ * within an Android application.
+ * &lt;p&gt;
+ * Whether it is desired to replace|add|remove|show|hide|attach|detach a specific {@link Fragment},
+ * this may be requested via {@link FragmentRequest}. A new request may be created via {@link #newRequest(Fragment)}.
+ * Each fragment request is associated with the controller trough which it has been created and that
+ * controller is responsible for execution of fragment request when {@link FragmentRequest#execute()}
+ * is called.
+ *
+ * &lt;h3&gt;Factory&lt;/h3&gt;
+ * The best advantage of the FragmentController and globally of this library may be accomplished by
+ * using of {@link FragmentFactory} attached to the desired fragment controller. Basically in an
+ * Android application you will use directly instances of the FragmentController to replace|add|hide...
+ * fragments and for each of that application screens (Activities) a single FragmentFactory may be
+ * defined which will provide fragment instances for that activity screen. For example, one fragment
+ * factory for main activity with &lt;b&gt;navigation drawer&lt;/b&gt; where that factory will provide fragments
+ * for each of the items within the navigation menu. Than another fragment factory for profile activity
+ * and that factory will provide all fragments used within that activity, like fragment for displaying
+ * of user's info an another one for editing that info.
+ * &lt;p&gt;
+ * The desired factory for FragmentController may be specified via {@link #setFactory(FragmentFactory)}.
+ * Fragment requests for fragments provided by the attached factory may be than created via {@link #newRequest(int)}.
+ * &lt;b&gt;Note, that it is required that factory is attached to the controller before call to this method,
+ * otherwise an exception will be thrown.&lt;/b&gt;
+ * &lt;p&gt;
+ * Fragments that are provided by factory attached to the fragment controller may be found via
+ * {@link #findFragmentByFactoryId(int)} (when already displayed) by theirs corresponding id defined
+ * in the related factory.
+ *
+ * &lt;h3&gt;Callbacks&lt;/h3&gt;
+ * If you want to listen for fragment request executions, a desired {@link OnRequestListener} may
+ * be attached to the FragmentController via {@link #registerOnRequestListener(OnRequestListener)}.
+ * &lt;p&gt;
+ * If you want to listen for changes in the fragments back stack whenever a new fragment is added to
+ * the stack or an old one removed from the stack, a desired {@link OnBackStackChangeListener} may
+ * be attached to the FragmentController via {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}.
+ *
+ * @author Martin Albedinsky
+ * @see FragmentFactory
+ * @see FragmentRequest
+ */
+public class FragmentController {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	private static final String TAG = &quot;FragmentController&quot;;
+
+	/**
+	 * Default TAG used for fragments.
+	 */
+<span class="nc" id="L95">	public static final String FRAGMENT_TAG = FragmentsConfig.class.getPackage().getName() + &quot;.TAG.Fragment&quot;;</span>
+
+	/**
+	 * Constant used to determine that no view container id is specified.
+	 */
+	public static final int NO_CONTAINER_ID = -1;
+
+	/**
+	 * Flag indicating whether we can attach transitions to a fragment instance at the current Android
+	 * API level or not.
+	 */
+<span class="nc bnc" id="L106" title="All 2 branches missed.">	private static final boolean CAN_ATTACH_TRANSITIONS = Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP;</span>
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Listener that may be used to receive callback about executed {@link FragmentRequest}.
+	 *
+	 * @author Martin Albedinsky
+	 * @see #registerOnRequestListener(OnRequestListener)
+	 */
+	public interface OnRequestListener {
+
+		/**
+		 * Invoked whenever the specified &lt;var&gt;request&lt;/var&gt; has been executed.
+		 *
+		 * @param request The executed fragment request.
+		 * @see FragmentRequest#execute()
+		 */
+		void onRequestExecuted(@NonNull FragmentRequest request);
+	}
+
+	/**
+	 * Listener that may be used to receive a callback about changes in the fragments back stack.
+	 * The callback is fired whenever a new fragment is added into the back stack or an old fragment
+	 * is removed from the back stack.
+	 *
+	 * @author Martin Albedinsky
+	 * @see #registerOnBackStackChangeListener(OnBackStackChangeListener)
+	 */
+	public interface OnBackStackChangeListener {
+
+		/**
+		 * Invoked whenever fragments back stack change occur.
+		 *
+		 * @param backStackEntry The back stack entry that was added into back stack or removed from it.
+		 * @param added          {@code True} if the entry has been added, {@code false} if removed.
+		 */
+		void onFragmentsBackStackChanged(@NonNull FragmentManager.BackStackEntry backStackEntry, boolean added);
+	}
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Listener used to listen for changes in fragments back stack.
+	 */
+<span class="nc" id="L159">	private final FragmentManager.OnBackStackChangedListener mBackStackChangeListener = new BackStackListener();</span>
+
+	/**
+	 * Fragment manager used to perform fragments related operations.
+	 */
+	private final FragmentManager mManager;
+
+	/**
+	 * Id of a view container where to place view hierarchies of the desired fragments.
+	 */
+<span class="nc" id="L169">	private int mViewContainerId = NO_CONTAINER_ID;</span>
+
+	/**
+	 * Factory that provides fragment instances for this controller.
+	 */
+	private FragmentFactory mFactory;
+
+	/**
+	 * Interceptor that may be used to intercept an execution of a particular {@link FragmentRequest}
+	 * when its execution has been requested via {@link #executeRequest(FragmentRequest)}.
+	 */
+	private FragmentRequestInterceptor mRequestInterceptor;
+
+	/**
+	 * List of listener callbacks registered for fragment requests.
+	 */
+	private List&lt;OnRequestListener&gt; mRequestListeners;
+
+	/**
+	 * List of listener callbacks registered for back stack changes.
+	 */
+	private List&lt;OnBackStackChangeListener&gt; mBackStackChangeListeners;
+
+	/**
+	 * Entry that is at the top of the fragments back stack.
+	 */
+	private FragmentManager.BackStackEntry mTopBackStackEntry;
+
+	/**
+	 * Boolean flag indicating whether this controller has been destroyed or not.
+	 */
+	private boolean mDestroyed;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of FragmentController for the given &lt;var&gt;parentActivity&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * Passed activity will be used to obtain an instance of {@link FragmentManager} for the new
+	 * controller.
+	 * &lt;p&gt;
+	 * This constructor attaches the given activity to the new controller as one of interfaces
+	 * listed below if the activity implements listed interfaces respectively:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link FragmentRequestInterceptor} -&amp;gt; {@link #setRequestInterceptor(FragmentRequestInterceptor)}&lt;/li&gt;
+	 * &lt;li&gt;{@link OnRequestListener} -&amp;gt; {@link #registerOnRequestListener(OnRequestListener)}&lt;/li&gt;
+	 * &lt;li&gt;{@link OnBackStackChangeListener} -&amp;gt; {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 *
+	 * @param parentActivity The activity that wants to use the new fragment controller.
+	 * @see #FragmentController(Fragment)
+	 */
+	public FragmentController(@NonNull Activity parentActivity) {
+<span class="nc" id="L224">		this(parentActivity.getFragmentManager());</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">		if (parentActivity instanceof FragmentRequestInterceptor) {</span>
+<span class="nc" id="L226">			setRequestInterceptor((FragmentRequestInterceptor) parentActivity);</span>
+		}
+<span class="nc bnc" id="L228" title="All 2 branches missed.">		if (parentActivity instanceof OnRequestListener) {</span>
+<span class="nc" id="L229">			registerOnRequestListener((OnRequestListener) parentActivity);</span>
+		}
+<span class="nc bnc" id="L231" title="All 2 branches missed.">		if (parentActivity instanceof OnBackStackChangeListener) {</span>
+<span class="nc" id="L232">			registerOnBackStackChangeListener((OnBackStackChangeListener) parentActivity);</span>
+		}
+<span class="nc" id="L234">	}</span>
+
+	/**
+	 * Creates a new instance of FragmentController for the given &lt;var&gt;parentFragment&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * Passed fragment will be used to obtain an instance of {@link FragmentManager} for the new
+	 * controller.
+	 * &lt;p&gt;
+	 * This constructor attaches the given fragment to the new controller as one of interfaces
+	 * listed below if the fragment implements listed interfaces respectively:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link FragmentRequestInterceptor} -&amp;gt; {@link #setRequestInterceptor(FragmentRequestInterceptor)}&lt;/li&gt;
+	 * &lt;li&gt;{@link OnRequestListener} -&amp;gt; {@link #registerOnRequestListener(OnRequestListener)}&lt;/li&gt;
+	 * &lt;li&gt;{@link OnBackStackChangeListener} -&amp;gt; {@link #registerOnBackStackChangeListener(OnBackStackChangeListener)}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * &lt;b&gt;Do not forget to destroy the new controller via {@link #destroy()} when the fragment is
+	 * also destroyed.&lt;/b&gt;
+	 *
+	 * @param parentFragment The fragment that wants to use the new fragment controller.
+	 * @see #FragmentController(Activity)
+	 */
+	public FragmentController(@NonNull Fragment parentFragment) {
+<span class="nc" id="L257">		this(parentFragment.getFragmentManager());</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">		if (parentFragment instanceof FragmentRequestInterceptor) {</span>
+<span class="nc" id="L259">			setRequestInterceptor((FragmentRequestInterceptor) parentFragment);</span>
+		}
+<span class="nc bnc" id="L261" title="All 2 branches missed.">		if (parentFragment instanceof OnRequestListener) {</span>
+<span class="nc" id="L262">			registerOnRequestListener((OnRequestListener) parentFragment);</span>
+		}
+<span class="nc bnc" id="L264" title="All 2 branches missed.">		if (parentFragment instanceof OnBackStackChangeListener) {</span>
+<span class="nc" id="L265">			registerOnBackStackChangeListener((OnBackStackChangeListener) parentFragment);</span>
+		}
+<span class="nc" id="L267">	}</span>
+
+	/**
+	 * Creates a new instance of FragmentController with the given &lt;var&gt;fragmentManager&lt;/var&gt;.
+	 *
+	 * @param fragmentManager Fragment manager that will be used to perform fragments related operations.
+	 * @see #FragmentController(Activity)
+	 * @see #FragmentController(Fragment)
+	 */
+<span class="nc" id="L276">	public FragmentController(@NonNull FragmentManager fragmentManager) {</span>
+<span class="nc" id="L277">		this.mManager = fragmentManager;</span>
+<span class="nc" id="L278">		this.mManager.addOnBackStackChangedListener(mBackStackChangeListener);</span>
+<span class="nc" id="L279">		final int n = mManager.getBackStackEntryCount();</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">		if (n &gt; 0) {</span>
+<span class="nc" id="L281">			this.mTopBackStackEntry = mManager.getBackStackEntryAt(n - 1);</span>
+		}
+<span class="nc" id="L283">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Returns the fragment manager specified for this controller during its initialization.
+	 *
+	 * @return FragmentManager instance.
+	 * @see #FragmentController(FragmentManager)
+	 */
+	@NonNull
+	public final FragmentManager getFragmentManager() {
+<span class="nc" id="L297">		return mManager;</span>
+	}
+
+	/**
+	 * Sets an id of a view container where to place view hierarchies of the desired fragments.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that this container id is used to specify initial/default container id for all
+	 * {@link FragmentRequest FragmentRequests} created via {@link #newRequest(Fragment)}
+	 *
+	 * @param containerId The desired view container id.
+	 * @see #getViewContainerId()
+	 */
+	public final void setViewContainerId(@IdRes int containerId) {
+<span class="nc" id="L310">		this.mViewContainerId = containerId;</span>
+<span class="nc" id="L311">	}</span>
+
+	/**
+	 * Returns id of the view container for fragment views.
+	 *
+	 * @return View container id or {@link #NO_CONTAINER_ID} if no id has been specified yet.
+	 * @see #setViewContainerId(int)
+	 */
+	@IdRes
+	public final int getViewContainerId() {
+<span class="nc" id="L321">		return mViewContainerId;</span>
+	}
+
+	/**
+	 * Sets a fragment factory that should provide fragment instances for {@link FragmentRequest FragmentRequests}
+	 * created via {@link #newRequest(int)}.
+	 *
+	 * @param factory The desired factory. May {@code null} to clear the current one.
+	 * @see #getFactory()
+	 * @see #hasFactory()
+	 */
+	public void setFactory(@Nullable FragmentFactory factory) {
+<span class="nc" id="L333">		this.mFactory = factory;</span>
+<span class="nc" id="L334">	}</span>
+
+	/**
+	 * Checks whether this controller has fragment factory attached or not.
+	 *
+	 * @return {@code True} if factory is attached, {@code false} otherwise.
+	 * @see #setFactory(FragmentFactory)
+	 * @see #getFactory()
+	 */
+	public boolean hasFactory() {
+<span class="nc bnc" id="L344" title="All 2 branches missed.">		return mFactory != null;</span>
+	}
+
+	/**
+	 * Asserts that the factory has been attached to this controller. If no factory is attached,
+	 * an exception is thrown.
+	 */
+	private void assertHasFactory() {
+<span class="nc bnc" id="L352" title="All 2 branches missed.">		if (mFactory == null) throw new IllegalStateException(&quot;No factory attached!&quot;);</span>
+<span class="nc" id="L353">	}</span>
+
+	/**
+	 * Returns the current fragment factory attached to this controller.
+	 *
+	 * @return This controller's factory or {@code null} if there is no factory attached yet.
+	 * @see #setFactory(FragmentFactory)
+	 * @see #hasFactory()
+	 */
+	@Nullable
+	public FragmentFactory getFactory() {
+<span class="nc" id="L364">		return mFactory;</span>
+	}
+
+	/**
+	 * Sets an interceptor that may be used to intercept an execution of a {@link FragmentRequest}
+	 * created via {@link #newRequest(Fragment)} when execution of that request has been requested
+	 * via {@link FragmentRequest#execute()}.
+	 *
+	 * @param interceptor The desired interceptor. May be {@code null} to clear the current one.
+	 */
+	public void setRequestInterceptor(@Nullable FragmentRequestInterceptor interceptor) {
+<span class="nc" id="L375">		this.mRequestInterceptor = interceptor;</span>
+<span class="nc" id="L376">	}</span>
+
+	/**
+	 * Registers a callback to be invoked when a {@link FragmentRequest} is executed via this
+	 * controller.
+	 * &lt;p&gt;
+	 * Fragment request created via {@link #newRequest(Fragment)} is executed whenever its
+	 * {@link FragmentRequest#execute()} is called and the associated controller does not have
+	 * {@link FragmentRequestInterceptor} attached or the attached interceptor did not intercept
+	 * execution of that particular request.
+	 *
+	 * @param listener The desired listener callback to be registered.
+	 * @see #unregisterOnRequestListener(OnRequestListener)
+	 */
+	public void registerOnRequestListener(@NonNull OnRequestListener listener) {
+<span class="nc bnc" id="L391" title="All 2 branches missed.">		if (mRequestListeners == null) this.mRequestListeners = new ArrayList&lt;&gt;(1);</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">		if (!mRequestListeners.contains(listener)) mRequestListeners.add(listener);</span>
+<span class="nc" id="L393">	}</span>
+
+	/**
+	 * Un-registers the given callback from the registered request listeners.
+	 *
+	 * @param listener The desired listener callback to be un-registered.
+	 * @see #registerOnRequestListener(OnRequestListener)
+	 */
+	public void unregisterOnRequestListener(@NonNull OnRequestListener listener) {
+<span class="nc bnc" id="L402" title="All 2 branches missed.">		if (mRequestListeners != null) mRequestListeners.remove(listener);</span>
+<span class="nc" id="L403">	}</span>
+
+	/**
+	 * Notifies all registered {@link OnRequestListener OnRequestListeners} that the given
+	 * &lt;var&gt;request&lt;/var&gt; has been executed.
+	 *
+	 * @param request The request that has been just executed via {@link #executeRequest(FragmentRequest)}.
+	 */
+	private void notifyRequestExecuted(FragmentRequest request) {
+<span class="nc bnc" id="L412" title="All 4 branches missed.">		if (mRequestListeners != null &amp;&amp; !mRequestListeners.isEmpty()) {</span>
+<span class="nc bnc" id="L413" title="All 2 branches missed.">			for (final OnRequestListener listener : mRequestListeners) {</span>
+<span class="nc" id="L414">				listener.onRequestExecuted(request);</span>
+<span class="nc" id="L415">			}</span>
+		}
+<span class="nc" id="L417">	}</span>
+
+	/**
+	 * Registers a callback to be invoked when some change occurs in the fragments back stack.
+	 *
+	 * @param listener The desired listener callback to be registered.
+	 * @see #unregisterOnBackStackChangeListener(OnBackStackChangeListener)
+	 * @see FragmentManager#addOnBackStackChangedListener(FragmentManager.OnBackStackChangedListener)
+	 */
+	public void registerOnBackStackChangeListener(@NonNull OnBackStackChangeListener listener) {
+<span class="nc bnc" id="L427" title="All 2 branches missed.">		if (mBackStackChangeListeners == null) this.mBackStackChangeListeners = new ArrayList&lt;&gt;(1);</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">		if (!mBackStackChangeListeners.contains(listener)) mBackStackChangeListeners.add(listener);</span>
+<span class="nc" id="L429">	}</span>
+
+	/**
+	 * Un-registers the given callback from the registered back stack change listeners.
+	 *
+	 * @param listener The desired listener callback to be un-registered.
+	 * @see #registerOnBackStackChangeListener(OnBackStackChangeListener)
+	 */
+	public void unregisterOnBackStackChangeListener(@NonNull OnBackStackChangeListener listener) {
+<span class="nc bnc" id="L438" title="All 2 branches missed.">		if (mBackStackChangeListeners != null) mBackStackChangeListeners.remove(listener);</span>
+<span class="nc" id="L439">	}</span>
+
+	/**
+	 * Notifies all registered {@link OnBackStackChangeListener OnBackStackChangeListeners} that the
+	 * given &lt;var&gt;changedEntry&lt;/var&gt; was added or removed from the back stack.
+	 *
+	 * @param changedEntry The back stack entry that was changed.
+	 * @param added        {@code True} if the specified entry was added to the back stack,
+	 *                     {@code false} if it was removed.
+	 */
+	private void notifyBackStackEntryChange(FragmentManager.BackStackEntry changedEntry, boolean added) {
+<span class="nc bnc" id="L450" title="All 4 branches missed.">		if (mBackStackChangeListeners != null &amp;&amp; !mBackStackChangeListeners.isEmpty()) {</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">			for (final OnBackStackChangeListener listener : mBackStackChangeListeners) {</span>
+<span class="nc" id="L452">				listener.onFragmentsBackStackChanged(changedEntry, added);</span>
+<span class="nc" id="L453">			}</span>
+		}
+<span class="nc" id="L455">	}</span>
+
+	/**
+	 * Creates a new instance of FragmentRequest for the given &lt;var&gt;fragmentId&lt;/var&gt;. The new request
+	 * will have the given fragment id attached along with this controller which will be responsible
+	 * for execution of the new request when its {@link FragmentRequest#execute()} is called.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that execution of the created request assumes that there is factory attached and
+	 * that factory provides fragment that is associated with the specified &lt;var&gt;fragmentId&lt;/var&gt;
+	 * otherwise an exception will be thrown.
+	 *
+	 * @param fragmentId Id of the desired factory fragment for which to crate the new request.
+	 * @return New fragment request with the specified fragmentId id attached. Also
+	 * specified id.
+	 */
+	@NonNull
+	public final FragmentRequest newRequest(int fragmentId) {
+<span class="nc" id="L472">		this.assertNotDestroyed(&quot;NEW REQUEST&quot;);</span>
+<span class="nc" id="L473">		return new FragmentRequest(this).fragmentId(fragmentId).viewContainerId(mViewContainerId);</span>
+	}
+
+	/**
+	 * Creates a new FragmentRequest for the given &lt;var&gt;fragment&lt;/var&gt;. The new request will have
+	 * the given fragment attached along with this controller which will be responsible for execution
+	 * of the new request when its {@link FragmentRequest#execute()} is called.
+	 * &lt;p&gt;
+	 * The returned request will have default {@link #FRAGMENT_TAG} attached via {@link FragmentRequest#tag(String)}
+	 * and also view container id via {@link FragmentRequest#viewContainerId(int)} specified for this
+	 * controller via {@link #setViewContainerId(int)}.
+	 *
+	 * @param fragment The fragment for which to create the new request.
+	 * @return New fragment request with default {@link #FRAGMENT_TAG} and container id specified for
+	 * this controller via {@link #setViewContainerId(int)}.
+	 * @see FragmentRequest#tag(String)
+	 * @see FragmentRequest#viewContainerId(int)
+	 */
+	@NonNull
+	public final FragmentRequest newRequest(@NonNull Fragment fragment) {
+<span class="nc" id="L493">		this.assertNotDestroyed(&quot;NEW REQUEST&quot;);</span>
+<span class="nc" id="L494">		return new FragmentRequest(this, fragment).tag(FRAGMENT_TAG).viewContainerId(mViewContainerId);</span>
+	}
+
+	/**
+	 * Performs execution of the given fragment &lt;var&gt;request&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This method also notifies all registered {@link OnRequestListener OnRequestListeners} about
+	 * the request execution.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that this method does not check if the request has been already executed or not.
+	 *
+	 * @param request The fragment request to be executed.
+	 * @return The fragment that has been associated with the request either during its initialization
+	 * or as result of this execution. May be {@code null} if the execution has failed.
+	 * @throws IllegalStateException    If there is no factory attached.
+	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
+	 *                                  fragment id specified for the request.
+	 * @see FragmentRequestInterceptor#interceptFragmentRequest(FragmentRequest)
+	 */
+	@Nullable
+	final Fragment executeRequest(FragmentRequest request) {
+<span class="nc" id="L515">		this.assertNotDestroyed(&quot;EXECUTE REQUEST&quot;);</span>
+<span class="nc" id="L516">		Fragment fragment = request.mFragment;</span>
+<span class="nc bnc" id="L517" title="All 2 branches missed.">		if (fragment == null) {</span>
+<span class="nc" id="L518">			this.assertHasFactory();</span>
+<span class="nc" id="L519">			final int fragmentId = request.mFragmentId;</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">			if (!mFactory.isFragmentProvided(fragmentId)) {</span>
+<span class="nc" id="L521">				throw new IllegalArgumentException(</span>
+<span class="nc" id="L522">						&quot;Cannot execute request for factory fragment. Current factory(&quot; + mFactory.getClass() + &quot;) &quot; +</span>
+								&quot;does not provide fragment for the requested id(&quot; + fragmentId + &quot;)!&quot;);
+			}
+<span class="nc bnc" id="L525" title="All 2 branches missed.">			switch (request.mTransaction) {</span>
+				case FragmentRequest.REMOVE:
+				case FragmentRequest.SHOW:
+				case FragmentRequest.HIDE:
+				case FragmentRequest.ATTACH:
+				case FragmentRequest.DETACH:
+<span class="nc" id="L531">					fragment = findFragmentByFactoryId(fragmentId);</span>
+<span class="nc" id="L532">					break;</span>
+				case FragmentRequest.REPLACE:
+				case FragmentRequest.ADD:
+				default:
+<span class="nc" id="L536">					fragment = mFactory.createFragment(fragmentId);</span>
+<span class="nc bnc" id="L537" title="All 2 branches missed.">					if (fragment == null) {</span>
+<span class="nc" id="L538">						throw new IllegalArgumentException(</span>
+<span class="nc" id="L539">								&quot;Cannot execute request for factory fragment. Current factory(&quot; + mFactory.getClass() + &quot;) is cheating. &quot; +</span>
+										&quot;FragmentFactory.isFragmentProvided(...) returned true, but FragmentFactory.createFragment(...) returned null!&quot;
+						);
+					}
+					break;
+			}
+<span class="nc bnc" id="L545" title="All 2 branches missed.">			if (fragment == null) {</span>
+<span class="nc" id="L546">				return null;</span>
+			}
+<span class="nc" id="L548">			request.mFragment = fragment;</span>
+<span class="nc bnc" id="L549" title="All 2 branches missed.">			if (request.mTag == null) {</span>
+<span class="nc" id="L550">				request.tag(mFactory.createFragmentTag(fragmentId));</span>
+			}
+		}
+<span class="nc bnc" id="L553" title="All 2 branches missed.">		fragment = mRequestInterceptor == null ? null : mRequestInterceptor.interceptFragmentRequest(request);</span>
+<span class="nc bnc" id="L554" title="All 2 branches missed.">		if (fragment == null) {</span>
+<span class="nc" id="L555">			fragment = onExecuteRequest(request);</span>
+		}
+<span class="nc" id="L557">		this.notifyRequestExecuted(request);</span>
+<span class="nc" id="L558">		return fragment;</span>
+	}
+
+	/**
+	 * Called to perform execution of the given fragment &lt;var&gt;request&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This implementation creates a new {@link FragmentTransaction} via {@link #createTransaction(FragmentRequest)}
+	 * for the request and commits it via appropriate commit method and returns the associated fragment.
+	 *
+	 * @param request The fragment request of which execution has been requested via call to
+	 *                {@link FragmentRequest#execute()}
+	 * @return The fragment associated with the request.
+	 */
+	@NonNull
+	@SuppressWarnings(&quot;ConstantConditions&quot;)
+	protected Fragment onExecuteRequest(@NonNull FragmentRequest request) {
+<span class="nc bnc" id="L574" title="All 4 branches missed.">		if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN_MR1 &amp;&amp; mManager.isDestroyed()) {</span>
+<span class="nc" id="L575">			throw new IllegalStateException(&quot;Cannot execute fragment request in context of activity that has been already destroyed!&quot;);</span>
+		}
+<span class="nc bnc" id="L577" title="All 4 branches missed.">		if (request.mTransaction == FragmentRequest.REPLACE &amp;&amp; !request.hasFlag(FragmentRequest.REPLACE_SAME)) {</span>
+			// Do not replace same fragment if there is already displayed fragment with the same tag.
+<span class="nc" id="L579">			final Fragment existingFragment = mManager.findFragmentByTag(request.mTag);</span>
+<span class="nc bnc" id="L580" title="All 2 branches missed.">			if (existingFragment != null) {</span>
+<span class="nc bnc" id="L581" title="All 2 branches missed.">				if (FragmentsConfig.LOG_ENABLED) {</span>
+<span class="nc" id="L582">					Log.v(TAG, &quot;Fragment with tag(&quot; + request.mTag + &quot;) is already displayed or it is in the back-stack.&quot;);</span>
+				}
+<span class="nc" id="L584">				return existingFragment;</span>
+			}
+		}
+		// Crate transaction for the fragment request.
+<span class="nc" id="L588">		final Fragment fragment = request.mFragment;</span>
+<span class="nc" id="L589">		final FragmentTransaction transaction = createTransaction(request);</span>
+<span class="nc bnc" id="L590" title="All 4 branches missed.">		if (request.hasFlag(FragmentRequest.ADD_TO_BACK_STACK) &amp;&amp; FragmentsConfig.DEBUG_LOG_ENABLED) {</span>
+<span class="nc" id="L591">			Log.d(TAG, &quot;Fragment(&quot; + fragment + &quot;) will be added to back-stack under the tag(&quot; + fragment.getTag() + &quot;).&quot;);</span>
+		}
+		// Commit the transaction either normally or allowing state loss.
+<span class="nc bnc" id="L594" title="All 2 branches missed.">		if (request.hasFlag(FragmentRequest.ALLOW_STATE_LOSS)) {</span>
+<span class="nc" id="L595">			transaction.commitAllowingStateLoss();</span>
+		} else {
+<span class="nc" id="L597">			transaction.commit();</span>
+		}
+<span class="nc bnc" id="L599" title="All 2 branches missed.">		if (request.hasFlag(FragmentRequest.IMMEDIATE)) {</span>
+<span class="nc" id="L600">			mManager.executePendingTransactions();</span>
+		}
+<span class="nc" id="L602">		return fragment;</span>
+	}
+
+	/**
+	 * Begins and configures a new FragmentTransaction for the given fragment &lt;var&gt;request&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * The created transaction will be configured via methods listed below depending on configuration
+	 * parameters supplied via the specified request:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#replace(int, Fragment, String)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#add(int, Fragment, String)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#remove(Fragment)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#show(Fragment)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#hide(Fragment)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#attach(Fragment)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#detach(Fragment)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#setCustomAnimations(int, int, int, int)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#setTransitionStyle(int)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#addSharedElement(View, String)}&lt;/li&gt;
+	 * &lt;li&gt;{@link FragmentTransaction#addToBackStack(String)}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Also transitions related configuration will be performed for the fragment that is attached to
+	 * the request via methods listed below:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link Fragment#setEnterTransition(Transition)}
+	 * &lt;li&gt;{@link Fragment#setExitTransition(Transition)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Fragment#setReenterTransition(Transition)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Fragment#setReturnTransition(Transition)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Fragment#setSharedElementEnterTransition(Transition)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Fragment#setSharedElementReturnTransition(Transition)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Fragment#setAllowEnterTransitionOverlap(boolean)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Fragment#setAllowReturnTransitionOverlap(boolean)}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * &lt;b&gt;Do not forget to commit the transaction.&lt;/b&gt;
+	 *
+	 * @param request The request specifying configuration parameters for the transaction to be
+	 *                created.
+	 * @return The desired fragment transaction that may be immediately committed via one of
+	 * {@code FragmentTransaction.commit...()} methods.
+	 * @throws IllegalArgumentException If the request has specified transaction type of {@link FragmentRequest#REPLACE}
+	 *                                  or {@link FragmentRequest#ADD} but it has no container id
+	 *                                  specified via {@link FragmentRequest#viewContainerId(int)}
+	 */
+	@NonNull
+	@SuppressWarnings(&quot;NewApi&quot;)
+	public FragmentTransaction createTransaction(@NonNull FragmentRequest request) {
+<span class="nc" id="L649">		this.assertNotDestroyed(&quot;CREATE TRANSACTION&quot;);</span>
+<span class="nc" id="L650">		final FragmentTransaction transaction = mManager.beginTransaction();</span>
+<span class="nc" id="L651">		final Fragment fragment = request.mFragment;</span>
+<span class="nc bnc" id="L652" title="All 2 branches missed.">		if (request.mArguments != null) {</span>
+<span class="nc" id="L653">			fragment.setArguments(request.mArguments);</span>
+		}
+		// Attach animations to the transaction from the FragmentTransition parameter.
+<span class="nc bnc" id="L656" title="All 2 branches missed.">		if (request.mTransition != null) {</span>
+<span class="nc" id="L657">			transaction.setCustomAnimations(</span>
+<span class="nc" id="L658">					request.mTransition.getIncomingAnimation(),</span>
+<span class="nc" id="L659">					request.mTransition.getOutgoingAnimation(),</span>
+<span class="nc" id="L660">					request.mTransition.getIncomingBackStackAnimation(),</span>
+<span class="nc" id="L661">					request.mTransition.getOutgoingBackStackAnimation()</span>
+			);
+<span class="nc bnc" id="L663" title="All 2 branches missed.">		} else if (request.mTransitionStyle != FragmentRequest.NO_STYLE) {</span>
+<span class="nc" id="L664">			transaction.setTransitionStyle(request.mTransitionStyle);</span>
+		}
+		// Resolve transaction type.
+<span class="nc bnc" id="L667" title="All 8 branches missed.">		switch (request.mTransaction) {</span>
+			case FragmentRequest.REPLACE:
+<span class="nc bnc" id="L669" title="All 2 branches missed.">				if (request.mViewContainerId == NO_CONTAINER_ID) {</span>
+<span class="nc" id="L670">					throw new IllegalArgumentException(&quot;Cannot create REPLACE transaction. No view container id specified!&quot;);</span>
+				}
+<span class="nc" id="L672">				transaction.replace(request.mViewContainerId, fragment, request.mTag);</span>
+<span class="nc" id="L673">				break;</span>
+			case FragmentRequest.ADD:
+<span class="nc bnc" id="L675" title="All 2 branches missed.">				if (request.mViewContainerId == NO_CONTAINER_ID) {</span>
+<span class="nc" id="L676">					throw new IllegalArgumentException(&quot;Cannot create ADD transaction. No view container id specified!&quot;);</span>
+				}
+<span class="nc" id="L678">				transaction.add(request.mViewContainerId, fragment, request.mTag);</span>
+<span class="nc" id="L679">				break;</span>
+			case FragmentRequest.REMOVE:
+<span class="nc" id="L681">				transaction.remove(fragment);</span>
+<span class="nc" id="L682">				break;</span>
+			case FragmentRequest.SHOW:
+<span class="nc" id="L684">				transaction.show(fragment);</span>
+<span class="nc" id="L685">				break;</span>
+			case FragmentRequest.HIDE:
+<span class="nc" id="L687">				transaction.hide(fragment);</span>
+<span class="nc" id="L688">				break;</span>
+			case FragmentRequest.ATTACH:
+<span class="nc" id="L690">				transaction.attach(fragment);</span>
+<span class="nc" id="L691">				break;</span>
+			case FragmentRequest.DETACH:
+<span class="nc" id="L693">				transaction.detach(fragment);</span>
+<span class="nc" id="L694">				break;</span>
+			default:
+<span class="nc" id="L696">				throw new IllegalArgumentException(&quot;Unsupported transaction type(&quot; + request.mTransaction + &quot;) specified for the fragment request!&quot;);</span>
+		}
+		// Attach transitions with shared elements, if specified and supported.
+<span class="nc bnc" id="L699" title="All 2 branches missed.">		if (CAN_ATTACH_TRANSITIONS) {</span>
+<span class="nc" id="L700">			this.attachTransitionsToFragment(request, fragment);</span>
+<span class="nc bnc" id="L701" title="All 4 branches missed.">			if (request.mSharedElements != null &amp;&amp; !request.mSharedElements.isEmpty()) {</span>
+<span class="nc" id="L702">				final List&lt;Pair&lt;View, String&gt;&gt; elements = request.mSharedElements;</span>
+<span class="nc bnc" id="L703" title="All 2 branches missed.">				for (final Pair&lt;View, String&gt; pair : elements) {</span>
+<span class="nc" id="L704">					transaction.addSharedElement(pair.first, pair.second);</span>
+<span class="nc" id="L705">				}</span>
+			}
+		}
+		// Add fragment to back stack if requested.
+<span class="nc bnc" id="L709" title="All 2 branches missed.">		if (request.hasFlag(FragmentRequest.ADD_TO_BACK_STACK)) {</span>
+<span class="nc" id="L710">			transaction.addToBackStack(fragment.getTag());</span>
+		}
+<span class="nc" id="L712">		return transaction;</span>
+	}
+
+	/**
+	 * Attaches all transitions specified via the given &lt;var&gt;request&lt;/var&gt; to the given &lt;var&gt;fragment&lt;/var&gt;.
+	 *
+	 * @param request  Request caring the specified transitions for the fragment.
+	 * @param fragment The fragment instance to which to attach the transitions.
+	 */
+	@SuppressWarnings(&quot;NewApi&quot;)
+	private void attachTransitionsToFragment(FragmentRequest request, Fragment fragment) {
+<span class="nc bnc" id="L723" title="All 2 branches missed.">		if (request.hasTransition(FragmentRequest.TRANSITION_ENTER)) {</span>
+<span class="nc" id="L724">			fragment.setEnterTransition(request.mEnterTransition);</span>
+		}
+<span class="nc bnc" id="L726" title="All 2 branches missed.">		if (request.hasTransition(FragmentRequest.TRANSITION_EXIT)) {</span>
+<span class="nc" id="L727">			fragment.setExitTransition(request.mExitTransition);</span>
+		}
+<span class="nc bnc" id="L729" title="All 2 branches missed.">		if (request.hasTransition(FragmentRequest.TRANSITION_REENTER)) {</span>
+<span class="nc" id="L730">			fragment.setReenterTransition(request.mReenterTransition);</span>
+		}
+<span class="nc bnc" id="L732" title="All 2 branches missed.">		if (request.hasTransition(FragmentRequest.TRANSITION_RETURN)) {</span>
+<span class="nc" id="L733">			fragment.setReturnTransition(request.mReturnTransition);</span>
+		}
+<span class="nc bnc" id="L735" title="All 2 branches missed.">		if (request.hasTransition(FragmentRequest.TRANSITION_SHARED_ELEMENT_ENTER)) {</span>
+<span class="nc" id="L736">			fragment.setSharedElementEnterTransition(request.mSharedElementEnterTransition);</span>
+		}
+<span class="nc bnc" id="L738" title="All 2 branches missed.">		if (request.hasTransition(FragmentRequest.TRANSITION_SHARED_ELEMENT_RETURN)) {</span>
+<span class="nc" id="L739">			fragment.setSharedElementReturnTransition(request.mSharedElementReturnTransition);</span>
+		}
+<span class="nc bnc" id="L741" title="All 2 branches missed.">		if (request.mAllowEnterTransitionOverlap != null) {</span>
+<span class="nc" id="L742">			fragment.setAllowEnterTransitionOverlap(request.mAllowEnterTransitionOverlap);</span>
+		}
+<span class="nc bnc" id="L744" title="All 2 branches missed.">		if (request.mAllowReturnTransitionOverlap != null) {</span>
+<span class="nc" id="L745">			fragment.setAllowReturnTransitionOverlap(request.mAllowReturnTransitionOverlap);</span>
+		}
+<span class="nc" id="L747">	}</span>
+
+	/**
+	 * Finds a fragment that is currently visible in the layout container with id specified via
+	 * {@link #setViewContainerId(int)}.
+	 *
+	 * @return Currently visible fragment or {@code null} if there is no fragment displayed in the
+	 * fragment layout container.
+	 * @throws UnsupportedOperationException If there is no fragment container id specified.
+	 * @see FragmentManager#findFragmentById(int)
+	 */
+	@Nullable
+	public Fragment findCurrentFragment() {
+<span class="nc" id="L760">		this.assertNotDestroyed(&quot;FIND CURRENT FRAGMENT&quot;);</span>
+<span class="nc bnc" id="L761" title="All 2 branches missed.">		if (mViewContainerId == NO_CONTAINER_ID) {</span>
+<span class="nc" id="L762">			throw new UnsupportedOperationException(&quot;Cannot find current fragment. No fragment container id specified!&quot;);</span>
+		}
+<span class="nc" id="L764">		return mManager.findFragmentById(mViewContainerId);</span>
+	}
+
+	/**
+	 * Delegates to {@link FragmentManager#findFragmentByTag(String)} with the TAG obtained via
+	 * {@link FragmentFactory#createFragmentTag(int)} from the current factory.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that this method assumes that there is factory attached and that factory provides
+	 * fragment that is associated with the specified &lt;var&gt;factoryFragmentId&lt;/var&gt; otherwise an
+	 * exception is thrown.
+	 *
+	 * @param factoryFragmentId Id of the desired factory fragment to find.
+	 * @return The requested fragment if found, {@code null} otherwise.
+	 * @throws IllegalStateException    If there is no factory attached.
+	 * @throws IllegalArgumentException If the attached factory does not provide fragment for the
+	 *                                  specified id.
+	 */
+	@Nullable
+	public Fragment findFragmentByFactoryId(int factoryFragmentId) {
+<span class="nc" id="L783">		this.assertNotDestroyed(&quot;FIND FRAGMENT BY FACTORY ID&quot;);</span>
+<span class="nc" id="L784">		this.assertHasFactory();</span>
+<span class="nc bnc" id="L785" title="All 2 branches missed.">		if (!mFactory.isFragmentProvided(factoryFragmentId)) {</span>
+<span class="nc" id="L786">			throw new IllegalArgumentException(</span>
+<span class="nc" id="L787">					&quot;Cannot find fragment by factory id. Current factory(&quot; + mFactory.getClass() + &quot;) &quot; +</span>
+							&quot;does not provide fragment for the requested id(&quot; + factoryFragmentId + &quot;)!&quot;);
+		}
+<span class="nc" id="L790">		return mManager.findFragmentByTag(mFactory.createFragmentTag(factoryFragmentId));</span>
+	}
+
+	/**
+	 * Checks whether there are some fragments within the back stack or not.
+	 *
+	 * @return {@code True} if fragments back stack contains at least one entry, {@code false} otherwise.
+	 * @see FragmentManager#getBackStackEntryCount()
+	 */
+	public final boolean hasBackStackEntries() {
+<span class="nc bnc" id="L800" title="All 2 branches missed.">		return mManager.getBackStackEntryCount() &gt; 0;</span>
+	}
+
+	/**
+	 * Returns the top entry from the fragments back stack.
+	 *
+	 * @return The top back stack entry or {@code null} if there are no back stack entries.
+	 * @see #hasBackStackEntries()
+	 */
+	@Nullable
+	public final FragmentManager.BackStackEntry getTopBackStackEntry() {
+<span class="nc" id="L811">		return mTopBackStackEntry;</span>
+	}
+
+	/**
+	 * Clears fragments back stack by calling {@link FragmentManager#popBackStack()} in loop for current
+	 * back stack size obtained via {@link FragmentManager#getBackStackEntryCount()}.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that {@link FragmentManager#popBackStack()} is an asynchronous call, so the
+	 * fragments back stack may be cleared in a feature, not immediately.
+	 *
+	 * @see #clearBackStackImmediate()
+	 */
+	public void clearBackStack() {
+<span class="nc" id="L824">		this.assertNotDestroyed(&quot;CLEAR BACK STACK&quot;);</span>
+<span class="nc" id="L825">		final int n = mManager.getBackStackEntryCount();</span>
+<span class="nc bnc" id="L826" title="All 2 branches missed.">		if (n &gt; 0) {</span>
+<span class="nc bnc" id="L827" title="All 2 branches missed.">			for (int i = 0; i &lt; n; i++) {</span>
+<span class="nc" id="L828">				mManager.popBackStack();</span>
+			}
+		}
+<span class="nc" id="L831">	}</span>
+
+	/**
+	 * Like {@link #clearBackStack()} but this will call {@link FragmentManager#popBackStackImmediate()}
+	 * instead of {@link FragmentManager#popBackStack()}.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that {@link FragmentManager#popBackStackImmediate()} is a synchronous call, so
+	 * the fragments back stack will be popped immediately within this call. If there are too many
+	 * fragments, this may take some time.
+	 *
+	 * @return {@code True} if there was at least one fragment popped, {@code false} otherwise.
+	 */
+	public boolean clearBackStackImmediate() {
+<span class="nc" id="L844">		this.assertNotDestroyed(&quot;CLEAR BACK STACK IMMEDIATE&quot;);</span>
+<span class="nc" id="L845">		final int n = mManager.getBackStackEntryCount();</span>
+<span class="nc bnc" id="L846" title="All 2 branches missed.">		if (n &gt; 0) {</span>
+<span class="nc" id="L847">			boolean popped = false;</span>
+<span class="nc bnc" id="L848" title="All 2 branches missed.">			for (int i = 0; i &lt; n; i++) {</span>
+<span class="nc bnc" id="L849" title="All 4 branches missed.">				if (mManager.popBackStackImmediate() &amp;&amp; !popped) {</span>
+<span class="nc" id="L850">					popped = true;</span>
+				}
+			}
+<span class="nc" id="L853">			return popped;</span>
+		}
+<span class="nc" id="L855">		return false;</span>
+	}
+
+	/**
+	 * Destroys this fragment controller instance, mainly un-registering its internal &lt;b&gt;back-stack&lt;/b&gt;
+	 * listener from the attached {@link FragmentManager}.
+	 * &lt;p&gt;
+	 * Fragment controller should be destroyed whenever it is used in application component that has
+	 * 'shorter' lifecycle (like fragment) as its parent application component (activity).
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that already destroyed controller should not be used further as such usage will
+	 * result in an exception to be thrown.
+	 */
+	public final void destroy() {
+<span class="nc bnc" id="L869" title="All 2 branches missed.">		if (!mDestroyed) {</span>
+<span class="nc" id="L870">			this.mDestroyed = true;</span>
+<span class="nc" id="L871">			this.mManager.removeOnBackStackChangedListener(mBackStackChangeListener);</span>
+<span class="nc" id="L872">			this.mRequestListeners = null;</span>
+<span class="nc" id="L873">			this.mBackStackChangeListeners = null;</span>
+		}
+<span class="nc" id="L875">	}</span>
+
+	/**
+	 * Asserts that this controller is not destroyed yet. If it is already destroyed, an exception
+	 * is thrown.
+	 *
+	 * @param forAction Action for which the check should be performed. The action will be placed
+	 *                  into exception if it will be thrown.
+	 */
+	private void assertNotDestroyed(String forAction) {
+<span class="nc bnc" id="L885" title="All 2 branches missed.">		if (mDestroyed)</span>
+<span class="nc" id="L886">			throw new IllegalStateException(&quot;Cannot perform &quot; + forAction + &quot; action. Controller is already destroyed!&quot;);</span>
+<span class="nc" id="L887">	}</span>
+
+	/**
+	 * Called to dispatch change in the fragments back stack.
+	 *
+	 * @param backStackSize Current size of the fragments back stack.
+	 * @param change        Identifier determining the occurred change. One of {@link BackStackListener#ADDED}
+	 *                      or {@link BackStackListener#REMOVED}.
+	 */
+	@SuppressWarnings(&quot;WeakerAccess&quot;)
+	final void handleBackStackChange(int backStackSize, int change) {
+<span class="nc bnc" id="L898" title="All 2 branches missed.">		if (backStackSize &gt; 0) {</span>
+<span class="nc" id="L899">			final FragmentManager.BackStackEntry entry = mManager.getBackStackEntryAt(backStackSize - 1);</span>
+<span class="nc bnc" id="L900" title="All 2 branches missed.">			if (entry != null) {</span>
+<span class="nc bnc" id="L901" title="All 2 branches missed.">				this.notifyBackStackEntryChange(mTopBackStackEntry = entry, change == BackStackListener.ADDED);</span>
+			}
+<span class="nc bnc" id="L903" title="All 2 branches missed.">		} else if (mTopBackStackEntry != null) {</span>
+<span class="nc" id="L904">			this.notifyBackStackEntryChange(mTopBackStackEntry, false);</span>
+<span class="nc" id="L905">			this.mTopBackStackEntry = null;</span>
+		}
+<span class="nc" id="L907">	}</span>
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * A {@link FragmentManager.OnBackStackChangedListener} implementation used to listen for changes
+	 * in fragments back stack.
+	 */
+<span class="nc" id="L917">	private final class BackStackListener implements FragmentManager.OnBackStackChangedListener {</span>
+
+		/**
+		 * Flag to indicate, that fragment was added to the back stack.
+		 */
+		static final int ADDED = 0x00;
+
+		/**
+		 * Flag to indicate, that fragment was removed from the back stack.
+		 */
+		static final int REMOVED = 0x01;
+
+		/**
+		 * Current size of the fragments back stack.
+		 */
+		int backStackSize;
+
+		/**
+		 */
+		@Override
+		public void onBackStackChanged() {
+<span class="nc" id="L938">			final int n = mManager.getBackStackEntryCount();</span>
+<span class="nc bnc" id="L939" title="All 4 branches missed.">			if (n &gt;= 0 &amp;&amp; n != backStackSize) {</span>
+<span class="nc bnc" id="L940" title="All 2 branches missed.">				handleBackStackChange(n, n &gt; backStackSize ? ADDED : REMOVED);</span>
+<span class="nc" id="L941">				this.backStackSize = n;</span>
+			}
+<span class="nc" id="L943">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

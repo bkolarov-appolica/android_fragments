@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FragmentUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.util</a> &gt; <span class="el_source">FragmentUtils.java</span></div><h1>FragmentUtils.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.util;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.TransitionRes;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
+import android.view.ViewGroup;
+
+import universum.studios.android.fragment.FragmentsConfig;
+
+/**
+ * Utility class for the Fragments library.
+ *
+ * @author Martin Albedinsky
+ */
+public final class FragmentUtils {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;FragmentUtils&quot;;
+
+	/**
+	 * Boolean flag indicating whether we can use resources access in a way appropriate for
+	 * {@link Build.VERSION_CODES#LOLLIPOP} Android version.
+	 */
+<span class="nc bnc" id="L58" title="All 2 branches missed.">	private static final boolean ACCESS_LOLLIPOP = Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP;</span>
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 */
+<span class="nc" id="L78">	private FragmentUtils() {</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L80">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Inflates a desired Transition from the specified &lt;var&gt;resource&lt;/var&gt;.
+	 *
+	 * @param context  Context used for inflation process.
+	 * @param resource Resource id of the desired transition to inflate.
+	 * @return Inflated transition or {@code null} if the current API level does not support transitions.
+	 * @see TransitionInflater#inflateTransition(int)
+	 * @see #inflateTransitionManager(Context, int, ViewGroup)
+	 */
+	@Nullable
+	@SuppressLint(&quot;NewApi&quot;)
+	public static Transition inflateTransition(@NonNull Context context, @TransitionRes int resource) {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">		return FragmentsConfig.TRANSITIONS_SUPPORTED ? TransitionInflater.from(context).inflateTransition(resource) : null;</span>
+	}
+
+	/**
+	 * Inflates a desired TransitionManager from the specified &lt;var&gt;resource&lt;/var&gt;.
+	 *
+	 * @param context   Context used for inflation process.
+	 * @param resource  Resource id of the desired transition manager to inflate.
+	 * @param sceneRoot Root of the scene for which to inflate transition manager.
+	 * @return Inflated transition manager or {@code null} if the current API level does not support
+	 * transitions.
+	 * @see TransitionInflater#inflateTransitionManager(int, ViewGroup)
+	 * @see #inflateTransition(Context, int)
+	 */
+	@Nullable
+	@SuppressLint(&quot;NewApi&quot;)
+	public static TransitionManager inflateTransitionManager(@NonNull Context context, @TransitionRes int resource, @NonNull ViewGroup sceneRoot) {
+<span class="nc bnc" id="L115" title="All 2 branches missed.">		return FragmentsConfig.TRANSITIONS_SUPPORTED ? TransitionInflater.from(context).inflateTransitionManager(resource, sceneRoot) : null;</span>
+	}
+
+	/**
+	 * Obtains vector drawable with the specified &lt;var&gt;resId&lt;/var&gt; using the given &lt;var&gt;resources&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This utility method will obtain the requested vector drawable in a way that is appropriate
+	 * for the current Android version.
+	 *
+	 * @param resources The resources that should be used to obtain the vector drawable.
+	 * @param resId     Resource id of the desired vector drawable to obtain.
+	 * @param theme     Theme that will be used to resolve theme attributes for the requested drawable
+	 *                  on {@link Build.VERSION_CODES#LOLLIPOP} and above Android versions.
+	 * @return Instance of the requested vector drawable or {@code null} if the specified resource
+	 * id is {@code 0}.
+	 * @see #getDrawable(Resources, int, Resources.Theme)
+	 * @see VectorDrawableCompat#create(Resources, int, Resources.Theme)
+	 */
+	@Nullable
+	public static Drawable getVectorDrawable(@NonNull Resources resources, @DrawableRes int resId, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">		if (resId == 0) return null;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">		else return ACCESS_LOLLIPOP ? getDrawable(resources, resId, theme) : VectorDrawableCompat.create(resources, resId, theme);</span>
+	}
+
+	/**
+	 * Obtains drawable with the specified &lt;var&gt;resId&lt;/var&gt; using the given &lt;var&gt;resources&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This utility method will obtain the requested drawable in a way that is appropriate for the
+	 * current Android version.
+	 *
+	 * @param resources The resources that should be used to obtain the drawable.
+	 * @param resId     Resource id of the desired drawable to obtain.
+	 * @param theme     Theme that will be used to resolve theme attributes for the requested drawable
+	 *                  on {@link Build.VERSION_CODES#LOLLIPOP} and above Android versions.
+	 * @return Instance of the requested drawable or {@code null} if the specified resource id is {@code 0}.
+	 * @see Resources#getDrawable(int, Resources.Theme)
+	 * @see Resources#getDrawable(int)
+	 */
+	@Nullable
+	@SuppressWarnings({&quot;NewApi&quot;, &quot;deprecation&quot;})
+	public static Drawable getDrawable(@NonNull Resources resources, @DrawableRes int resId, @Nullable Resources.Theme theme) throws Resources.NotFoundException {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">		if (resId == 0) return null;</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">		else return ACCESS_LOLLIPOP ? resources.getDrawable(resId, theme) : resources.getDrawable(resId);</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

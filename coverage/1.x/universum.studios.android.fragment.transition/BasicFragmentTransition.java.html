@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BasicFragmentTransition.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.transition</a> &gt; <span class="el_source">BasicFragmentTransition.java</span></div><h1>BasicFragmentTransition.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.transition;
+
+import android.os.Parcel;
+import android.support.annotation.AnimatorRes;
+import android.support.annotation.NonNull;
+
+import universum.studios.android.fragment.manage.FragmentTransition;
+
+/**
+ * Basic implementation of {@link FragmentTransition} that may be used to create instances of fragment
+ * transactions with desired fragment animations.
+ *
+ * @author Martin Albedinsky
+ */
+public class BasicFragmentTransition implements FragmentTransition {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;BasicFragmentTransition&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Creator used to create an instance or array of instances of BasicFragmentTransition from {@link Parcel}.
+	 */
+<span class="nc" id="L55">	public static final Creator&lt;BasicFragmentTransition&gt; CREATOR = new Creator&lt;BasicFragmentTransition&gt;() {</span>
+
+		/**
+		 */
+		@Override
+		public BasicFragmentTransition createFromParcel(@NonNull Parcel source) {
+<span class="nc" id="L61">			return new BasicFragmentTransition(source);</span>
+		}
+
+		/**
+		 */
+		@Override
+		public BasicFragmentTransition[] newArray(int size) {
+<span class="nc" id="L68">			return new BasicFragmentTransition[size];</span>
+		}
+	};
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Animation resource for a new incoming fragment.
+	 */
+	private final int mInAnimRes;
+
+	/**
+	 * Animation resource for an old outgoing fragment.
+	 */
+	private final int mOutAnimRes;
+
+	/**
+	 * Animation resource for an old incoming fragment when it is being popped from the back stack.
+	 */
+	private final int mInBackAnimRes;
+
+	/**
+	 * Animation resource for a current outgoing fragment when it is being popped from the back stack.
+	 */
+	private final int mOutBackAnimRes;
+
+	/**
+	 * Name of this transition.
+	 */
+	private final String mName;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Same as {@link #BasicFragmentTransition(int, int, int, int)} with back-stack animations set
+	 * to {@link #NO_ANIMATION}.
+	 */
+	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim) {
+<span class="nc" id="L110">		this(inAnim, outAnim, NO_ANIMATION, NO_ANIMATION);</span>
+<span class="nc" id="L111">	}</span>
+
+	/**
+	 * Same as {@link #BasicFragmentTransition(int, int, int, int, String)} with name specified
+	 * as {@code &quot;UNKNOWN&quot;}.
+	 */
+	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim, @AnimatorRes int inBackAnim, @AnimatorRes int outBackAnim) {
+<span class="nc" id="L118">		this(inAnim, outAnim, inBackAnim, outBackAnim, &quot;UNKNOWN&quot;);</span>
+<span class="nc" id="L119">	}</span>
+
+	/**
+	 * Creates a new instance of BasicFragmentTransition with the specified animations and name.
+	 *
+	 * @param inAnim      A resource id of the animation for an incoming fragment.
+	 * @param outAnim     A resource id of the animation for an outgoing fragment to be added to the
+	 *                    back stack or to be destroyed and replaced by the incoming one.
+	 * @param inBackAnim  A resource id of the animation for an incoming fragment to be showed from
+	 *                    the back stack.
+	 * @param outBackAnim A resource id of the animation for an outgoing fragment to be destroyed and
+	 *                    replaced by the incoming one.
+	 * @param name        Name for the new transition.
+	 */
+<span class="nc" id="L133">	public BasicFragmentTransition(@AnimatorRes int inAnim, @AnimatorRes int outAnim, @AnimatorRes int inBackAnim, @AnimatorRes int outBackAnim, @NonNull String name) {</span>
+<span class="nc" id="L134">		this.mInAnimRes = inAnim;</span>
+<span class="nc" id="L135">		this.mOutAnimRes = outAnim;</span>
+<span class="nc" id="L136">		this.mInBackAnimRes = inBackAnim;</span>
+<span class="nc" id="L137">		this.mOutBackAnimRes = outBackAnim;</span>
+<span class="nc" id="L138">		this.mName = name;</span>
+<span class="nc" id="L139">	}</span>
+
+	/**
+	 * Called form {@link #CREATOR} to create an instance of FragmentTransition form the given parcel
+	 * &lt;var&gt;source&lt;/var&gt;.
+	 *
+	 * @param source Parcel with data for the new instance.
+	 */
+<span class="nc" id="L147">	protected BasicFragmentTransition(@NonNull Parcel source) {</span>
+<span class="nc" id="L148">		this.mInAnimRes = source.readInt();</span>
+<span class="nc" id="L149">		this.mOutAnimRes = source.readInt();</span>
+<span class="nc" id="L150">		this.mInBackAnimRes = source.readInt();</span>
+<span class="nc" id="L151">		this.mOutBackAnimRes = source.readInt();</span>
+<span class="nc" id="L152">		this.mName = source.readString();</span>
+<span class="nc" id="L153">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	public void writeToParcel(@NonNull Parcel dest, int flags) {
+<span class="nc" id="L163">		dest.writeInt(mInAnimRes);</span>
+<span class="nc" id="L164">		dest.writeInt(mOutAnimRes);</span>
+<span class="nc" id="L165">		dest.writeInt(mInBackAnimRes);</span>
+<span class="nc" id="L166">		dest.writeInt(mOutBackAnimRes);</span>
+<span class="nc" id="L167">		dest.writeString(mName);</span>
+<span class="nc" id="L168">	}</span>
+
+	/**
+	 */
+	@Override
+	public int describeContents() {
+<span class="nc" id="L174">		return 0;</span>
+	}
+
+	/**
+	 */
+	@Override
+	@AnimatorRes
+	public int getIncomingAnimation() {
+<span class="nc" id="L182">		return mInAnimRes;</span>
+	}
+
+	/**
+	 */
+	@Override
+	@AnimatorRes
+	public int getOutgoingAnimation() {
+<span class="nc" id="L190">		return mOutAnimRes;</span>
+	}
+
+	/**
+	 */
+	@Override
+	@AnimatorRes
+	public int getIncomingBackStackAnimation() {
+<span class="nc" id="L198">		return mInBackAnimRes;</span>
+	}
+
+	/**
+	 */
+	@Override
+	@AnimatorRes
+	public int getOutgoingBackStackAnimation() {
+<span class="nc" id="L206">		return mOutBackAnimRes;</span>
+	}
+
+	/**
+	 */
+	@NonNull
+	@Override
+	public String getName() {
+<span class="nc" id="L214">		return mName;</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

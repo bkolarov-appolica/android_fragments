@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BaseManagementAnnotationHandlers.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.annotation.handler</a> &gt; <span class="el_source">BaseManagementAnnotationHandlers.java</span></div><h1>BaseManagementAnnotationHandlers.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License 
+ * you may obtain at
+ * 
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * You can redistribute, modify or publish any part of the code written within this file but as it 
+ * is described in the License, the software distributed under the License is distributed on an 
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * 
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.annotation.handler;
+
+import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.SparseArray;
+
+import java.lang.reflect.Field;
+
+import universum.studios.android.fragment.annotation.FactoryFragment;
+import universum.studios.android.fragment.annotation.FactoryFragments;
+import universum.studios.android.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.fragment.manage.BaseFragmentFactory;
+import universum.studios.android.fragment.manage.FragmentItem;
+
+/**
+ * An {@link AnnotationHandlers} implementation providing {@link AnnotationHandler} instances for
+ * &lt;b&gt;base management&lt;/b&gt; associated fragments and classes.
+ *
+ * @author Martin Albedinsky
+ */
+public final class BaseManagementAnnotationHandlers extends AnnotationHandlers {
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 */
+	private BaseManagementAnnotationHandlers() {
+<span class="nc" id="L51">		super();</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L53">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Obtains a {@link FragmentFactoryAnnotationHandler} implementation for the given &lt;var&gt;classOfFactory&lt;/var&gt;.
+	 *
+	 * @see AnnotationHandlers#obtainHandler(Class, Class)
+	 */
+	@Nullable
+	public static FragmentFactoryAnnotationHandler obtainFactoryHandler(@NonNull Class&lt;?&gt; classOfFactory) {
+<span class="nc" id="L66">		return obtainHandler(FragmentFactoryHandler.class, classOfFactory);</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * A {@link FragmentFactoryAnnotationHandler} implementation for {@link BaseFragmentFactory} class.
+	 */
+	@SuppressWarnings(&quot;WeakerAccess&quot;) static final class FragmentFactoryHandler extends BaseAnnotationHandler implements FragmentFactoryAnnotationHandler {
+
+		/**
+		 * Array of fragment items populated from the {@link FactoryFragments @FactoryFragments} or
+		 * {@link FactoryFragment @FactoryFragment} annotations if presented.
+		 */
+		private final SparseArray&lt;FragmentItem&gt; items;
+
+		/**
+		 * Same as {@link BaseAnnotationHandler#BaseAnnotationHandler(Class, Class)} with
+		 * {@link BaseFragmentFactory} as &lt;var&gt;maxSuperClass&lt;/var&gt;.
+		 */
+		public FragmentFactoryHandler(@NonNull Class&lt;?&gt; annotatedClass) {
+<span class="nc" id="L89">			super(annotatedClass, BaseFragmentFactory.class);</span>
+<span class="nc" id="L90">			final SparseArray&lt;FragmentItem&gt; items = new SparseArray&lt;&gt;();</span>
+<span class="nc" id="L91">			final FactoryFragments fragments = findAnnotationRecursive(FactoryFragments.class);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">			if (fragments != null) {</span>
+<span class="nc" id="L93">				final int[] ids = fragments.value();</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">				if (ids.length &gt; 0) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">					for (final int id : ids) {</span>
+<span class="nc" id="L96">						items.put(id, new FragmentItem(</span>
+								id,
+								Fragment.class,
+<span class="nc" id="L99">								BaseFragmentFactory.createFragmentTag(mAnnotatedClass, Integer.toString(id))</span>
+						));
+					}
+				}
+			}
+<span class="nc" id="L104">			FragmentAnnotations.iterateFields(new FragmentAnnotations.FieldProcessor() {</span>
+
+				/**
+				 */
+				@Override
+				public void onProcessField(@NonNull Field field, @NonNull String name) {
+<span class="nc bnc" id="L110" title="All 4 branches missed.">					if (field.isAnnotationPresent(FactoryFragment.class) &amp;&amp; int.class.equals(field.getType())) {</span>
+<span class="nc" id="L111">						final FactoryFragment factoryFragment = field.getAnnotation(FactoryFragment.class);</span>
+						try {
+<span class="nc" id="L113">							field.setAccessible(true);</span>
+<span class="nc" id="L114">							final int id = (int) field.get(null);</span>
+<span class="nc" id="L115">							items.put(id, new FragmentItem(</span>
+									id,
+<span class="nc" id="L117">									factoryFragment.value(),</span>
+<span class="nc" id="L118">									BaseFragmentFactory.createFragmentTag(</span>
+											mAnnotatedClass,
+<span class="nc bnc" id="L120" title="All 2 branches missed.">											TextUtils.isEmpty(factoryFragment.taggedName()) ?</span>
+<span class="nc" id="L121">													Integer.toString(id) :</span>
+<span class="nc" id="L122">													factoryFragment.taggedName()</span>
+									)
+							));
+<span class="nc" id="L125">						} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L126">							Log.e(</span>
+<span class="nc" id="L127">									FragmentFactoryAnnotationHandler.class.getSimpleName(),</span>
+									&quot;Failed to obtain id value from @FactoryFragment &quot; + name + &quot;!&quot;,
+									e
+							);
+<span class="nc" id="L131">						}</span>
+					}
+<span class="nc" id="L133">				}</span>
+			}, mAnnotatedClass, mMaxSuperClass);
+<span class="nc bnc" id="L135" title="All 2 branches missed.">			this.items = items.size() &gt; 0 ? items : null;</span>
+<span class="nc" id="L136">		}</span>
+
+		/**
+		 */
+		@Override
+		@Nullable
+		public SparseArray&lt;FragmentItem&gt; getFragmentItems() {
+<span class="nc" id="L143">			return items;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

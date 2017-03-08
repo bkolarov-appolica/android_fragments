@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FragmentAnnotations.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.annotation</a> &gt; <span class="el_source">FragmentAnnotations.java</span></div><h1>FragmentAnnotations.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.annotation;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+
+import universum.studios.android.fragment.FragmentsConfig;
+
+/**
+ * Annotation utils for the Fragments library.
+ *
+ * @author Martin Albedinsky
+ */
+public final class FragmentAnnotations {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;FragmentAnnotations&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Simple callback which allows processing of all declared fields of a desired class via
+	 * {@link #iterateFields(FragmentAnnotations.FieldProcessor, Class, Class)}.
+	 *
+	 * @author Martin Albedinsky
+	 */
+	public interface FieldProcessor {
+
+		/**
+		 * Invoked for each of iterated fields.
+		 *
+		 * @param field The currently iterated field.
+		 * @param name  Name of the currently iterated field.
+		 */
+		void onProcessField(@NonNull Field field, @NonNull String name);
+	}
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 */
+<span class="nc" id="L80">	private FragmentAnnotations() {</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L82">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Performs check for enabled state of the annotations processing for the Fragments library.
+	 * &lt;p&gt;
+	 * This check is requested mostly from parts of the Fragments library that require to be annotations
+	 * processing enabled.
+	 *
+	 * @throws IllegalStateException If annotations processing is disabled.
+	 */
+	public static void checkIfEnabledOrThrow() {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">		if (!FragmentsConfig.ANNOTATIONS_PROCESSING_ENABLED) {</span>
+<span class="nc" id="L98">			throw new IllegalStateException(</span>
+					&quot;Trying to access logic that requires annotations processing to be enabled, &quot; +
+					&quot;but it appears that the annotations processing is disabled for the Fragments library.&quot;
+			);
+		}
+<span class="nc" id="L103">	}</span>
+
+	/**
+	 * Obtains the requested type of annotation from the given &lt;var&gt;fromClass&lt;/var&gt; if it is presented.
+	 *
+	 * @param classOfAnnotation Class of the requested annotation.
+	 * @param fromClass         Class from which should be the requested annotation obtained.
+	 * @param maxSuperClass     If {@code not null}, this method will be called (recursively) for
+	 *                          all super classes of the given annotated class (max to the specified
+	 *                          &lt;var&gt;maxSuperClass&lt;/var&gt; excluding) until the requested annotation
+	 *                          is presented and obtained, otherwise annotation will be obtained only
+	 *                          from the given annotated class.
+	 * @param &lt;A&gt;               Type of the requested annotation.
+	 * @return Obtained annotation or {@code null} if the requested annotation is not presented
+	 * for the given class or its supers if requested.
+	 */
+	@Nullable
+	public static &lt;A extends Annotation&gt; A obtainAnnotationFrom(@NonNull Class&lt;A&gt; classOfAnnotation, @NonNull Class&lt;?&gt; fromClass, @Nullable Class&lt;?&gt; maxSuperClass) {
+<span class="nc" id="L121">		final A annotation = fromClass.getAnnotation(classOfAnnotation);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">		if (annotation != null) {</span>
+<span class="nc" id="L123">			return annotation;</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">		} else if (maxSuperClass != null) {</span>
+<span class="nc" id="L125">			final Class&lt;?&gt; parent = fromClass.getSuperclass();</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">			if (parent != null &amp;&amp; !parent.equals(maxSuperClass)) {</span>
+<span class="nc" id="L127">				return obtainAnnotationFrom(classOfAnnotation, parent, maxSuperClass);</span>
+			}
+		}
+<span class="nc" id="L130">		return null;</span>
+	}
+
+	/**
+	 * Iterates all declared fields of the given &lt;var&gt;ofClass&lt;/var&gt;.
+	 *
+	 * @param processor     Field processor callback to be invoked for each of iterated fields.
+	 * @param ofClass       Class of which fields to iterate.
+	 * @param maxSuperClass If {@code not null}, this method will be called (recursively) for all
+	 *                      super classes of the given class (max to the specified &lt;var&gt;maxSuperClass&lt;/var&gt;
+	 *                      excluding), otherwise only fields of the given class will be iterated.
+	 */
+	public static void iterateFields(@NonNull FieldProcessor processor, @NonNull Class&lt;?&gt; ofClass, @Nullable Class&lt;?&gt; maxSuperClass) {
+<span class="nc" id="L143">		final Field[] fields = ofClass.getDeclaredFields();</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">		if (fields.length &gt; 0) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">			for (final Field field : fields) {</span>
+<span class="nc" id="L146">				processor.onProcessField(field, field.getName());</span>
+			}
+		}
+<span class="nc bnc" id="L149" title="All 2 branches missed.">		if (maxSuperClass != null) {</span>
+<span class="nc" id="L150">			final Class&lt;?&gt; parent = ofClass.getSuperclass();</span>
+<span class="nc bnc" id="L151" title="All 4 branches missed.">			if (parent != null &amp;&amp; !parent.equals(maxSuperClass)) {</span>
+<span class="nc" id="L152">				iterateFields(processor, parent, maxSuperClass);</span>
+			}
+		}
+<span class="nc" id="L155">	}</span>
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

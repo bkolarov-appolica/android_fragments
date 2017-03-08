@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ActivityDelegate.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment</a> &gt; <span class="el_source">ActivityDelegate.java</span></div><h1>ActivityDelegate.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.ActionMode;
+
+/**
+ * ActivityDelegate is used to wrap an instance of {@link Activity} in order to hide some implementation
+ * details when using Activity context within fragments.
+ *
+ * @author Martin Albedinsky
+ */
+@SuppressWarnings(&quot;WeakerAccess&quot;) public abstract class ActivityDelegate {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;ActivityDelegate&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Wrapped activity instance to which will be this delegate delegating its calls.
+	 */
+	protected final Activity mActivity;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of ActivityDelegate for the given &lt;var&gt;activity&lt;/var&gt;.
+	 *
+	 * @param activity The activity for which is the new delegate being created.
+	 */
+<span class="nc" id="L71">	protected ActivityDelegate(@NonNull Activity activity) {</span>
+<span class="nc" id="L72">		this.mActivity = activity;</span>
+<span class="nc" id="L73">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Wraps the given &lt;var&gt;activity&lt;/var&gt; into its corresponding delegate depending on the activity's
+	 * implementation.
+	 *
+	 * @param activity The activity to be wrapped.
+	 * @return Instance of ActivityDelegate for the specified activity.
+	 */
+	@NonNull
+	public static ActivityDelegate create(Activity activity) {
+<span class="nc bnc" id="L88" title="All 2 branches missed.">		if (activity instanceof AppCompatActivity) {</span>
+<span class="nc" id="L89">			return new AppCompatImpl((AppCompatActivity) activity);</span>
+		}
+<span class="nc" id="L91">		return new Impl(activity);</span>
+	}
+
+	/**
+	 * Delegates to {@link Activity#requestWindowFeature(int)}.
+	 */
+	public abstract boolean requestWindowFeature(int featureId);
+
+	/**
+	 * Delegates to {@link Activity#invalidateOptionsMenu()}.
+	 */
+	public abstract void invalidateOptionsMenu();
+
+	/**
+	 * Delegates to {@link Activity#getActionBar()}.
+	 */
+	@Nullable
+	public abstract ActionBar getActionBar();
+
+	/**
+	 * Delegates to {@link AppCompatActivity#getSupportActionBar()}.
+	 */
+	@Nullable
+	public abstract android.support.v7.app.ActionBar getSupportActionBar();
+
+	/**
+	 * Delegates to {@link Activity#startActionMode(ActionMode.Callback)}.
+	 */
+	@Nullable
+	public abstract ActionMode startActionMode(@NonNull ActionMode.Callback callback);
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+
+	/**
+	 * An {@link ActivityDelegate} implementation used to wrap basic {@link Activity}.
+	 */
+	private static class Impl extends ActivityDelegate {
+
+		/**
+		 * Creates a new instance of Impl to wrap the given &lt;var&gt;activity&lt;/var&gt;.
+		 *
+		 * @param activity The Activity instance to be wrapped.
+		 */
+		private Impl(Activity activity) {
+<span class="nc" id="L137">			super(activity);</span>
+<span class="nc" id="L138">		}</span>
+
+		/**
+		 */
+		@Override
+		public boolean requestWindowFeature(int featureId) {
+<span class="nc" id="L144">			return mActivity.requestWindowFeature(featureId);</span>
+		}
+
+		/**
+		 */
+		@Override
+		public void invalidateOptionsMenu() {
+<span class="nc" id="L151">			mActivity.invalidateOptionsMenu();</span>
+<span class="nc" id="L152">		}</span>
+
+		/**
+		 */
+		@Nullable
+		@Override
+		public ActionBar getActionBar() {
+<span class="nc" id="L159">			return mActivity.getActionBar();</span>
+		}
+
+		/**
+		 */
+		@Nullable
+		@Override
+		public android.support.v7.app.ActionBar getSupportActionBar() {
+<span class="nc" id="L167">			return null;</span>
+		}
+
+		/**
+		 */
+		@Nullable
+		@Override
+		public ActionMode startActionMode(@NonNull ActionMode.Callback callback) {
+<span class="nc" id="L175">			return mActivity.startActionMode(callback);</span>
+		}
+	}
+
+	/**
+	 * A {@link Impl} implementation used to wrap {@link AppCompatActivity}.
+	 */
+	private static final class AppCompatImpl extends Impl {
+
+		/**
+		 * Creates a new instance of AppCompatImpl to wrap the given &lt;var&gt;activity&lt;/var&gt;.
+		 *
+		 * @param activity The AppCompatImpl instance to be wrapped.
+		 */
+		private AppCompatImpl(AppCompatActivity activity) {
+<span class="nc" id="L190">			super(activity);</span>
+<span class="nc" id="L191">		}</span>
+
+		/**
+		 */
+		@Override
+		public boolean requestWindowFeature(int featureId) {
+<span class="nc" id="L197">			return ((AppCompatActivity) mActivity).supportRequestWindowFeature(featureId);</span>
+		}
+
+		/**
+		 */
+		@Override
+		public void invalidateOptionsMenu() {
+<span class="nc" id="L204">			((AppCompatActivity) mActivity).supportInvalidateOptionsMenu();</span>
+<span class="nc" id="L205">		}</span>
+
+		/**
+		 */
+		@Override
+		public android.support.v7.app.ActionBar getSupportActionBar() {
+<span class="nc" id="L211">			return ((AppCompatActivity) mActivity).getSupportActionBar();</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BaseFragmentFactory.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.manage</a> &gt; <span class="el_source">BaseFragmentFactory.java</span></div><h1>BaseFragmentFactory.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.manage;
+
+import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.SparseArray;
+
+import universum.studios.android.fragment.FragmentsConfig;
+import universum.studios.android.fragment.annotation.FactoryFragment;
+import universum.studios.android.fragment.annotation.FactoryFragments;
+import universum.studios.android.fragment.annotation.FragmentAnnotations;
+import universum.studios.android.fragment.annotation.handler.BaseManagementAnnotationHandlers;
+import universum.studios.android.fragment.annotation.handler.FragmentFactoryAnnotationHandler;
+
+/**
+ * A {@link FragmentFactory} base implementation that may be used for fragment factories used
+ * across Android application project.
+ *
+ * &lt;h3&gt;Accepted annotations&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;
+ * {@link FactoryFragments @FactoryFragments} &lt;b&gt;[class - inherited]&lt;/b&gt;
+ * &lt;p&gt;
+ * If this annotation is presented, all ids of fragments specified via this annotation will be
+ * attached to an instance of annotated BaseFragmentFactory subclass, so {@link #isFragmentProvided(int)}
+ * will return always {@code true} for each of these ids.
+ * &lt;p&gt;
+ * Also, there will be automatically created default tags for all such ids, so they may be obtained
+ * via {@link #createFragmentTag(int)} with the corresponding fragment id.
+ * &lt;/li&gt;
+ * &lt;li&gt;
+ * {@link FactoryFragment @FactoryFragment} &lt;b&gt;[member - inherited]&lt;/b&gt;
+ * &lt;p&gt;
+ * This annotation provides same result as {@link FactoryFragments @FactoryFragments} annotation,
+ * but this annotation is meant to be used to mark directly constant fields that specify fragment
+ * ids and also provides more configuration options like the type of fragment that should be
+ * instantiated for the specified id.
+ * &lt;p&gt;
+ * &lt;b&gt;Note&lt;/b&gt;, that tagged name for fragment with the specified id will be automatically created
+ * using its id but may be also specified via {@link FactoryFragment#taggedName()} attribute.
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @author Martin Albedinsky
+ */
+public abstract class BaseFragmentFactory implements FragmentFactory {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;BaseFragmentFactory&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Handler responsible for processing of all annotations of this class and also for handling all
+	 * annotations related operations for this class.
+	 */
+	private final FragmentFactoryAnnotationHandler mAnnotationHandler;
+
+	/**
+	 * Set of fragment item holders created from annotated fields ({@link FactoryFragment @FactoryDialog})
+	 * of this factory instance.
+	 */
+	private final SparseArray&lt;FragmentItem&gt; mItems;
+
+	/**
+	 * Id of the fragment that has been last checked via {@link #isFragmentProvided(int)}.
+	 */
+<span class="nc" id="L103">	private int mLastCheckedFragmentId = -1;</span>
+
+	/**
+	 * Flag indicating whether an instance of fragment for {@link #mLastCheckedFragmentId} is
+	 * provided by this factory or not.
+	 */
+	private boolean mFragmentProvided;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of BaseFragmentFactory.
+	 * &lt;p&gt;
+	 * If annotations processing is enabled via {@link FragmentsConfig} all annotations supported by
+	 * this class will be processed/obtained here so they can be later used.
+	 */
+<span class="nc" id="L121">	public BaseFragmentFactory() {</span>
+<span class="nc" id="L122">		this.mAnnotationHandler = onCreateAnnotationHandler();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">		this.mItems = mAnnotationHandler == null ? null : mAnnotationHandler.getFragmentItems();</span>
+<span class="nc" id="L124">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Creates a tag for fragment in the required format depending on a package name of the passed
+	 * &lt;var&gt;classOfFactory&lt;/var&gt; and &lt;var&gt;fragmentName&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * Example format: &lt;u&gt;com.android.app.fragment.ProfileFragments.TAG.EditProfile&lt;/u&gt;
+	 * &lt;p&gt;
+	 * - where &lt;b&gt;com.android.app.fragment&lt;/b&gt; is name of the package where is the specified
+	 * &lt;var&gt;classOfFactory&lt;/var&gt; placed, &lt;b&gt;ProfileFragments&lt;/b&gt; is factory class name, &lt;b&gt;EditProfile&lt;/b&gt;
+	 * is &lt;var&gt;fragmentName&lt;/var&gt; and &lt;b&gt;TAG&lt;/b&gt; is the static tag identifier.
+	 *
+	 * @param classOfFactory Class of factory that provides fragment with the given name.
+	 * @param fragmentName   Fragment name (may be fragment class name) for which the requested TAG
+	 *                       should be created.
+	 * @return Fragment tag in required format, or {@code null} if &lt;var&gt;fragmentName&lt;/var&gt; is {@code null}
+	 * or empty.
+	 */
+	@Nullable
+	public static String createFragmentTag(@NonNull Class&lt;?&gt; classOfFactory, @NonNull String fragmentName) {
+<span class="nc bnc" id="L148" title="All 2 branches missed.">		if (TextUtils.isEmpty(fragmentName)) {</span>
+<span class="nc" id="L149">			return null;</span>
+		}
+<span class="nc" id="L151">		return classOfFactory.getPackage().getName() + &quot;.&quot; + classOfFactory.getSimpleName() + &quot;.TAG.&quot; + fragmentName;</span>
+	}
+
+	/**
+	 * Invoked to create annotations handler for this instance.
+	 *
+	 * @return Annotations handler specific for this class.
+	 */
+	private FragmentFactoryAnnotationHandler onCreateAnnotationHandler() {
+<span class="nc" id="L160">		return BaseManagementAnnotationHandlers.obtainFactoryHandler(getClass());</span>
+	}
+
+	/**
+	 * Returns handler that is responsible for annotations processing of this class and also for
+	 * handling all annotations related operations for this class.
+	 *
+	 * @return Annotations handler specific for this class.
+	 * @throws IllegalStateException If annotations processing is not enabled for the Fragments library.
+	 */
+	@NonNull
+	protected FragmentFactoryAnnotationHandler getAnnotationHandler() {
+<span class="nc" id="L172">		FragmentAnnotations.checkIfEnabledOrThrow();</span>
+<span class="nc" id="L173">		return mAnnotationHandler;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public boolean isFragmentProvided(int fragmentId) {
+<span class="nc bnc" id="L180" title="All 2 branches missed.">		if (fragmentId == mLastCheckedFragmentId) {</span>
+<span class="nc" id="L181">			return mFragmentProvided;</span>
+		}
+<span class="nc" id="L183">		this.mLastCheckedFragmentId = fragmentId;</span>
+<span class="nc" id="L184">		return mFragmentProvided = providesFragment(fragmentId);</span>
+	}
+
+	/**
+	 * Invoked whenever {@link #isFragmentProvided(int)} is called and the specified &lt;var&gt;fragmentId&lt;/var&gt;
+	 * differs from the one last time called.
+	 * &lt;p&gt;
+	 * This implementation returns {@code true} if there is {@link FactoryFragments @FactoryFragments}
+	 * or {@link FactoryFragment @FactoryFragment} annotation presented for the specified &lt;var&gt;fragmentId&lt;/var&gt;,
+	 * {@code false} otherwise.
+	 */
+	protected boolean providesFragment(int fragmentId) {
+<span class="nc bnc" id="L196" title="All 4 branches missed.">		return mItems != null &amp;&amp; mItems.indexOfKey(fragmentId) &gt;= 0;</span>
+	}
+
+	/**
+	 */
+	@Nullable
+	@Override
+	public Fragment createFragment(int fragmentId) {
+<span class="nc bnc" id="L204" title="All 2 branches missed.">		return isFragmentProvided(fragmentId) ? onCreateFragment(fragmentId) : null;</span>
+	}
+
+	/**
+	 * Invoked whenever {@link #createFragment(int)} is called and this factory provides fragment
+	 * instance for the specified &lt;var&gt;fragmentId&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This implementation returns the requested fragment instance instantiated from class specified
+	 * via {@link FactoryFragment @FactoryFragment}. If instantiation fails an exception is thrown.
+	 */
+	@NonNull
+	protected Fragment onCreateFragment(int fragmentId) {
+<span class="nc" id="L216">		final Fragment fragment = mItems.get(fragmentId).newFragmentInstance(null);</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">		if (fragment == null) {</span>
+<span class="nc" id="L218">			throw new IllegalArgumentException(&quot;Failed to instantiate fragment for the requested id(&quot; + fragmentId + &quot;)!&quot;);</span>
+		}
+<span class="nc" id="L220">		return fragment;</span>
+	}
+
+	/**
+	 */
+	@Nullable
+	@Override
+	public String createFragmentTag(int fragmentId) {
+<span class="nc bnc" id="L228" title="All 2 branches missed.">		return isFragmentProvided(fragmentId) ? onCreateFragmentTag(fragmentId) : null;</span>
+	}
+
+	/**
+	 * Invoked whenever {@link #createFragmentTag(int)} is called and this factory provides fragment
+	 * instance for the specified &lt;var&gt;fragmentId&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This implementation returns the requested fragment TAG created from fragment ids specified
+	 * via {@link FactoryFragments @FactoryFragments} or for a single id marked by {@link FactoryFragment @FactoryFragment}.
+	 * If neither of these annotations is presented, the TAG is created via {@link #createFragmentTag(Class, String)}
+	 * with the fragment id as &lt;var&gt;fragmentName&lt;/var&gt;.
+	 */
+	@Nullable
+	protected String onCreateFragmentTag(int fragmentId) {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">		return mItems.indexOfKey(fragmentId) &gt;= 0 ? mItems.get(fragmentId).tag : createFragmentTag(getClass(), Integer.toString(fragmentId));</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

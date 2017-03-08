@@ -1,0 +1,1251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FragmentRequest.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.manage</a> &gt; <span class="el_source">FragmentRequest.java</span></div><h1>FragmentRequest.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.manage;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
+import android.support.v4.util.Pair;
+import android.transition.Transition;
+import android.view.View;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * A request that may be used to replace|add|remove|show|hide|attach|detach a desired {@link Fragment}
+ * in a view hierarchy. New instance of request may be created via {@link FragmentController#newRequest(Fragment)}
+ * or via {@link FragmentController#newRequest(int)} for fragments provided by {@link FragmentFactory}.
+ * When request is created it may be configured via methods listed below and then executed via
+ * {@link #execute()}.
+ *
+ * &lt;h3&gt;Configuration&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;{@link #fragmentId(int)}&lt;/li&gt;
+ * &lt;li&gt;{@link #outgoingFragmentId(int)}&lt;/li&gt;
+ * &lt;li&gt;{@link #arguments(Bundle)}&lt;/li&gt;
+ * &lt;li&gt;{@link #transaction(int)}&lt;/li&gt;
+ * &lt;li&gt;{@link #tag(String)}&lt;/li&gt;
+ * &lt;li&gt;{@link #viewContainerId(int)}&lt;/li&gt;
+ * &lt;li&gt;{@link #transition(FragmentTransition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #transitionStyle(int)}&lt;/li&gt;
+ * &lt;li&gt;{@link #enterTransition(Transition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #exitTransition(Transition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #reenterTransition(Transition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #returnTransition(Transition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #allowEnterTransitionOverlap(boolean)}&lt;/li&gt;
+ * &lt;li&gt;{@link #allowReturnTransitionOverlap(boolean)}&lt;/li&gt;
+ * &lt;li&gt;{@link #sharedElementEnterTransition(Transition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #sharedElementReturnTransition(Transition)}&lt;/li&gt;
+ * &lt;li&gt;{@link #sharedElement(View, String)}&lt;/li&gt;
+ * &lt;li&gt;{@link #sharedElements(Pair[])}&lt;/li&gt;
+ * &lt;li&gt;{@link #replaceSame(boolean)}&lt;/li&gt;
+ * &lt;li&gt;{@link #addToBackStack(boolean)}&lt;/li&gt;
+ * &lt;li&gt;{@link #executeAllowingStateLoss(boolean)}&lt;/li&gt;
+ * &lt;li&gt;{@link #executeImmediate(boolean)}&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;p&gt;
+ * &lt;b&gt;Note, that each fragment request may be executed only once.&lt;/b&gt;
+ *
+ * @author Martin Albedinsky
+ * @see FragmentController
+ * @see FragmentRequestInterceptor
+ */
+public final class FragmentRequest {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;FragmentRequest&quot;;
+
+	/**
+	 * Constant used to determine that no fragment id has been specified.
+	 */
+	public static final int NO_ID = -1;
+
+	/**
+	 * Constant used to determine that no style resource has been specified.
+	 */
+	public static final int NO_STYLE = -1;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using &lt;b&gt;replace&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#replace(int, Fragment, String)
+	 */
+	public static final int REPLACE = 0x00;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using &lt;b&gt;add&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#add(int, Fragment, String)
+	 */
+	public static final int ADD = 0x01;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using &lt;b&gt;remove&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#remove(Fragment)
+	 */
+	public static final int REMOVE = 0x02;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using &lt;b&gt;show&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#show(Fragment)
+	 */
+	public static final int SHOW = 0x03;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment should be committed
+	 * using &lt;b&gt;hide&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#hide(Fragment)
+	 */
+	public static final int HIDE = 0x04;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using &lt;b&gt;attach&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#attach(Fragment)
+	 */
+	public static final int ATTACH = 0x05;
+
+	/**
+	 * Fragment transaction type used to indicate that the associated fragment transaction should be
+	 * committed using &lt;b&gt;detach&lt;/b&gt; operation.
+	 *
+	 * @see FragmentTransaction#detach(Fragment)
+	 */
+	public static final int DETACH = 0x06;
+
+	/**
+	 * Defines an annotation for determining available transaction types for {@link #transaction(int)}
+	 * method.
+	 *
+	 * &lt;h3&gt;Available types:&lt;/h3&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link #REPLACE}&lt;/li&gt;
+	 * &lt;li&gt;{@link #ADD}&lt;/li&gt;
+	 * &lt;li&gt;{@link #REMOVE}&lt;/li&gt;
+	 * &lt;li&gt;{@link #SHOW}&lt;/li&gt;
+	 * &lt;li&gt;{@link #HIDE}&lt;/li&gt;
+	 * &lt;li&gt;{@link #ATTACH}&lt;/li&gt;
+	 * &lt;li&gt;{@link #DETACH}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 *
+	 * @see #transaction(int)
+	 */
+	@IntDef({
+			REPLACE,
+			ADD, REMOVE,
+			SHOW, HIDE,
+			ATTACH, DETACH
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface Transaction {
+	}
+
+	/**
+	 * Flag indicating that a same fragment (currently displayed) can be replaced by the associated fragment.
+	 *
+	 * @see FragmentTransaction#replace(int, Fragment, String)
+	 */
+	static final int REPLACE_SAME = 0x00000001;
+
+	/**
+	 * Flag indicating that the associated fragment should be added into back stack.
+	 *
+	 * @see FragmentTransaction#addToBackStack(String)
+	 */
+	static final int ADD_TO_BACK_STACK = 0x00000001 &lt;&lt; 1;
+
+	/**
+	 * Flag indicating that the associated {@link FragmentTransaction} should be committed allowing
+	 * state loss.
+	 *
+	 * @see FragmentTransaction#commitAllowingStateLoss()
+	 */
+	static final int ALLOW_STATE_LOSS = 0x00000001 &lt;&lt; 2;
+
+	/**
+	 * Flag indicating that the associated {@link FragmentTransaction} should be executed immediately.
+	 *
+	 * @see FragmentManager#executePendingTransactions()
+	 */
+	static final int IMMEDIATE = 0x00000001 &lt;&lt; 3;
+
+	/**
+	 * Defines an annotation for determining available boolean flags for FragmentRequest.
+	 */
+	@IntDef(flag = true, value = {
+			REPLACE_SAME,
+			ADD_TO_BACK_STACK,
+			ALLOW_STATE_LOSS,
+			IMMEDIATE
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface Flag {
+	}
+
+	/**
+	 * Flag indicating whether {@link #mEnterTransition} has been specified or not.
+	 */
+	static final int TRANSITION_ENTER = 0x00000001;
+
+	/**
+	 * Flag indicating whether {@link #mExitTransition} has been specified or not.
+	 */
+	static final int TRANSITION_EXIT = 0x00000001 &lt;&lt; 1;
+
+	/**
+	 * Flag indicating whether {@link #mReenterTransition} has been specified or not.
+	 */
+	static final int TRANSITION_REENTER = 0x00000001 &lt;&lt; 2;
+
+	/**
+	 * Flag indicating whether {@link #mReturnTransition} has been specified or not.
+	 */
+	static final int TRANSITION_RETURN = 0x00000001 &lt;&lt; 3;
+
+	/**
+	 * Flag indicating whether {@link #mSharedElementEnterTransition} has been specified or not.
+	 */
+	static final int TRANSITION_SHARED_ELEMENT_ENTER = 0x00000001 &lt;&lt; 4;
+
+	/**
+	 * Flag indicating whether {@link #mSharedElementReturnTransition} has been specified or not.
+	 */
+	static final int TRANSITION_SHARED_ELEMENT_RETURN = 0x00000001 &lt;&lt; 5;
+
+	/**
+	 * Defines an annotation for determining available transition flags for FragmentRequest.
+	 */
+	@IntDef(flag = true, value = {
+			TRANSITION_ENTER,
+			TRANSITION_EXIT,
+			TRANSITION_REENTER,
+			TRANSITION_RETURN,
+			TRANSITION_SHARED_ELEMENT_ENTER,
+			TRANSITION_SHARED_ELEMENT_RETURN
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	private @interface TransitionFlag {
+	}
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Controller that has been used to create this request and also is responsible for execution
+	 * of this request.
+	 *
+	 * @see #execute()
+	 */
+	private final FragmentController mController;
+
+	/**
+	 * Fragment instance associated with this request.
+	 */
+	Fragment mFragment;
+
+	/**
+	 * Id of the associated fragment.
+	 */
+<span class="nc" id="L298">	int mFragmentId = NO_ID;</span>
+
+	/**
+	 * Id of the outgoing fragment that will be replaced by the associated fragment.
+	 */
+<span class="nc" id="L303">	private int mOutgoingFragmentId = NO_ID;</span>
+
+	/**
+	 * Arguments for the associated fragment.
+	 *
+	 * @see Fragment#setArguments(Bundle)
+	 */
+	Bundle mArguments;
+
+	/**
+	 * Type determining what {@link FragmentTransaction} to perform for the associated fragment.
+	 *
+	 * @see Transaction @Transaction
+	 */
+<span class="nc" id="L317">	@Transaction</span>
+	int mTransaction = REPLACE;
+
+	/**
+	 * Tag for the associated fragment.
+	 */
+	String mTag;
+
+	/**
+	 * Id of a view container where to place view hierarchy of the associated fragment.
+	 */
+<span class="nc" id="L328">	int mViewContainerId = FragmentController.NO_CONTAINER_ID;</span>
+
+	/**
+	 * Transition object specifying transition resources for the associated {@link FragmentTransaction}.
+	 *
+	 * @see FragmentTransaction#setCustomAnimations(int, int, int, int)
+	 */
+	FragmentTransition mTransition;
+
+	/**
+	 * Resource id of the style containing transitions used to animate fragment.
+	 *
+	 * @see FragmentTransaction#setTransitionStyle(int)
+	 */
+<span class="nc" id="L342">	int mTransitionStyle = -1;</span>
+
+	/**
+	 * Enter transition the associated fragment.
+	 *
+	 * @see Fragment#setEnterTransition(Transition)
+	 */
+	Transition mEnterTransition;
+
+	/**
+	 * Exit transition the associated fragment.
+	 *
+	 * @see Fragment#setExitTransition(Transition)
+	 */
+	Transition mExitTransition;
+
+	/**
+	 * Reenter transition the associated fragment.
+	 *
+	 * @see Fragment#setReenterTransition(Transition)
+	 */
+	Transition mReenterTransition;
+
+	/**
+	 * Return transition the associated fragment.
+	 *
+	 * @see Fragment#setReturnTransition(Transition)
+	 */
+	Transition mReturnTransition;
+
+	/**
+	 * Shared element's enter transition the associated fragment.
+	 *
+	 * @see Fragment#setSharedElementEnterTransition(Transition)
+	 */
+	Transition mSharedElementEnterTransition;
+
+	/**
+	 * Shared element's return transition the associated fragment.
+	 *
+	 * @see Fragment#setSharedElementReturnTransition(Transition)
+	 */
+	Transition mSharedElementReturnTransition;
+
+	/**
+	 * Transition flags determining which transitions has been specified for this request.
+	 *
+	 * @see TransitionFlag @TransitionFlag
+	 */
+	@TransitionFlag
+	private int mSpecifiedTransitions;
+
+	/**
+	 * Flag indicating whether enter transition for the associated fragment can overlap or not.
+	 *
+	 * @see Fragment#setAllowReturnTransitionOverlap(boolean)
+	 */
+	Boolean mAllowEnterTransitionOverlap;
+
+	/**
+	 * Flag indicating whether return transition for the associated fragment can overlap or not.
+	 *
+	 * @see Fragment#setAllowEnterTransitionOverlap(boolean)
+	 */
+	Boolean mAllowReturnTransitionOverlap;
+
+	/**
+	 * Set of shared elements for the associated fragment.
+	 *
+	 * @see FragmentTransaction#addSharedElement(View, String)
+	 */
+	List&lt;Pair&lt;View, String&gt;&gt; mSharedElements;
+
+	/**
+	 * Flags specified for this request.
+	 *
+	 * @see Flag @Flag
+	 */
+	@Flag
+	private int mFlags;
+
+	/**
+	 * Boolean flag indicating whether this request has been already executed via {@link #execute()}
+	 * or not.
+	 */
+	private boolean mExecuted;
+
+	/**
+	 * Constructors ============================================================================
+	 */
+
+	/**
+	 * Creates a new instance of FragmentRequest for the given &lt;var&gt;controller&lt;/var&gt;.
+	 *
+	 * @param controller Fragment controller that creates the new request and will be also responsible
+	 *                   for its execution.
+	 */
+	FragmentRequest(FragmentController controller) {
+<span class="nc" id="L440">		this(controller, null);</span>
+<span class="nc" id="L441">	}</span>
+
+	/**
+	 * Creates a new instance of FragmentRequest for the given &lt;var&gt;fragment&lt;/var&gt;.
+	 *
+	 * @param controller Fragment controller that creates the new request and will be also responsible
+	 *                   for its execution.
+	 * @param fragment   The fragment to associate with the new request.
+	 */
+<span class="nc" id="L450">	FragmentRequest(FragmentController controller, Fragment fragment) {</span>
+<span class="nc" id="L451">		this.mController = controller;</span>
+<span class="nc" id="L452">		this.mFragment = fragment;</span>
+<span class="nc" id="L453">	}</span>
+
+	/**
+	 * Methods =================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	@SuppressWarnings(&quot;StringBufferReplaceableByString&quot;)
+	public String toString() {
+<span class="nc" id="L464">		final StringBuilder builder = new StringBuilder(128);</span>
+<span class="nc" id="L465">		builder.append(&quot;FragmentRequest{fragmentId: &quot;);</span>
+<span class="nc" id="L466">		builder.append(mFragmentId);</span>
+<span class="nc" id="L467">		builder.append(&quot;, outgoingFragmentId: &quot;);</span>
+<span class="nc" id="L468">		builder.append(mOutgoingFragmentId);</span>
+<span class="nc" id="L469">		builder.append(&quot;, arguments: &quot;);</span>
+<span class="nc" id="L470">		builder.append(mArguments);</span>
+<span class="nc" id="L471">		builder.append(&quot;, transactionType: &quot;);</span>
+<span class="nc" id="L472">		builder.append(mTransition);</span>
+<span class="nc" id="L473">		builder.append(&quot;, tag: &quot;);</span>
+<span class="nc" id="L474">		builder.append(mTag);</span>
+<span class="nc" id="L475">		builder.append(&quot;, viewContainerId: &quot;);</span>
+<span class="nc" id="L476">		builder.append(mViewContainerId);</span>
+<span class="nc" id="L477">		builder.append(&quot;, transition: &quot;);</span>
+<span class="nc bnc" id="L478" title="All 2 branches missed.">		builder.append(mTransition == null ? &quot;null&quot; : mTransition.getName());</span>
+<span class="nc" id="L479">		builder.append(&quot;, transitionStyle: &quot;);</span>
+<span class="nc" id="L480">		builder.append(mTransitionStyle);</span>
+<span class="nc" id="L481">		builder.append(&quot;, replaceSame: &quot;);</span>
+<span class="nc" id="L482">		builder.append(hasFlag(REPLACE_SAME));</span>
+<span class="nc" id="L483">		builder.append(&quot;, addToBackStack: &quot;);</span>
+<span class="nc" id="L484">		builder.append(hasFlag(ADD_TO_BACK_STACK));</span>
+<span class="nc" id="L485">		builder.append(&quot;, allowStateLoss: &quot;);</span>
+<span class="nc" id="L486">		builder.append(hasFlag(ALLOW_STATE_LOSS));</span>
+<span class="nc" id="L487">		builder.append(&quot;, immediate: &quot;);</span>
+<span class="nc" id="L488">		builder.append(hasFlag(IMMEDIATE));</span>
+<span class="nc" id="L489">		builder.append(&quot;, executed: &quot;);</span>
+<span class="nc" id="L490">		builder.append(mExecuted);</span>
+<span class="nc" id="L491">		return builder.append(&quot;}&quot;).toString();</span>
+	}
+
+	/**
+	 * Returns the fragment instance associated with this request.
+	 *
+	 * @return This request's fragment.
+	 * @see FragmentController#newRequest(Fragment)
+	 */
+	@NonNull
+	public Fragment fragment() {
+<span class="nc" id="L502">		return mFragment;</span>
+	}
+
+	/**
+	 * Creates a new instance of default FragmentTransactionOptions for the specified &lt;var&gt;incomingFragmentId&lt;/var&gt;
+	 * and &lt;var&gt;outgoingFragmentId&lt;/var&gt;.
+	 * &lt;p&gt;
+	 * This constructor can be used to instantiate transaction options to show instance of fragment
+	 * provided by {@link FragmentFactory} where as id of incoming fragment so
+	 * id of outgoing fragment are relevant to properly set up options of incoming fragment.
+	 *
+	 * @param incomingFragmentId Id of the incoming fragment associated with these options.
+	 * @param outgoingFragmentId Id of the outgoing fragment associated with these options.
+	 */
+
+	/**
+	 * Sets an id of the fragment associated with this request.
+	 * &lt;p&gt;
+	 * This id along with {@link #outgoingFragmentId()} may be used to determine exact change between
+	 * two fragments and configure this request accordingly when using {@link FragmentRequestInterceptor}.
+	 *
+	 * @param fragmentId The desired fragment id.
+	 * @return This request to allow methods chaining.
+	 * @see #fragmentId()
+	 * @see #outgoingFragmentId(int)
+	 */
+	public FragmentRequest fragmentId(int fragmentId) {
+<span class="nc" id="L529">		this.mFragmentId = fragmentId;</span>
+<span class="nc" id="L530">		return this;</span>
+	}
+
+	/**
+	 * Returns the id of the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@link #NO_ID}&lt;/b&gt;
+	 *
+	 * @return Fragment id or {@link #NO_ID} if no id has been specified.
+	 * @see #fragmentId(int)
+	 */
+	public int fragmentId() {
+<span class="nc" id="L542">		return mFragmentId;</span>
+	}
+
+	/**
+	 * Sets an id of the outgoing fragment that is to be replaced by the fragment associated with
+	 * this request.
+	 * &lt;p&gt;
+	 * This id along with {@link #fragmentId()} may be used to determine exact change between two
+	 * fragments and configure this request accordingly when using {@link FragmentRequestInterceptor}.
+	 *
+	 * @param fragmentId The desired fragment id.
+	 * @return This request to allow methods chaining.
+	 * @see #outgoingFragmentId()
+	 * @see #fragmentId(int)
+	 */
+	public FragmentRequest outgoingFragmentId(int fragmentId) {
+<span class="nc" id="L558">		this.mOutgoingFragmentId = fragmentId;</span>
+<span class="nc" id="L559">		return this;</span>
+	}
+
+	/**
+	 * Returns the id of the outgoing fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@link #NO_ID}&lt;/b&gt;
+	 *
+	 * @return Fragment id or {@link #NO_ID} if no id has been specified.
+	 * @see #outgoingFragmentId(int)
+	 */
+	public int outgoingFragmentId() {
+<span class="nc" id="L571">		return mOutgoingFragmentId;</span>
+	}
+
+	/**
+	 * Sets an arguments for the associated fragment.
+	 *
+	 * @param arguments The desired arguments for fragment. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see Fragment#setArguments(Bundle)
+	 * @see #arguments()
+	 */
+	public FragmentRequest arguments(@Nullable Bundle arguments) {
+<span class="nc" id="L583">		this.mArguments = arguments;</span>
+<span class="nc" id="L584">		return this;</span>
+	}
+
+	/**
+	 * Returns the arguments that should be attached to the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Arguments for fragment or {@code null} if no arguments have been specified yet.
+	 * @see #arguments(Bundle)
+	 */
+	@Nullable
+	public Bundle arguments() {
+<span class="nc" id="L597">		return mArguments;</span>
+	}
+
+	/**
+	 * Sets a transaction type determining what {@link FragmentTransaction} to perform for the
+	 * associated fragment.
+	 *
+	 * @param transaction The desired transaction type. One of types defined by {@link Transaction @Transaction}
+	 *                    annotation.
+	 * @return This request to allow methods chaining.
+	 * @see #transaction()
+	 */
+	public FragmentRequest transaction(@Transaction int transaction) {
+<span class="nc" id="L610">		this.mTransaction = transaction;</span>
+<span class="nc" id="L611">		return this;</span>
+	}
+
+	/**
+	 * Returns the transaction type determining what {@link FragmentTransaction} to perform.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@link #REPLACE}&lt;/b&gt;
+	 *
+	 * @return One of transaction types defined by {@link Transaction @Transaction} annotation.
+	 * @see #transaction(int)
+	 */
+	@Transaction
+	public int transaction() {
+<span class="nc" id="L624">		return mTransaction;</span>
+	}
+
+	/**
+	 * Sets a tag for the associated fragment.
+	 *
+	 * @param fragmentTag The desired fragment tag. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #tag()
+	 * @see Fragment#getTag()
+	 */
+	public FragmentRequest tag(@Nullable String fragmentTag) {
+<span class="nc" id="L636">		this.mTag = fragmentTag;</span>
+<span class="nc" id="L637">		return this;</span>
+	}
+
+	/**
+	 * Returns the tag by which should be the associated fragment identified.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Tag for the associated fragment to be shown using these options.
+	 * @see #tag(String)
+	 */
+	@Nullable
+	public String tag() {
+<span class="nc" id="L650">		return mTag;</span>
+	}
+
+	/**
+	 * Sets an id of a view container where to place view hierarchy of the associated fragment.
+	 *
+	 * @param containerId The desired view container id.
+	 * @return This request to allow methods chaining.
+	 * @see #viewContainerId()
+	 */
+	public FragmentRequest viewContainerId(@IdRes int containerId) {
+<span class="nc" id="L661">		this.mViewContainerId = containerId;</span>
+<span class="nc" id="L662">		return this;</span>
+	}
+
+	/**
+	 * Returns the id of view container where a view hierarchy of the associated fragment should be
+	 * placed.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@link FragmentController#NO_CONTAINER_ID}&lt;/b&gt;
+	 *
+	 * @return View container id or {@link FragmentController#NO_CONTAINER_ID NO_CONTAINER_ID} if no
+	 * id has been specified.
+	 * @see #viewContainerId(int)
+	 */
+	@IdRes
+	public int viewContainerId() {
+<span class="nc" id="L677">		return mViewContainerId;</span>
+	}
+
+	/**
+	 * Sets a transition that should be used to provide animation resources for the associated
+	 * {@link FragmentTransaction}.
+	 *
+	 * @param transition Transition providing animation resources.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#setCustomAnimations(int, int, int, int)
+	 * @see #transition()
+	 */
+	public FragmentRequest transition(@Nullable FragmentTransition transition) {
+<span class="nc" id="L690">		this.mTransition = transition;</span>
+<span class="nc" id="L691">		return this;</span>
+	}
+
+	/**
+	 * Returns the transition providing animation resources for {@link FragmentTransaction}.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition with animation resources used to animate change of view between incoming
+	 * and outgoing fragment.
+	 */
+	@Nullable
+	public FragmentTransition transition() {
+<span class="nc" id="L704">		return mTransition;</span>
+	}
+
+	/**
+	 * Sets a resource id of the style containing transitions used to animate change between incoming
+	 * and outgoing fragment.
+	 *
+	 * @param transitionStyle Resource id of the desired style.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#setTransitionStyle(int)
+	 * @see #transitionStyle()
+	 */
+	public FragmentRequest transitionStyle(@StyleRes int transitionStyle) {
+<span class="nc" id="L717">		this.mTransitionStyle = transitionStyle;</span>
+<span class="nc" id="L718">		return this;</span>
+	}
+
+	/**
+	 * Returns the transition style providing transitions for fragment view changes.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@link #NO_STYLE}&lt;/b&gt;
+	 *
+	 * @return Transition style resource or {@link #NO_STYLE} if no style has been specified.
+	 */
+	@StyleRes
+	public int transitionStyle() {
+<span class="nc" id="L730">		return mTransitionStyle;</span>
+	}
+
+	/**
+	 * Sets an enter transition for the associated fragment.
+	 *
+	 * @param transition The desired enter transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #enterTransition()
+	 * @see Fragment#setEnterTransition(Transition)
+	 */
+	public FragmentRequest enterTransition(@Nullable Transition transition) {
+<span class="nc" id="L742">		this.mSpecifiedTransitions |= TRANSITION_ENTER;</span>
+<span class="nc" id="L743">		this.mEnterTransition = transition;</span>
+<span class="nc" id="L744">		return this;</span>
+	}
+
+	/**
+	 * Returns the enter transition to be played for the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition or {@code null} if no enter transition has been specified yet.
+	 * @see #enterTransition(Transition)
+	 */
+	@Nullable
+	public Transition enterTransition() {
+<span class="nc" id="L757">		return mEnterTransition;</span>
+	}
+
+	/**
+	 * Sets an exit transition for the associated fragment.
+	 *
+	 * @param transition The desired exit transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #exitTransition()
+	 * @see Fragment#setExitTransition(Transition)
+	 */
+	public FragmentRequest exitTransition(@Nullable Transition transition) {
+<span class="nc" id="L769">		this.mSpecifiedTransitions |= TRANSITION_EXIT;</span>
+<span class="nc" id="L770">		this.mExitTransition = transition;</span>
+<span class="nc" id="L771">		return this;</span>
+	}
+
+	/**
+	 * Returns the exit transition to be played for the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition or {@code null} if no exit transition has been specified yet.
+	 * @see #exitTransition(Transition)
+	 */
+	@Nullable
+	public Transition exitTransition() {
+<span class="nc" id="L784">		return mExitTransition;</span>
+	}
+
+	/**
+	 * Sets a reenter transition for the associated fragment.
+	 *
+	 * @param transition The desired reenter transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #reenterTransition()
+	 * @see Fragment#setReenterTransition(Transition)
+	 */
+	public FragmentRequest reenterTransition(@Nullable Transition transition) {
+<span class="nc" id="L796">		this.mSpecifiedTransitions |= TRANSITION_REENTER;</span>
+<span class="nc" id="L797">		this.mReenterTransition = transition;</span>
+<span class="nc" id="L798">		return this;</span>
+	}
+
+	/**
+	 * Returns the reenter transition to be played for the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition or {@code null} if no reenter transition has been specified yet.
+	 * @see #reenterTransition(Transition)
+	 */
+	@Nullable
+	public Transition reenterTransition() {
+<span class="nc" id="L811">		return mReenterTransition;</span>
+	}
+
+	/**
+	 * Sets a return transition for the associated fragment.
+	 *
+	 * @param transition The desired return transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #exitTransition()
+	 * @see Fragment#setReturnTransition(Transition)
+	 */
+	public FragmentRequest returnTransition(@Nullable Transition transition) {
+<span class="nc" id="L823">		this.mSpecifiedTransitions |= TRANSITION_RETURN;</span>
+<span class="nc" id="L824">		this.mReturnTransition = transition;</span>
+<span class="nc" id="L825">		return this;</span>
+	}
+
+	/**
+	 * Returns the return transition to be played for the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition or {@code null} if no return transition has been specified yet.
+	 * @see #returnTransition(Transition)
+	 */
+	@Nullable
+	public Transition returnTransition() {
+<span class="nc" id="L838">		return mReturnTransition;</span>
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether enter transition for the associated fragment may overlap
+	 * or not.
+	 *
+	 * @param allowOverlap {@code True} to allow enter transition overlapping, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see Fragment#setAllowEnterTransitionOverlap(boolean)
+	 * @see #allowEnterTransitionOverlap()
+	 */
+	public FragmentRequest allowEnterTransitionOverlap(boolean allowOverlap) {
+<span class="nc" id="L851">		this.mAllowEnterTransitionOverlap = allowOverlap;</span>
+<span class="nc" id="L852">		return this;</span>
+	}
+
+	/**
+	 * Returns boolean flag indicating whether overlapping for enter transition is allowed.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return {@code True} if overlapping for enter transition is allowed, {@code false} otherwise
+	 * or {@code null} if this option has not been specified yet.
+	 * @see #allowEnterTransitionOverlap(boolean)
+	 */
+	public Boolean allowEnterTransitionOverlap() {
+<span class="nc" id="L865">		return mAllowEnterTransitionOverlap;</span>
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether return transition for the associated fragment may overlap
+	 * or not.
+	 *
+	 * @param allowOverlap {@code True} to allow return transition overlapping, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see Fragment#setAllowReturnTransitionOverlap(boolean)
+	 * @see #allowReturnTransitionOverlap()
+	 */
+	public FragmentRequest allowReturnTransitionOverlap(boolean allowOverlap) {
+<span class="nc" id="L878">		this.mAllowReturnTransitionOverlap = allowOverlap;</span>
+<span class="nc" id="L879">		return this;</span>
+	}
+
+	/**
+	 * Returns boolean flag indicating whether overlapping for return transition is allowed.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return {@code True} if overlapping for return transition is allowed, {@code false} otherwise
+	 * or {@code null} if this option has not been specified yet.
+	 * @see #allowReturnTransitionOverlap(boolean)
+	 */
+	public boolean allowReturnTransitionOverlap() {
+<span class="nc bnc" id="L892" title="All 4 branches missed.">		return mAllowReturnTransitionOverlap != null &amp;&amp; mAllowReturnTransitionOverlap;</span>
+	}
+
+	/**
+	 * Bulk method for adding shared element pairs into this request.
+	 *
+	 * @param elements The desired shared elements pairs.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElement(View, String)
+	 */
+	@SafeVarargs
+	public final FragmentRequest sharedElements(@NonNull Pair&lt;View, String&gt;... elements) {
+<span class="nc bnc" id="L904" title="All 2 branches missed.">		if (mSharedElements == null) {</span>
+<span class="nc" id="L905">			this.mSharedElements = new ArrayList&lt;&gt;(elements.length);</span>
+		}
+<span class="nc" id="L907">		this.mSharedElements.addAll(Arrays.asList(elements));</span>
+<span class="nc" id="L908">		return this;</span>
+	}
+
+	/**
+	 * Adds a shared element view and its name for the associated fragment.
+	 * &lt;p&gt;
+	 * Subsequent calls to this method will append list of already specified shared element pairs.
+	 *
+	 * @param element     The view to be shared via transition.
+	 * @param elementName The name of the shared element.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElements(Pair[])
+	 * @see FragmentTransaction#addSharedElement(View, String)
+	 */
+	public FragmentRequest sharedElement(@NonNull View element, @NonNull String elementName) {
+<span class="nc bnc" id="L923" title="All 2 branches missed.">		if (mSharedElements == null) {</span>
+<span class="nc" id="L924">			this.mSharedElements = new ArrayList&lt;&gt;(1);</span>
+		}
+<span class="nc" id="L926">		this.mSharedElements.add(new Pair&lt;&gt;(element, elementName));</span>
+<span class="nc" id="L927">		return this;</span>
+	}
+
+	/**
+	 * Returns a list of all shared elements specified for this request.
+	 *
+	 * @return List of shared elements or {@code null} if there are no shared elements specified.
+	 * @see #sharedElement(View, String)
+	 * @see #sharedElements(Pair[])
+	 */
+	@Nullable
+	public List&lt;Pair&lt;View, String&gt;&gt; sharedElements() {
+<span class="nc" id="L939">		return mSharedElements;</span>
+	}
+
+	/**
+	 * Returns the single shared element at the {@code 0} position among the current shared elements.
+	 * &lt;p&gt;
+	 * This method may be used to obtain a single shared element when there is specified only one for
+	 * this request.
+	 *
+	 * @return Single shared element or {@code null} if there are no shared elements specified.
+	 * @see #sharedElements()
+	 * @see #sharedElement(View, String)
+	 */
+	@Nullable
+	public Pair&lt;View, String&gt; singleSharedElement() {
+<span class="nc bnc" id="L954" title="All 4 branches missed.">		return mSharedElements == null || mSharedElements.isEmpty() ? null : mSharedElements.get(0);</span>
+	}
+
+	/**
+	 * Sets an enter transition for shared elements of the associated fragment.
+	 *
+	 * @param transition The desired shared elements's enter transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElementEnterTransition()
+	 * @see Fragment#setSharedElementEnterTransition(Transition)
+	 */
+	public FragmentRequest sharedElementEnterTransition(@Nullable Transition transition) {
+<span class="nc" id="L966">		this.mSpecifiedTransitions |= TRANSITION_SHARED_ELEMENT_ENTER;</span>
+<span class="nc" id="L967">		this.mSharedElementEnterTransition = transition;</span>
+<span class="nc" id="L968">		return this;</span>
+	}
+
+	/**
+	 * Returns the enter transition to be played for shared elements of the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition or {@code null} if no shared element enter transition has been specified yet.
+	 * @see #sharedElementEnterTransition(Transition)
+	 */
+	@Nullable
+	public Transition sharedElementEnterTransition() {
+<span class="nc" id="L981">		return mSharedElementEnterTransition;</span>
+	}
+
+	/**
+	 * Sets an return transition for shared elements of the associated fragment.
+	 *
+	 * @param transition The desired shared elements's return transition. May be {@code null}.
+	 * @return This request to allow methods chaining.
+	 * @see #sharedElementEnterTransition()
+	 * @see Fragment#setSharedElementReturnTransition(Transition)
+	 */
+	public FragmentRequest sharedElementReturnTransition(@Nullable Transition transition) {
+<span class="nc" id="L993">		this.mSpecifiedTransitions |= TRANSITION_SHARED_ELEMENT_RETURN;</span>
+<span class="nc" id="L994">		this.mSharedElementReturnTransition = transition;</span>
+<span class="nc" id="L995">		return this;</span>
+	}
+
+	/**
+	 * Returns the return transition to be played for shared elements of the associated fragment.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code null}&lt;/b&gt;
+	 *
+	 * @return Transition or {@code null} if no shared element return transition has been specified yet.
+	 * @see #sharedElementReturnTransition(Transition)
+	 */
+	@Nullable
+	public Transition sharedElementReturnTransition() {
+<span class="nc" id="L1008">		return mSharedElementReturnTransition;</span>
+	}
+
+	/**
+	 * Checks whether a transition with the specified &lt;var&gt;transitionFlag&lt;/var&gt; has been specified
+	 * for this request or not.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that also {@code null} transitions may be specified.
+	 *
+	 * @param transitionFlag One of transition flags defined by {@link TransitionFlag @TransitionFlag}
+	 *                       annotation.
+	 * @return {@code True} if transition has been specified, {@code false} otherwise.
+	 */
+	boolean hasTransition(@TransitionFlag int transitionFlag) {
+<span class="nc bnc" id="L1022" title="All 2 branches missed.">		return (mSpecifiedTransitions &amp; transitionFlag) != 0;</span>
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether the already displayed fragment with the same TAG as that
+	 * specified for this request may be replaced by the associated fragment or not.
+	 *
+	 * @param replace {@code True} to replace an existing fragment with the same TAG as specified
+	 *                via {@link #tag(String)} with the associated one, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see #replaceSame()
+	 */
+	public FragmentRequest replaceSame(boolean replace) {
+<span class="nc" id="L1035">		return setHasFlag(REPLACE_SAME, replace);</span>
+	}
+
+	/**
+	 * Returns boolean flag indicating whether already displayed fragment with the same TAG may be
+	 * replaced by a new one.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code false}&lt;/b&gt;
+	 *
+	 * @return {@code True} if already displayed fragment with the same TAG may be replaced, {@code false}
+	 * otherwise.
+	 * @see #replaceSame(boolean)
+	 */
+	public boolean replaceSame() {
+<span class="nc" id="L1049">		return hasFlag(REPLACE_SAME);</span>
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether the associated fragment should be added into fragments
+	 * back stack under its tag or not.
+	 *
+	 * @param add {@code True} to add fragment into back stack, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#addToBackStack(String)
+	 * @see #addToBackStack()
+	 */
+	public FragmentRequest addToBackStack(boolean add) {
+<span class="nc" id="L1062">		return setHasFlag(ADD_TO_BACK_STACK, add);</span>
+	}
+
+	/**
+	 * Returns boolean indicating whether to add fragment into back stack.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code false}&lt;/b&gt;
+	 *
+	 * @return {@code True} if to add the associated fragment into back stack, {@code false} otherwise.
+	 * @see #addToBackStack(boolean)
+	 */
+	public boolean addToBackStack() {
+<span class="nc" id="L1074">		return hasFlag(ADD_TO_BACK_STACK);</span>
+	}
+
+	/**
+	 * &lt;b&gt;This method will be removed in the next release.&lt;/b&gt;
+	 *
+	 * @deprecated Use {@link #allowStateLoss(boolean)} instead.
+	 */
+	@Deprecated
+	public FragmentRequest executeAllowingStateLoss(boolean allowing) {
+<span class="nc" id="L1084">		return allowStateLoss(allowing);</span>
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether {@link FragmentTransaction} for the associated fragment
+	 * may be committed allowing state loss or not.
+	 *
+	 * @param allow {@code True} to allow state loss when committing transaction, {@code false} otherwise.
+	 * @return This request to allow methods chaining.
+	 * @see FragmentTransaction#commitAllowingStateLoss()
+	 * @see #allowStateLoss()
+	 */
+	public FragmentRequest allowStateLoss(boolean allow) {
+<span class="nc" id="L1097">		return setHasFlag(ALLOW_STATE_LOSS, allow);</span>
+	}
+
+	/**
+	 * &lt;b&gt;This method will be removed in the next release.&lt;/b&gt;
+	 *
+	 * @deprecated Use {@link #allowStateLoss()} instead.
+	 */
+	@Deprecated
+	public boolean executeAllowingStateLoss() {
+<span class="nc" id="L1107">		return allowStateLoss();</span>
+	}
+
+	/**
+	 * Returns boolean flag indicating whether to commit fragment transaction allowing state loss.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code false}&lt;/b&gt;
+	 *
+	 * @return {@code True} if transaction may be committed allowing state loss, {@code false} otherwise.
+	 * @see #allowStateLoss(boolean)
+	 */
+	public boolean allowStateLoss() {
+<span class="nc" id="L1119">		return hasFlag(ALLOW_STATE_LOSS);</span>
+	}
+
+	/**
+	 * &lt;b&gt;This method will be removed in the next release.&lt;/b&gt;
+	 *
+	 * @deprecated Use {@link #immediate(boolean)} instead.
+	 */
+	@Deprecated
+	public FragmentRequest executeImmediate(boolean immediate) {
+<span class="nc" id="L1129">		return immediate(immediate);</span>
+	}
+
+	/**
+	 * Sets a boolean flag indicating whether {@link FragmentTransaction} for the associated fragment
+	 * should be executed immediately or not.
+	 *
+	 * @param immediate {@code True} to execute immediately (synchronously), {@code false} otherwise
+	 *                  (asynchronously).
+	 * @return This request to allow methods chaining.
+	 * @see FragmentManager#executePendingTransactions()
+	 * @see #immediate()
+	 */
+	public FragmentRequest immediate(boolean immediate) {
+<span class="nc" id="L1143">		return setHasFlag(IMMEDIATE, immediate);</span>
+	}
+
+	/**
+	 * &lt;b&gt;This method will be removed in the next release.&lt;/b&gt;
+	 *
+	 * @deprecated Use {@link #immediate()} instead.
+	 */
+	@Deprecated
+	public boolean executeImmediate() {
+<span class="nc" id="L1153">		return immediate();</span>
+	}
+
+	/**
+	 * Returns boolean indicating whether to execute fragment transaction immediately.
+	 * &lt;p&gt;
+	 * Default value: &lt;b&gt;{@code false}&lt;/b&gt;
+	 *
+	 * @return {@code True} if fragment transaction should be executed immediately (synchronously),
+	 * {@code false} otherwise (asynchronously).
+	 * @see #immediate(boolean)
+	 */
+	public boolean immediate() {
+<span class="nc" id="L1166">		return hasFlag(IMMEDIATE);</span>
+	}
+
+	/**
+	 * Sets whether this request has the specified &lt;var&gt;flag&lt;/var&gt; registered or not.
+	 *
+	 * @param flag One of flags defined by {@link Flag @Flag} annotation.
+	 * @param has  {@code True} to determine that this request has this flag, {@code false} that it
+	 *             has not.
+	 * @return This request to allow methods chaining.
+	 */
+	private FragmentRequest setHasFlag(@Flag int flag, boolean has) {
+<span class="nc bnc" id="L1178" title="All 2 branches missed.">		if (has) this.mFlags |= flag;</span>
+<span class="nc" id="L1179">		else this.mFlags &amp;= ~flag;</span>
+<span class="nc" id="L1180">		return this;</span>
+	}
+
+	/**
+	 * Checks whether this request has the specified &lt;var&gt;flag&lt;/var&gt; registered or not.
+	 *
+	 * @param flag One of flags defined by {@link Flag @Flag} annotation.
+	 * @return {@code True} if flag is registered, {@code false} otherwise.
+	 */
+	boolean hasFlag(@Flag int flag) {
+<span class="nc bnc" id="L1190" title="All 2 branches missed.">		return (mFlags &amp; flag) != 0;</span>
+	}
+
+	/**
+	 * Executes this request via the associated {@link FragmentController} that was used to create
+	 * this request instance.
+	 * &lt;p&gt;
+	 * &lt;b&gt;Note&lt;/b&gt;, that each request may be executed only once and any subsequent calls to this
+	 * method will throw an exception.
+	 *
+	 * @return The fragment that has been associated with this request either during its initialization
+	 * or as result of execution process. May be {@code null} if the execution has failed.
+	 * @throws IllegalStateException    If this request has been already executed.
+	 * @throws IllegalArgumentException If current configuration of this request does not meet the
+	 *                                  requirements. For example, request with transaction type of
+	 *                                  {@link #REPLACE} or {@link #ADD} cannot be executed without
+	 *                                  view container id specified.
+	 */
+	@Nullable
+	public Fragment execute() {
+<span class="nc" id="L1210">		this.assertNotExecuted();</span>
+<span class="nc bnc" id="L1211" title="All 2 branches missed.">		switch (mTransaction) {</span>
+			case REPLACE:
+			case ADD:
+<span class="nc bnc" id="L1214" title="All 2 branches missed.">				if (mViewContainerId == FragmentController.NO_CONTAINER_ID) {</span>
+<span class="nc" id="L1215">					throw new IllegalArgumentException(&quot;Cannot execute request for REPLACE|ADD transaction. No view container id specified!&quot;);</span>
+				}
+			case REMOVE:
+			case SHOW:
+			case HIDE:
+			case ATTACH:
+			case DETACH:
+			default:
+<span class="nc" id="L1223">				final Fragment fragment = mController.executeRequest(this);</span>
+<span class="nc" id="L1224">				this.mExecuted = true;</span>
+<span class="nc" id="L1225">				return fragment;</span>
+		}
+	}
+
+	/**
+	 * Asserts that this request has not been executed yet. If it has been executed, an exception is
+	 * thrown.
+	 */
+	private void assertNotExecuted() {
+<span class="nc bnc" id="L1234" title="All 2 branches missed.">		if (mExecuted) throw new IllegalStateException(&quot;Already executed!&quot;);</span>
+<span class="nc" id="L1235">	}</span>
+
+	/**
+	 * Returns boolean flag indicating whether this request has been executed.
+	 *
+	 * @return {@code True} if {@link #execute()} has been called for this request, {@code false}
+	 * otherwise.
+	 */
+	public boolean executed() {
+<span class="nc" id="L1244">		return mExecuted;</span>
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>

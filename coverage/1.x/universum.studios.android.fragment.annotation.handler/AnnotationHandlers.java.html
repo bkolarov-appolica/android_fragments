@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AnnotationHandlers.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">universum.studios.android.fragment.annotation.handler</a> &gt; <span class="el_source">AnnotationHandlers.java</span></div><h1>AnnotationHandlers.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.android.fragment.annotation.handler;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import universum.studios.android.fragment.FragmentsConfig;
+
+/**
+ * Base factory and cache for {@link AnnotationHandler} instances for a specific classes from the
+ * Fragments library.
+ *
+ * @author Martin Albedinsky
+ */
+public abstract class AnnotationHandlers {
+
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;AnnotationHandlers&quot;;
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Lock used for synchronized operations.
+	 */
+<span class="nc" id="L57">	private static final Object LOCK = new Object();</span>
+
+	/**
+	 * Initial capacity for the handlers map.
+	 */
+	private static final int HANDLERS_INITIAL_CAPACITY = 20;
+
+	/**
+	 * Map with annotation handlers where each handler is mapped to a particular class for which
+	 * has been that handler instantiated.
+	 */
+	private static Map&lt;Class&lt;?&gt;, Object&gt; sHandlers;
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 */
+<span class="nc" id="L80">	AnnotationHandlers() {</span>
+		// Creation of instances of this class is not publicly allowed.
+<span class="nc" id="L82">	}</span>
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 * Obtains an annotation handler with the specified &lt;var&gt;classOfHandler&lt;/var&gt; class for the
+	 * given &lt;var&gt;annotatedClass&lt;/var&gt;. If there is no such handler already instantiated and cached,
+	 * its instance will be created and cached.
+	 * &lt;p&gt;
+	 * Each handler is mapped to its annotated class, so there may be only one handler of the same
+	 * type created for the same annotated class.
+	 *
+	 * @param classOfHandler Class of the handler used to instantiate the requested handler instance
+	 *                       if needed.
+	 * @param annotatedClass Class for which to obtain the requested handler.
+	 * @param &lt;T&gt;            Type of the handler to be obtained.
+	 * @return Always valid instance of the requested handler or {@code null} if annotations processing
+	 * is disabled for the Fragments library.
+	 * @throws ClassCastException If there is already an annotation handler instantiated for the
+	 *                            specified annotated class but it is of different type as requested.
+	 * @see FragmentsConfig#ANNOTATIONS_PROCESSING_ENABLED
+	 */
+	@Nullable
+	@SuppressWarnings({&quot;unchecked&quot;, &quot;ConstantConditions&quot;})
+	public static &lt;T extends AnnotationHandler&gt; T obtainHandler(@NonNull Class&lt;T&gt; classOfHandler, @NonNull Class&lt;?&gt; annotatedClass) {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">		if (!FragmentsConfig.ANNOTATIONS_PROCESSING_ENABLED) return null;</span>
+		Object handler;
+<span class="nc" id="L111">		synchronized (LOCK) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">			if (sHandlers == null) {</span>
+<span class="nc" id="L113">				sHandlers = new HashMap&lt;&gt;(HANDLERS_INITIAL_CAPACITY);</span>
+			}
+<span class="nc" id="L115">			handler = sHandlers.get(annotatedClass);</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">			if (handler == null) {</span>
+<span class="nc" id="L117">				handler = instantiateHandler(classOfHandler, annotatedClass);</span>
+<span class="nc" id="L118">				sHandlers.put(annotatedClass, handler);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">			} else if (!handler.getClass().equals(classOfHandler)) {</span>
+<span class="nc" id="L120">				final String newHandlerName = classOfHandler.getSimpleName();</span>
+<span class="nc" id="L121">				final String currentHandlerName = handler.getClass().getSimpleName();</span>
+<span class="nc" id="L122">				final String className = annotatedClass.getSimpleName();</span>
+<span class="nc" id="L123">				throw new ClassCastException(</span>
+						&quot;Trying to obtain handler(&quot; + newHandlerName + &quot;) for class(&quot; + className + &quot;) while there &quot; +
+								&quot;is already handler(&quot; + currentHandlerName + &quot;) of different type for that class!&quot;
+				);
+			}
+<span class="nc" id="L128">		}</span>
+<span class="nc" id="L129">		return (T) handler;</span>
+	}
+
+	/**
+	 * Instantiates a new annotation handler instance of the specified &lt;var&gt;classOfHandler&lt;/var&gt; class
+	 * for the given &lt;var&gt;annotatedClass&lt;/var&gt;.
+	 *
+	 * @param classOfHandler Class of the handler to instantiate.
+	 * @param annotatedClass Class for which to instantiate the requested handler.
+	 * @param &lt;T&gt;            Type of the handler that will be instantiated.
+	 * @return New instance of the requested handler with the annotated class attached.
+	 * @throws IllegalStateException If the requested handler failed to be instantiated.
+	 */
+	private static &lt;T&gt; T instantiateHandler(Class&lt;T&gt; classOfHandler, Class&lt;?&gt; annotatedClass) {
+		try {
+<span class="nc" id="L144">			return classOfHandler.getConstructor(Class.class).newInstance(annotatedClass);</span>
+<span class="nc" id="L145">		} catch (Exception e) {</span>
+			// Happens when the handler implementation is not properly implemented:
+			// - handler class is not visible,
+			// - handler class does not have public constructor taking annotated class as single argument.
+<span class="nc" id="L149">			final String handlerName = classOfHandler.getSimpleName();</span>
+<span class="nc" id="L150">			final String className = annotatedClass.getSimpleName();</span>
+<span class="nc" id="L151">			throw new IllegalStateException(&quot;Failed to instantiate annotation handler(&quot; + handlerName + &quot;) for(&quot; + className + &quot;).&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.0</div></body></html>
