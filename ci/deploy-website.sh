@@ -12,7 +12,7 @@ LIBRARY_DIR_ARTIFACTS=../artifacts/universum/studios/android/$LIBRARY_NAME/$LIBR
 LIBRARY_JAVADOC_FILE_NAME="${LIBRARY_ARTIFACT_NAME}-${LIBRARY_VERSION}-javadoc.jar"
 LIBRARY_DIR_TESTS=../library/build/reports/androidTests/connected/
 LIBRARY_DIR_COVERAGE=../library/build/reports/coverage/debug/
-WEBSITE_FILES_VERSION=1.x
+WEBSITE_FILES_VERSION="${LIBRARY_VERSION:0:1}".x
 WEBSITE_DIR_DOC=doc/
 WEBSITE_DIR_DOC_VERSIONED=$WEBSITE_DIR_DOC$WEBSITE_FILES_VERSION/
 WEBSITE_DIR_TESTS=tests/
@@ -24,13 +24,10 @@ WEBSITE_DIR_COVERAGE_VERSIONED=$WEBSITE_DIR_COVERAGE$WEBSITE_FILES_VERSION/
 rm -rf $TEMP_DIR
 
 #  Clone the current repo into temporary directory.
-git clone $LIBRARY_REPO $TEMP_DIR
+git clone --depth 1 --branch gh-pages $LIBRARY_REPO $TEMP_DIR
 
 # Move working directory into temporary directory.
 cd $TEMP_DIR
-
-# Checkout and track the gh-pages branch.
-git checkout -t origin/gh-pages
 
 # Delete all files for the current version.
 rm -rf $WEBSITE_DIR_DOC_VERSIONED
