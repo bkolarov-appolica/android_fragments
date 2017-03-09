@@ -101,7 +101,7 @@ import universum.studios.android.support.fragment.util.FragmentUtils;
 			return actionBar == null ? null : create(activity, actionBar);
 		} else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
 			final ActionBar actionBar = activity.getActionBar();
-			return actionBar != null ? create(activity, actionBar) : null;
+			return actionBar == null ? null : create(activity, actionBar);
 		}
 		throw new IllegalStateException(
 				"Cannot wrap ActionBar of " + activity + " at the current API level(" + Build.VERSION.SDK_INT + ")."
