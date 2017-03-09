@@ -20,7 +20,7 @@
  */
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-		  package="universum.studios.android.fragment">
+		  package="universum.studios.android.support.fragment">
 
 	<application>
 		<activity android:name=".inner.TestActivity" />
