@@ -19,4 +19,4 @@ _depends on:_
 
 Below are listed some of **primary components** that are available in this module:
 
-- [FragmentTransitions](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-common/src/main/java/universum/studios/android/fragment/transition/FragmentTransitions.java)
+- [FragmentTransitions](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-common/src/main/java/universum/studios/android/support/fragment/transition/FragmentTransitions.java)
