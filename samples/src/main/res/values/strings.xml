@@ -24,6 +24,9 @@
 	<!-- ### APPLICATION ======================================================================= -->
 
 	<string name="app_name">Fragments (support)</string>
+	<string name="app_intro">
+		Welcome to the Fragments (support) sample App.
+	</string>
 
 	<!-- ### NAVIGATION ======================================================================== -->
 
