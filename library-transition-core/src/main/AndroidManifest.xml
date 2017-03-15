@@ -19,6 +19,6 @@
  * =================================================================================================
  */
 -->
-<manifest package="universum.studios.android.support.fragment.transition.core">
+<manifest package="universum.studios.android.fragment.transition.core">
 	<application/>
 </manifest>
