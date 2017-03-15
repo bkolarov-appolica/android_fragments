@@ -16,9 +16,9 @@ android:
 # Branches
 branches:
   only:
-    - support-develop
-    - /^support-release.*$/
-    - support-master
+    - develop
+    - /^release.*$/
+    - master
 
 # Continous integration scripts
 before_script:
