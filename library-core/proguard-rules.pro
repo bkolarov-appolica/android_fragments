@@ -21,7 +21,7 @@
 -keep @interface universum.studios.android.fragment.**$** { *; }
 # Keep BaseFragment implementation details:
 # - public empty constructor for proper working of instantiation process using reflection.
--keepclassmembers class * extends universum.studios.android.fragment.BaseFragment {
+-keepclassmembers class * extends universum.studios.android.support.fragment.BaseFragment {
     public <init>();
 }
 # Keep fragment class annotations. We need to specify this rule in case of fragments that have multiple

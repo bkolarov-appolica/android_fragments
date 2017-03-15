@@ -1,23 +1,23 @@
-Fragments-Transition-Extra
+Fragments-Transition-Extra (support)
 ===============
 
 This module contains **extra** `FragmentTransition` implementations.
 
 ## Download ##
-[![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android%3Afragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android%3Afragments/_latestVersion)
+[![Download](https://api.bintray.com/packages/universum-studios/android/universum.studios.android.support%3Asupport-fragments/images/download.svg)](https://bintray.com/universum-studios/android/universum.studios.android.support%3Asupport-fragments/_latestVersion)
 
 ### Gradle ###
 
-    compile "universum.studios.android:fragments-transition-extra:${DESIRED_VERSION}@aar"
+    compile "universum.studios.android.support:support-fragments-transition-extra:${DESIRED_VERSION}@aar"
 
 _depends on:_
-[fragments-core](https://github.com/universum-studios/android_fragments/tree/master/library-core),
-[fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core),
-[fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/master/library-transition-core),
-[fragments-transition-common](https://github.com/universum-studios/android_fragments/tree/master/library-transition-common)
+[support-fragments-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-core),
+[support-fragments-manage-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core),
+[support-fragments-transition-core](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-core),
+[support-fragments-transition-common](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-common)
 
 ## Components ##
 
 Below are listed some of **primary components** that are available in this module:
 
-- [ExtraFragmentTransitions](https://github.com/universum-studios/android_fragments/tree/master/library-transition-extra/src/main/java/universum/studios/android/fragment/transition/ExtraFragmentTransitions.java)
+- [ExtraFragmentTransitions](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-extra/src/main/java/universum/studios/android/fragment/transition/ExtraFragmentTransitions.java)
