@@ -35,7 +35,7 @@ public final class MainActivity extends SamplesNavigationActivity {
 	private static final String TAG = "MainActivity";
 
 	@Override
-	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+	protected boolean onHandleNavigationItemSelected(@NonNull MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.navigation_item_home:
 				return true;
@@ -43,6 +43,6 @@ public final class MainActivity extends SamplesNavigationActivity {
 				startActivity(new Intent(this, WelcomeActivity.class));
 				return false;
 		}
-		return false;
+		return super.onHandleNavigationItemSelected(item);
 	}
 }
