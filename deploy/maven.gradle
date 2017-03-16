@@ -82,8 +82,8 @@ task updateArtifacts() {
     final String mavenLocalDir = System.getenv('MAVEN_URL_LOCAL')
     if (mavenLocalDir != null && !Boolean.parseBoolean(System.getenv('TRAVIS'))) {
         final String artifactId = String.valueOf(project.property('maven.pom.artifactId'))
-        final String artifactsSourceDir = "${mavenLocalDir}\\universum\\studios\\android\\${artifactId}\\${libraryVersion}"
-        final String artifactsDestinationDir = "..\\artifacts\\universum\\studios\\android\\${artifactId}\\${libraryVersion}"
+        final String artifactsSourceDir = "${mavenLocalDir}\\universum\\studios\\android\\support\\${artifactId}\\${libraryVersion}"
+        final String artifactsDestinationDir = "..\\artifacts\\universum\\studios\\android\\support\\${artifactId}\\${libraryVersion}"
         delete artifactsDestinationDir
         copy {
             from artifactsSourceDir
