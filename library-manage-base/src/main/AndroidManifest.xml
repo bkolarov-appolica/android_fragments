@@ -19,6 +19,6 @@
  * =================================================================================================
  */
 -->
-<manifest package="universum.studios.android.fragment.manage.base">
+<manifest package="universum.studios.android.support.fragment.manage.base">
 	<application/>
 </manifest>

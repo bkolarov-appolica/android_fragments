@@ -25,14 +25,14 @@ as usually.
 ## Available modules ##
 > Following modules are available in the [latest](https://github.com/universum-studios/android_fragments/releases "Latest Releases page") release.
 
-- **[Core](https://github.com/universum-studios/android_fragments/tree/master/library-core)**
-- **[Base](https://github.com/universum-studios/android_fragments/tree/master/library-base)**
-- **[Common](https://github.com/universum-studios/android_fragments/tree/master/library-common)**
-- **[Web](https://github.com/universum-studios/android_fragments/tree/master/library-web)**
-- **[@Manage](https://github.com/universum-studios/android_fragments/tree/master/library-manage_group)**
-- **[Manage-Core](https://github.com/universum-studios/android_fragments/tree/master/library-manage-core)**
-- **[Manage-Base](https://github.com/universum-studios/android_fragments/tree/master/library-manage-base)**
-- **[@Transition](https://github.com/universum-studios/android_fragments/tree/master/library-transition_group)**
-- **[Transition-Core](https://github.com/universum-studios/android_fragments/tree/master/library-transition-core)**
-- **[Transition-Common](https://github.com/universum-studios/android_fragments/tree/master/library-transition-common)**
-- **[Transition-Extra](https://github.com/universum-studios/android_fragments/tree/master/library-transition-extra)**
+- **[Core](https://github.com/universum-studios/android_fragments/tree/support-master/library-core)**
+- **[Base](https://github.com/universum-studios/android_fragments/tree/support-master/library-base)**
+- **[Common](https://github.com/universum-studios/android_fragments/tree/support-master/library-common)**
+- **[Web](https://github.com/universum-studios/android_fragments/tree/support-master/library-web)**
+- **[@Manage](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage_group)**
+- **[Manage-Core](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-core)**
+- **[Manage-Base](https://github.com/universum-studios/android_fragments/tree/support-master/library-manage-base)**
+- **[@Transition](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition_group)**
+- **[Transition-Core](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-core)**
+- **[Transition-Common](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-common)**
+- **[Transition-Extra](https://github.com/universum-studios/android_fragments/tree/support-master/library-transition-extra)**
