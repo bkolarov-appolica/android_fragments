@@ -6,7 +6,7 @@
   <artifactId>support-fragments</artifactId>
   <version>1.1.1</version>
   <name>Android Fragments</name>
-  <description>Simplified management of fragments for the Android platform.</description>
+  <description>Extended management of fragments for the Android platform.</description>
   <url>https://github.com/universum-studios/android_fragments</url>
   <inceptionYear>2016</inceptionYear>
   <organization>
@@ -38,19 +38,19 @@
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>support-annotations</artifactId>
-      <version>25.3.0</version>
+      <version>25.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>appcompat-v7</artifactId>
-      <version>25.3.0</version>
+      <version>25.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.android.support</groupId>
       <artifactId>support-vector-drawable</artifactId>
-      <version>25.3.0</version>
+      <version>25.1.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
