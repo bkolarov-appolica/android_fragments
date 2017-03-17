@@ -64,8 +64,8 @@ dependencies {
      */
     compile deps.androidSupport.annotations
     compile deps.androidSupport.appCompatV7
-    releaseCompile "universum.studios.android:fragments-core:${config.library.version}@aar"
-    releaseCompile "universum.studios.android:fragments-base:${config.library.version}@aar"
+    releaseCompile "universum.studios.android.support:support-fragments-core:${config.library.version}@aar"
+    releaseCompile "universum.studios.android.support:support-fragments-base:${config.library.version}@aar"
 
     /*
      * DEBUG DEPENDENCIES --------------------------------------------------------------------------

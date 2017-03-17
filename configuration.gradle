@@ -1,7 +1,7 @@
 // Defines configuration used across the library project.
 def buildConfig = [
         compileSdkVersion: 25,
-        minSdkVersion    : 14,
+        minSdkVersion    : 9,
         targetSdkVersion : 25,
         buildToolsVersion: '25.0.2'
 ]
@@ -16,8 +16,8 @@ def libraryConfig = [
 
 def mavenConfig = [
         localUrl                 : System.getenv('MAVEN_URL_LOCAL'),
-        groupId                  : 'universum.studios.android',
-        artifactId               : 'fragments',
+        groupId                  : 'universum.studios.android.support',
+        artifactId               : 'support-fragments',
         version                  : libraryConfig.version,
         packaging                : 'pom',
         projectName              : 'Android Fragments',
@@ -32,8 +32,8 @@ def bintrayConfig = [
         packageName              : mavenConfig.groupId + ':' + mavenConfig.artifactId,
         packageLabels            : ['android', 'fragment', 'management', 'transition'],
         packageVersionName       : mavenConfig.version,
-        packageVersionDescription: 'Version patch.',
-        packageVersionTag        : mavenConfig.version
+        packageVersionDescription: 'Version support patch.',
+        packageVersionTag        : 'support-' + mavenConfig.version
 ]
 
 def codacyConfig = [

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.test;
+package universum.studios.android.support.test;
 
 import org.junit.After;
 import org.junit.Before;
