@@ -46,12 +46,12 @@ android {
  */
 dependencies {
     // Android Instrumentation test dependencies.
-    androidTestCompile deps.test.androidSupportAnnotations
-    androidTestCompile deps.test.androidRunner
-    androidTestCompile deps.test.androidRules
-    androidTestCompile deps.test.androidEspressoCore
-    androidTestCompile deps.test.androidEspressoIntents
-    androidTestCompile(deps.test.androidEspressoContrib) {
+    compile deps.test.androidSupportAnnotations
+    compile deps.test.androidRunner
+    compile deps.test.androidRules
+    compile deps.test.androidEspressoCore
+    compile deps.test.androidEspressoIntents
+    compile(deps.test.androidEspressoContrib) {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -59,6 +59,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
     // Local JUnit test dependencies.
-    testCompile deps.test.junit
-    testCompile deps.test.mockitoCore
+    compile deps.test.junit
+    compile deps.test.mockitoCore
 }
