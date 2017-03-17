@@ -1,5 +1,5 @@
 // Gradle project settings. Specifies which modules to include into project.
-include ':library', ':samples'
+include ':library', ':samples', ':test-core'
 include ':library-core', ':library-base', ':library-common', ':library-web'
 include ':library-manage_group', ':library-manage-core', ':library-manage-base'
 include ':library-transition_group', ':library-transition-core', ':library-transition-common', ':library-transition-extra'
