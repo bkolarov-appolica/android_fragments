@@ -16,6 +16,7 @@
       <module fileurl="file://$PROJECT_DIR$/library-transition_group/library-transition_group.iml" filepath="$PROJECT_DIR$/library-transition_group/library-transition_group.iml" />
       <module fileurl="file://$PROJECT_DIR$/library-web/library-web.iml" filepath="$PROJECT_DIR$/library-web/library-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/samples/samples.iml" filepath="$PROJECT_DIR$/samples/samples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-core/test-core.iml" filepath="$PROJECT_DIR$/test-core/test-core.iml" />
     </modules>
   </component>
 </project>

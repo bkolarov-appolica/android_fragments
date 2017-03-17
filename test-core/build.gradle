@@ -1,6 +1,6 @@
 /*
  * =================================================================================================
- *                             Copyright (C) 2016 Universum Studios
+ *                             Copyright (C) 2017 Universum Studios
  * =================================================================================================
  *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
  * -------------------------------------------------------------------------------------------------
@@ -31,34 +31,6 @@ android {
         testInstrumentationRunner config.test.instrumentationRunner
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
-        modules {
-            minifyEnabled false
-        }
-        debug {
-            minifyEnabled false
-            testCoverageEnabled true
-        }
-    }
-
-    sourceSets {
-        release.java.srcDirs = [
-                '../library-transition-core/src/main/java',
-                '../library-transition-common/src/main/java',
-                '../library-transition-extra/src/main/java'
-        ]
-        debug.java.srcDirs = release.java.srcDirs
-        release.res.srcDirs = [
-                '../library-transition-core/src/main/res',
-                '../library-transition-common/src/main/res',
-                '../library-transition-extra/src/main/res'
-        ]
-        debug.res.srcDirs = release.res.srcDirs
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
@@ -72,29 +44,21 @@ android {
 /**
  * Library dependencies ============================================================================
  */
-repositories {
-    maven { url = repos.project.artifacts }
-}
-
 dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
-    compile deps.androidSupport.annotations
-    compile deps.androidSupport.appCompatV7
-    releaseCompile "universum.studios.android:fragments-core:${config.library.version}@aar"
-    releaseCompile "universum.studios.android:fragments-manage-core:${config.library.version}@aar"
-
-    /*
-     * DEBUG DEPENDENCIES --------------------------------------------------------------------------
-     */
-    debugCompile project(':library-manage-core')
-
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
-    androidTestCompile project(':test-core')
+    // Android Instrumentation test dependencies.
+    androidTestCompile deps.test.androidSupportAnnotations
+    androidTestCompile deps.test.androidRunner
+    androidTestCompile deps.test.androidRules
+    androidTestCompile deps.test.androidEspressoCore
+    androidTestCompile deps.test.androidEspressoIntents
+    androidTestCompile(deps.test.androidEspressoContrib) {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
+    // Local JUnit test dependencies.
+    testCompile deps.test.junit
+    testCompile deps.test.mockitoCore
 }
-
-// Apply DEPLOY script.
-apply from: '../deploy/deploy.gradle'

@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/library-transition_group" />
             <option value="$PROJECT_DIR$/library-web" />
             <option value="$PROJECT_DIR$/samples" />
+            <option value="$PROJECT_DIR$/test-core" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
