@@ -22,15 +22,25 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
+ * Class that may be used as base for <b>Android Instrumented Tests</b>.
+ *
  * @author Martin Albedinsky
  */
 public abstract class BaseTest {
 
+	/**
+	 * Called before execution of each test method starts.
+	 */
 	@Before
 	public void beforeTest() {
+		// Inheritance hierarchies may for example acquire here resources needed for each test.
 	}
 
+	/**
+	 * Called after execution of each test method finishes.
+	 */
 	@After
 	public void afterTest() {
+		// Inheritance hierarchies may for example release here resources acquired in beforeTest() call.
 	}
 }
