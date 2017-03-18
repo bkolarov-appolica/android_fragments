@@ -29,7 +29,7 @@ import org.junit.Before;
 public abstract class BaseTest {
 
 	/**
-	 * Called before each test starts.
+	 * Called before execution of each test method starts.
 	 */
 	@Before
 	public void beforeTest() {
@@ -37,7 +37,7 @@ public abstract class BaseTest {
 	}
 
 	/**
-	 * Called after each test finishes.
+	 * Called after execution of each test method finishes.
 	 */
 	@After
 	public void afterTest() {
