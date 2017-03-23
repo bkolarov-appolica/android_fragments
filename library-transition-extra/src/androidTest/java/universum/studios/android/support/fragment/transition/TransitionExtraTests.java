@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.fragment.transition;
+package universum.studios.android.support.fragment.transition;
 
 /**
  * @author Martin Albedinsky
