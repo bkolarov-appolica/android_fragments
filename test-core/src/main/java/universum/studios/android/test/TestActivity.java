@@ -16,15 +16,32 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.android.fragment.inner;
+package universum.studios.android.test;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.test.rule.ActivityTestRule;
+import android.view.View;
 
 /**
+ * Simple activity implementation that may be used for {@link ActivityTestRule} in <b>Android Instrumented Tests</b>.
+ *
  * @author Martin Albedinsky
  */
 public final class TestActivity extends Activity {
 
+	/**
+	 * Log TAG.
+	 */
 	@SuppressWarnings("unused")
 	private static final String TAG = "TestActivity";
+
+	/**
+	 */
+	@Override
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(new View(this));
+	}
 }

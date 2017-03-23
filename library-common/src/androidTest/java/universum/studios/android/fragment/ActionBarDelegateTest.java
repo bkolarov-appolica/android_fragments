@@ -25,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import universum.studios.android.fragment.inner.TestActivity;
+import universum.studios.android.test.TestActivity;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
