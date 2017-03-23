@@ -64,6 +64,18 @@ android {
                 '../library-transition-extra/src/main/res'
         ]
         debug.res.srcDirs = release.res.srcDirs
+        androidTest.java.srcDirs = [
+                '../library/src/androidTest/java',
+                '../library-core/src/androidTest/java',
+                '../library-base/src/androidTest/java',
+                '../library-common/src/androidTest/java',
+                '../library-web/src/androidTest/java',
+                '../library-manage-core/src/androidTest/java',
+                '../library-manage-base/src/androidTest/java',
+                '../library-transition-core/src/androidTest/java',
+                '../library-transition-common/src/androidTest/java',
+                '../library-transition-extra/src/androidTest/java'
+        ]
     }
 
     compileOptions {
@@ -79,10 +91,6 @@ android {
 /**
  * Library dependencies ============================================================================
  */
-repositories {
-    mavenLocal()
-}
-
 dependencies {
     /*
      * RELEASE DEPENDENCIES ------------------------------------------------------------------------
